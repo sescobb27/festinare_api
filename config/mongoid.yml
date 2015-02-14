@@ -62,7 +62,6 @@ test:
       hosts:
         - localhost:27017
       options:
-        allow_dynamic_fields: false
         read: primary
         # In the test environment we lower the retries and retry interval to
         # low amounts for fast failures.

@@ -14,10 +14,9 @@ module API
 
       def login
         req_params = safe_params
-        user = User.only(:id, :username, :encrypted_password).where(
-          'username = :username',
-          {username: req_params[:username]}
-        ).first
+        user = User.only(:id, :username, :encrypted_password).where({
+          username: req_params[:username]
+        }).first
         if !user.nil? && user.valid_password?(req_params[:password])
           token = authenticate_user user
           render json: {token: token}, status: :ok
