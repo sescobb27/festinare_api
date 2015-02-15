@@ -1,4 +1,4 @@
 require 'openssl'
 
-Rails.application.config.private_key = OpenSSL::PKey::RSA.new(File.read('cg.rsa'))
-Rails.application.config.public_key = OpenSSL::PKey::RSA.new(File.read('cg.rsa.pub'))
+Rails.application.config.PRIVATE_KEY = OpenSSL::PKey::RSA.new(File.read('cg.rsa')).freeze
+Rails.application.config.PUBLIC_KEY = OpenSSL::PKey::RSA.new(File.read('cg.rsa.pub')).freeze

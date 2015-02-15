@@ -52,13 +52,6 @@ GEM
       columnize (~> 0.8)
       debugger-linecache (~> 1.2)
       slop (~> 3.6)
-    coffee-rails (4.1.0)
-      coffee-script (>= 2.2.0)
-      railties (>= 4.0.0, < 5.0)
-    coffee-script (2.3.0)
-      coffee-script-source
-      execjs
-    coffee-script-source (1.9.0)
     columnize (0.9.0)
     connection_pool (2.1.1)
     debug_inspector (0.0.2)
@@ -114,6 +107,8 @@ GEM
     optionable (0.2.0)
     origin (2.1.1)
     orm_adapter (0.5.0)
+    pretty_backtrace (0.1.2)
+      debug_inspector (~> 0.0.1)
     puma (2.11.1)
       rack (>= 1.1, < 2.0)
     rack (1.6.0)
@@ -219,13 +214,13 @@ DEPENDENCIES
   bson_ext
   bullet
   byebug
-  coffee-rails (~> 4.1.0)
   devise
   factory_girl_rails (~> 4.5.0)
   ffaker
   jwt-rb
   mongoid (~> 4.0.1)
   mongoid-rspec (~> 2.1.0)
+  pretty_backtrace
   puma
   rails (= 4.2.0)
   rspec-rails (~> 3.1.0)

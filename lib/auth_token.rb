@@ -15,7 +15,7 @@ module JWT
     end
 
     private
-      @private_key = Rails.application.config.private_key
-      @public_key = Rails.application.config.public_key
+      @private_key = Rails.application.config.PRIVATE_KEY
+      @public_key = Rails.application.config.PUBLIC_KEY
   end
 end
