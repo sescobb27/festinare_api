@@ -1,0 +1,46 @@
+///////////////////////////////////////////////////////////////////////////////
+  plans: [
+    {
+      name: String
+      description: String
+      price: Integer
+      num_of_discounts: Integer   // number of discounts the plan includes
+    }
+  ]
+///////////////////////////////////////////////////////////////////////////////
+  client: {
+    username: String
+    email: String
+    encrypted_password: String
+    client_name: String
+    types: [String]               // e.g (Bar, Disco, Restaurant, ...)
+    created_at: Date
+    rate: Float                   // stars (* * * * *)
+    num_of_places: Integer        // ? don't know yet, but we can rise the price based on
+                                  // number of the same client we have to handle
+    current_plan: ObjectId
+    addresses: [String]           // we should tell the user where he/she can redeem the discount
+    discounts: [
+      {
+        discount_rate: Integer    // e.g (20%, 10%, ...)
+        title: String
+        secret_key: String        // for discount redemption
+        active: Boolean           // status (true || false)
+        duration: String          // discount duration e.g (10min, 30min, 1h, 2h, ...)
+        image_url: String
+        created_at: Date
+        types: [String]           // same as it's client for traceability in user's likes
+        hashtags: [String]
+      }
+    ]
+  }
+///////////////////////////////////////////////////////////////////////////////
+  user: {
+    username: String
+    full_name: String
+    email: String
+    likes: [
+      // discount's info, id or the whole discount
+    ]
+    subscriptions: [String]
+  }
