@@ -1,4 +1,13 @@
 ///////////////////////////////////////////////////////////////////////////////
+types: [
+  {
+    name: String
+    description: String
+    count: Integer                // number of users who are subscribed to a type or channel
+                                  // for statistics purposes
+  }
+]
+///////////////////////////////////////////////////////////////////////////////
   plans: [
     {
       name: String
@@ -20,6 +29,12 @@
                                   // number of the same client we have to handle
     current_plan: ObjectId
     addresses: [String]           // we should tell the user where he/she can redeem the discount
+    addresses_locations: [        // ? maybe for future Google Maps integration and Geolocation feature
+      {
+        latitude: Float
+        longitude: Float
+      }
+    ]
     discounts: [
       {
         discount_rate: Integer    // e.g (20%, 10%, ...)
@@ -42,5 +57,11 @@
     likes: [
       // discount's info, id or the whole discount
     ]
-    subscriptions: [String]
+    subscriptions: [ObjectId]     // type's ids
+    locations: [                  // ? maybe for future Google Maps integration and Geolocation feature
+      {
+        latitude: Float
+        longitude: Float
+      }
+    ]
   }
