@@ -28,6 +28,7 @@ types: [
     num_of_places: Integer        // ? don't know yet, but we can rise the price based on
                                   // number of the same client we have to handle
     current_plan: ObjectId
+    image_url: String
     addresses: [String]           // we should tell the user where he/she can redeem the discount
     addresses_locations: [        // ? maybe for future Google Maps integration and Geolocation feature
       {
@@ -42,7 +43,6 @@ types: [
         secret_key: String        // for discount redemption
         active: Boolean           // status (true || false)
         duration: String          // discount duration e.g (10min, 30min, 1h, 2h, ...)
-        image_url: String
         created_at: Date
         types: [String]           // same as it's client for traceability in user's likes
         hashtags: [String]
