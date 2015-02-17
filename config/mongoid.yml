@@ -11,6 +11,8 @@ development:
       hosts:
         - localhost:27017
       options:
+        pool_size: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 5) %>
+        timeout: 20
         # Change the default write concern. (default = { w: 1 })
         # write:
         # w: 1
