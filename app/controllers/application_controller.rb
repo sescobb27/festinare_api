@@ -4,4 +4,8 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
   Mongoid.logger.level = Logger::DEBUG
   Moped.logger.level = Logger::DEBUG
+
+  def index
+    render 'layouts/application'
+  end
 end

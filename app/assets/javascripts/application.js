@@ -10,7 +10,17 @@
 // Read Sprockets README (https://github.com/sstephenson/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require angular
 //= require jquery
-//= require jquery_ujs
-//= require turbolinks
-//= require_tree .
+//= require angular-ui-router
+//= require angular-animate
+//= require angular-aria
+//= require angular-cookies
+//= require flexslider/jquery.flexslider-min
+//= require angular-flexslider
+//= require angular-material
+//= require angular-resource
+//= require ng-file-upload
+//= require ng-file-upload-shim
+//= require ng-transloadit
+//= require ./app/app
