@@ -107,13 +107,12 @@ GEM
     optionable (0.2.0)
     origin (2.1.1)
     orm_adapter (0.5.0)
-    pretty_backtrace (0.1.2)
-      debug_inspector (~> 0.0.1)
     puma (2.11.1)
       rack (>= 1.1, < 2.0)
     rack (1.6.0)
     rack-test (0.6.3)
       rack (>= 1.0)
+    rack-timeout (0.2.0)
     rails (4.2.0)
       actionmailer (= 4.2.0)
       actionpack (= 4.2.0)
@@ -163,13 +162,6 @@ GEM
       rspec-mocks (~> 3.1.0)
       rspec-support (~> 3.1.0)
     rspec-support (3.1.2)
-    sass (3.4.11)
-    sass-rails (5.0.1)
-      railties (>= 4.0.0, < 5.0)
-      sass (~> 3.1)
-      sprockets (>= 2.8, < 4.0)
-      sprockets-rails (>= 2.0, < 4.0)
-      tilt (~> 1.1)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
@@ -220,11 +212,10 @@ DEPENDENCIES
   jwt-rb
   mongoid (~> 4.0.1)
   mongoid-rspec (~> 2.1.0)
-  pretty_backtrace
   puma
+  rack-timeout
   rails (= 4.2.0)
   rspec-rails (~> 3.1.0)
-  sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   shoulda-matchers
   spring
