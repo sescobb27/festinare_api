@@ -2,7 +2,7 @@ class Client
   include Mongoid::Document
   # =============================relationships=================================
     # embeds_many :types,     as: :typeable
-    has_many :types
+    has_many :types, as: :typeable
     embeds_many :locations, as: :localizable
     embeds_many :discounts, as: :discountable
     has_and_belongs_to_many :plans
