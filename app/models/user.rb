@@ -1,9 +1,10 @@
 class User
   include Mongoid::Document
-  # =============================User relationship===========================
-
-
-  # =============================END User relationship=======================
+  # =============================relationships=================================
+    embeds_many :locations, as: :localizable
+    embeds_many :likes, class_name: 'Discount' , as: :discountable
+    has_many    :subscriptions, class_name: 'Type'
+  # =============================END relationships=============================
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -15,7 +16,7 @@ class User
   #         :rememberable,
   #         :confirmable
 
-  # =============================User Schema=================================
+  # =============================Schema========================================
     ## Database authenticatable
     field :email
     field :encrypted_password
@@ -49,11 +50,11 @@ class User
 
     index({ username: 1 }, { unique: true, name: 'username_index' })
     index({ email: 1 }, { unique: true, name: 'email_index' })
-  # =============================END User Schema=============================
+  # =============================END Schema====================================
 
-  # =============================User Schema Validations=====================
+  # =============================User Schema Validations=======================
     validates_presence_of :email, :encrypted_password, :username, :lastname,
       :name
-  # =============================END User Schema Validations=================
+  # =============================END User Schema Validations===================
 
 end
