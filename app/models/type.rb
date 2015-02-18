@@ -11,5 +11,7 @@ class Type
     field :name
     field :description
     field :count, type: Integer, default: 0 # number of people interested in each Type
+
+    index({ name: 1 }, { unique: true, name: 'type_name_index' })
   # =============================END Schema====================================
 end
