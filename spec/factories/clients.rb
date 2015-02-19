@@ -2,7 +2,7 @@ require 'ffaker'
 
 FactoryGirl.define do
   factory :client do
-    types               Type.all
+    after(:build)       { |client| client.categories.concat(Category.all.to_a) }
     locations           { (1..5).map { FactoryGirl.build(:location) }}
     discounts           { (1..5).map { FactoryGirl.build(:discount) }}
     plans               { (1..5).map { FactoryGirl.create(:plan) }}

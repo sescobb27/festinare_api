@@ -30,7 +30,7 @@ RSpec.configure do |config|
     Rails.application.load_seed
   end
 
-  config.after(:each) do
+  config.after(:all) do
     Mongoid::Sessions.default.collections.select {|c| c.name !~ /system/ }.each(&:drop)
   end
 

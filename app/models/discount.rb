@@ -1,7 +1,7 @@
 class Discount
   include Mongoid::Document
   # =============================relationships=================================
-    has_many :types, as: :typeable
+    has_many :categories, as: :categorizable, autosave: true
     embedded_in :discountable, polymorphic: true
   # =============================END relationships=============================
   # =============================Schema========================================

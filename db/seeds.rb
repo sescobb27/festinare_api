@@ -5,7 +5,7 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-types = [
+categories = [
   {
     name: 'Bar',
     description: ''
@@ -20,8 +20,8 @@ types = [
   }
 ]
 
-if Type.count == 0
-  types.each do |type|
-    Type.create type
+if Category.count == 0
+  categories.each do |category|
+    Category.create category
   end
 end

@@ -3,7 +3,7 @@ class User
   # =============================relationships=================================
     embeds_many :locations, as: :localizable
     embeds_many :likes, class_name: 'Discount' , as: :discountable
-    has_many    :subscriptions, class_name: 'Type', as: :typeable
+    has_many    :subscriptions, class_name: 'Category', as: :categorizable, autosave: true
   # =============================END relationships=============================
 
   # Include default devise modules. Others available are:

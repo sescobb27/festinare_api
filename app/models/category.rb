@@ -1,11 +1,11 @@
-class Type
+class Category
   include Mongoid::Document
 
   # =============================relationships=================================
     # belongs_to :discount
     # belongs_to :client
     # belongs_to :user
-    belongs_to :typeable, polymorphic: true
+    belongs_to :categorizable, polymorphic: true
   # =============================END relationships=============================
   # =============================Schema========================================
     field :name
