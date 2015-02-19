@@ -3,7 +3,7 @@ require 'auth_token'
 
 module API
   module V1
-    describe UsersController do
+    RSpec.describe UsersController, :type => :controller  do
       before do
         request.host = 'api.example.com'
         expect({:post => "http://#{request.host}/v1/users"}).to(
