@@ -2,7 +2,7 @@ require 'ffaker'
 
 FactoryGirl.define do
   factory :location do
-    latitude rand
-    longitude rand
+    latitude  Faker::Geolocation.lat
+    longitude Faker::Geolocation.lng
   end
 end

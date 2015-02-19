@@ -20,6 +20,8 @@ types = [
   }
 ]
 
-types.each do |type|
-  Type.create type
+if Type.count == 0
+  types.each do |type|
+    Type.create type
+  end
 end

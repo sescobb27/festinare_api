@@ -17,7 +17,6 @@ class Client
     # field :num_of_places
     field :image_url
     field :addresses, type: Array
-    field :addresses_locations, type: Array
 
     index({ username: 1 }, { unique: true, name: 'client_username_index' })
     index({ email: 1 }, { unique: true, name: 'client_email_index' })
