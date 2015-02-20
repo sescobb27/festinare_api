@@ -1,3 +1,5 @@
+require 'api_version_constraints'
+
 Rails.application.routes.draw do
   root 'application#index'
   namespace :api,
