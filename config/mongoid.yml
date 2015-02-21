@@ -1,3 +1,14 @@
+production:
+  sessions:
+    default:
+      database: <%= ENV['OPENSHIFT_APP_NAME'] %>
+      hosts:
+      - <%= ENV['OPENSHIFT_MONGODB_DB_HOST'] || 'localhost' %>:<%= ENV['OPENSHIFT_MONGODB_DB_PORT'] || 27017 %>
+      username: <%= ENV['OPENSHIFT_MONGODB_DB_USERNAME'] %>
+      password: <%= ENV['OPENSHIFT_MONGODB_DB_PASSWORD'] %>
+      options:
+        pool_size: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 5) %>
+        timeout: 20
 development:
   # Configure available database sessions. (required)
   sessions:

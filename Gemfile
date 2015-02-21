@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'
 
-ruby '2.2.0'
+# ruby '2.2.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
@@ -42,9 +42,10 @@ end
 gem 'active_model_serializers', '~> 0.9.0'
 gem 'puma'
 gem 'jwt-rb'
-gem "mongoid", "~> 4.0.1"
+gem 'mongoid', '~> 4.0.1'
 gem 'mongoid_paranoia', '~> 0.1.2'
 gem 'devise'
 gem 'bson_ext'
 # Abort requests that are taking too long
-gem "rack-timeout"
+gem 'rack-timeout'
+gem 'websocket-rails'

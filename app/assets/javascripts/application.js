@@ -24,3 +24,5 @@
 //= require ng-file-upload-shim
 //= require ng-transloadit
 //= require ./app/app
+//= require websocket_rails/main
+
