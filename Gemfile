@@ -43,6 +43,7 @@ gem 'active_model_serializers', '~> 0.9.0'
 gem 'puma'
 gem 'jwt-rb'
 gem "mongoid", "~> 4.0.1"
+gem 'mongoid_paranoia', '~> 0.1.2'
 gem 'devise'
 gem 'bson_ext'
 # Abort requests that are taking too long

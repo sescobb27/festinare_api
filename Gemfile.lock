@@ -97,6 +97,8 @@ GEM
       mongoid (~> 4.0.0)
       rake
       rspec (~> 3.1)
+    mongoid_paranoia (0.1.2)
+      mongoid (> 3)
     moped (2.0.3)
       bson (~> 2.2)
       connection_pool (~> 2.0)
@@ -213,6 +215,7 @@ DEPENDENCIES
   jwt-rb
   mongoid (~> 4.0.1)
   mongoid-rspec (~> 2.1.0)
+  mongoid_paranoia (~> 0.1.2)
   puma
   rack-timeout
   rails (= 4.2.0)
