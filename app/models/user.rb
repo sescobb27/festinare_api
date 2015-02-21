@@ -1,55 +1,57 @@
 class User
   include Mongoid::Document
+  # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # when you don't want documents to actually get deleted from the database,
+  # but "flagged" as deleted. Mongoid provides a Paranoia module to give you
+  # just that.
+  # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  # person.delete   # Sets the deleted_at field to the current time, ignoring callbacks.
+  # person.delete!  # Permanently deletes the document, ignoring callbacks.
+  # person.destroy  # Sets the deleted_at field to the current time, firing callbacks.
+  # person.destroy! # Permanently deletes the document, firing callbacks.
+  # person.restore  # Brings the "deleted" document back to life.
+  # person.restore(:recursive => true) # Brings "deleted" associated documents back to life recursively
+  include Mongoid::Paranoia
+  include Mongoid::Timestamps::Created
   # =============================relationships=================================
     embeds_many :locations, as: :localizable
     embeds_many :likes, class_name: 'Discount' , as: :discountable
     has_many    :subscriptions, class_name: 'Category', as: :categorizable, autosave: true
   # =============================END relationships=============================
 
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise  :database_authenticatable,
-          :registerable,
-          :trackable,
-          :validatable
-  #         :recoverable,
-  #         :rememberable,
-  #         :confirmable
-
   # =============================Schema========================================
+    # Database Authenticatable: this module responsible for encrypting password and validating authenticity of a user while signing in.
+    # Registerable: handles signing up users through a registration process, also allowing them to edit and destroy their account.
+    # Recoverable: resets the user password and sends reset instructions.
+    # Validatable: provides validations of email and password.
+    # Omniauthable: adds Omniauth support.
+    # Confirmable: sends emails with confirmation instructions and verifies whether an account is already confirmed during sign in.
+    devise  :database_authenticatable,
+            :registerable,
+            :validatable,
+            :recoverable
+            # :confirmable
+
     ## Database authenticatable
     field :email
     field :encrypted_password
-
-    ## Trackable
-    field :sign_in_count, type: Integer, default: 0
-    field :current_sign_in_at, type: DateTime
-    field :last_sign_in_at, type: DateTime
-    field :current_sign_in_ip
-    field :last_sign_in_ip
 
     ## Confirmable
     field :confirmation_token
     field :confirmed_at, type: DateTime
     field :confirmation_sent_at, type: DateTime
-    field :unconfirmed_email
 
     ## Recoverable
     field :reset_password_token
     field :reset_password_sent_at, type: DateTime
 
-    ## Rememberable
-    field :remember_created_at, type: DateTime
-
     field :username
     field :lastname
     field :name
-    field :rate, type: Float
-    field :created_at, type: DateTime
-    field :updated_at, type: DateTime
 
     index({ username: 1 }, { unique: true, name: 'username_index' })
     index({ email: 1 }, { unique: true, name: 'email_index' })
+    index({ confirmation_token: 1}, { unique: true, name: 'confirmation_token_index' })
   # =============================END Schema====================================
 
   # =============================User Schema Validations=======================

@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     # namespace :v1, constraints: ApiVersionConstraint.new(version: 1, default: true) do
     namespace :v1 do
 
-      resources :users, except: [:new, :edit] do
+      resources :users, except: [:new, :edit, :index] do
         collection do
           post 'login'
           post 'me'
@@ -23,9 +23,8 @@ Rails.application.routes.draw do
           post 'login'
           post 'me'
         end
-        resources :discouts, only: [:index, :create, :show]
       end
-      resources :discouts, only: [:index]
+      resources :discounts, except: [:new, :destroy, :edit]
       resources :plans, except: [:new, :destroy, :edit]
     end
   end

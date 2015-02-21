@@ -1,7 +1,7 @@
 # bundle exec puma -C config/puma.rb
 workers Integer(ENV['WEB_CONCURRENCY'] || 2)
 min_threads_count = Integer(ENV['PUMA_MIN_THREADS'] || 0)
-max_threads_count = Integer(ENV['PUMA_MAX_THREADS'] || 5)
+max_threads_count = Integer(ENV['PUMA_MAX_THREADS'] || 16)
 threads min_threads_count, max_threads_count
 
 preload_app!

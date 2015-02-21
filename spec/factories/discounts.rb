@@ -9,7 +9,7 @@ FactoryGirl.define do
     status        true
     duration      { rand(10800) } # between 0h - 3 hours
     created_at    Time.now
-    hashtags      (1..5).map { "##{Faker::Lorem.word}" }
+    hashtags      { (1..5).map { "##{Faker::Lorem.word}" }}
   end
 
 end

@@ -26,12 +26,9 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
 
   config.before(:all) do
+    Mongoid::Sessions.default.collections.select {|c| c.name !~ /system/ }.each(&:drop)
     FactoryGirl.reload
     Rails.application.load_seed
-  end
-
-  config.after(:all) do
-    Mongoid::Sessions.default.collections.select {|c| c.name !~ /system/ }.each(&:drop)
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests

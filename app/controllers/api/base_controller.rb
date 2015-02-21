@@ -9,8 +9,9 @@ module API
       # if remember_me the token expiration time is set to a year else 24 hours
       expiration_time = params[:remember_me] ? 31104000 : 86400
       JWT::AuthToken.make_token({
-        user_id: user.id,
-        username: user.username
+        _id: user._id,
+        username: user.username,
+        email: user.email
       }, expiration_time)
     end
 
@@ -22,9 +23,7 @@ module API
       token = request.authorization()[7..-1]
       credentials = JWT::AuthToken.validate_token(token)
       if credentials
-        @current_user = User.
-                          only(:id, :username, :email, :name, :lastname, :rate).
-                          find(credentials['user_id'])
+        @current_user_credentials = credentials.clone
       else
         render nothing: true, status: :unauthorized
         return
