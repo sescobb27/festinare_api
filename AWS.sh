@@ -22,14 +22,19 @@ echo "export RAILS_ENV='production'" >> .bashrc
 echo "export WEB_CONCURRENCY=\"$(nproc)\"" >> .bashrc
 echo "export PUMA_MAX_THREADS=16" >> .bashrc
 echo "export PUMA_MIN_THREADS=8" >> .bashrc
-echo "export PORT=80" >> .bashrc
+echo "export PORT=8080" >> .bashrc
 echo "export RACK_ENV='production'" >> .bashrc
+KEY=$(ruby -e "require 'securerandom'; puts SecureRandom.hex(64)")
+echo "export SECRET_KEY_BASE=\"$KEY\"" >> .bashrc
+source .bashrc
 
 sudo gem install bundle
 bundle install
 # RUBY
 cd hurry-app-discount
+echo -e "production:\n  secret_key_base: <%= ENV[\"SECRET_KEY_BASE\"] %>" >> config/secrets.yml
 gem install bundler
 bower install
 bundle install
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 8080
 bundle exec puma -C config/puma.rb
