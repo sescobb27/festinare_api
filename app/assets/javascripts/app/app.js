@@ -9,7 +9,6 @@ angular.module('hurry_app_discount', [
     'ngResource',
     'ui.router',
     'ngMaterial',
-    'angular-flexslider',
     'angularFileUpload',
     'ng-transloadit'
   ]);

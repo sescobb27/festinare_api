@@ -36,5 +36,6 @@ echo -e "production:\n  secret_key_base: <%= ENV[\"SECRET_KEY_BASE\"] %>" >> con
 gem install bundler
 bower install
 bundle install
+bundle exec rake assets:precompile
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 8080
 bundle exec puma -C config/puma.rb

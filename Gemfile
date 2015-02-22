@@ -7,6 +7,7 @@ gem 'rails', '4.2.0'
 # ruby '2.2.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
+gem 'coffee-rails'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
 gem 'sprockets-rails', :require => 'sprockets/railtie'
