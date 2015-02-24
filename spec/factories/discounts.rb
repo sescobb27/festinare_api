@@ -2,7 +2,7 @@ require 'ffaker'
 
 FactoryGirl.define do
   factory :discount do
-    after(:build)     { |discount| discount.categories.concat(Category.all.to_a) }
+    after(:build)     { |discount| discount.categories.concat( (1..2).map { FactoryGirl.build(:category) }) }
     discount_rate { rand(60) }
     title         Faker::Product.product
     secret_key    'custom_secret_key'

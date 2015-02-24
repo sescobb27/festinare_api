@@ -5,7 +5,7 @@ class Category
     # belongs_to :discount
     # belongs_to :client
     # belongs_to :user
-    belongs_to :categorizable, polymorphic: true
+    embedded_in :categorizable, polymorphic: true
   # =============================END relationships=============================
   # =============================Schema========================================
     field :name

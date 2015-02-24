@@ -2,7 +2,7 @@ class Discount
   include Mongoid::Document
   include Mongoid::Timestamps::Created
   # =============================relationships=================================
-    has_many :categories, as: :categorizable, autosave: true
+    embeds_many :categories, as: :categorizable
     embedded_in :discountable, polymorphic: true
   # =============================END relationships=============================
   # =============================Schema========================================

@@ -13,7 +13,7 @@ wget http://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.0.tar.gz
 tar xvzf ruby-2.2.0.tar.gz
 cd ruby-2.2.0/
 CFLAGS=-fPIC ./configure --enable-shared --disable-install-doc --disable-install-rdoc --disable-install-capi
-make
+make -j$(nproc)
 sudo make install
 cd ..
 rm -rf ruby-2.2.0 ruby-2.2.0.tar.gz
@@ -29,13 +29,11 @@ echo "export SECRET_KEY_BASE=\"$KEY\"" >> .bashrc
 source .bashrc
 
 sudo gem install bundle
+cd hurry-app-discount
 bundle install
 # RUBY
-cd hurry-app-discount
 echo -e "production:\n  secret_key_base: <%= ENV[\"SECRET_KEY_BASE\"] %>" >> config/secrets.yml
-gem install bundler
 bower install
-bundle install
 bundle exec rake assets:precompile
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 8080
 bundle exec puma -C config/puma.rb

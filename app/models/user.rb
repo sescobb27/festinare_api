@@ -15,8 +15,8 @@ class User
   include Mongoid::Timestamps::Created
   # =============================relationships=================================
     embeds_many :locations, as: :localizable
-    embeds_many :likes, class_name: 'Discount' , as: :discountable
-    has_many    :subscriptions, class_name: 'Category', as: :categorizable, autosave: true
+    embeds_many :discounts , as: :discountable
+    embeds_many :categories, as: :categorizable
   # =============================END relationships=============================
 
   # =============================Schema========================================

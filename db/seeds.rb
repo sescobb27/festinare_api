@@ -5,23 +5,23 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-categories = [
-  {
-    name: 'Bar',
-    description: ''
-  },
-  {
-    name: 'Disco',
-    description: ''
-  },
-  {
-    name: 'Restaurant',
-    description: ''
-  }
-]
+# categories = [
+#   {
+#     name: 'Bar',
+#     description: ''
+#   },
+#   {
+#     name: 'Disco',
+#     description: ''
+#   },
+#   {
+#     name: 'Restaurant',
+#     description: ''
+#   }
+# ]
 
-if Category.count == 0
-  categories.each do |category|
-    Category.create category
-  end
-end
+# if Category.count == 0
+#   categories.each do |category|
+#     Category.create category
+#   end
+# end

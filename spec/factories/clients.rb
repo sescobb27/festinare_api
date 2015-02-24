@@ -2,7 +2,7 @@ require 'ffaker'
 
 FactoryGirl.define do
   factory :client do
-    after(:build)       { |client| client.categories.concat(Category.all.to_a) }
+    after(:build)       { |client| client.categories.concat( (1..2).map { FactoryGirl.build(:category) }) }
     locations           { (1..5).map { FactoryGirl.build(:location) }}
     username            { Faker::Internet.user_name }
     email               { Faker::Internet.email }

@@ -11,13 +11,10 @@
 // about supported directives.
 //
 //= require angular
-//= require jquery
 //= require angular-ui-router
 //= require angular-animate
 //= require angular-aria
 //= require angular-cookies
-//= require flexslider/jquery.flexslider-min
-//= require angular-flexslider
 //= require angular-material
 //= require angular-resource
 //= require ng-file-upload
