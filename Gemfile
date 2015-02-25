@@ -39,6 +39,10 @@ group :development, :test do
   gem 'factory_girl_rails', '~> 4.5.0'
   gem 'ffaker'
   gem 'shoulda-matchers'
+  gem 'rb-readline'
+  gem 'hirb'
+  gem 'fancy_irb'
+  gem 'awesome_print'
 end
 
 gem 'active_model_serializers', '~> 0.9.0'

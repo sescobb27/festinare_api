@@ -2,28 +2,20 @@ module API
   module V1
     class DiscountsController < API::BaseController
 
-      before_action :is_authenticated?, only: [:create]
+      before_action :is_authenticated?, only: [:create, :index]
       # GET /v1/clients/discounts
       # GET /v1/discounts
       def index
-        threads = []
-        clients = []
-        users = []
-        threads << Thread.new {
-          clients = Client.only(:_id, :discounts, :categories, :locations).all.batch_size(500).select do |db_client|
+        user = User.only(:_id, :categories).find_by(@current_user_credentials)
+        clients = Client.only(:_id, :name, :rate, :discounts, :addresses, :categories, :locations).
+          in('categories.name' => user.categories.map(&:name)).
+          batch_size(500).
+          select do |db_client|
             db_client.discounts.length > 0
           end
-        }
-        threads << Thread.new {
-          users = User.only(:_id, :categories).all.batch_size(1000).entries
-        }
-        threads.each do |thr|
-          thr.join
-        end
 
-        users.each do |user|
-          user.categories
-        end
+        # render json: clients.map(&:discounts)
+        render json: clients, each_serializer: ClientsDiscountSerializer
       end
 
       # POST /v1/clients/discounts

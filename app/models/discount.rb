@@ -16,4 +16,5 @@ class Discount
     index({ status: 1 }, { unique: false, name: 'discount_status_index' })
     # index({ hashtags: 1 }, { unique: false, name: 'discount_hashtags_index' })
   # =============================END Schema====================================
+  default_scope -> { where(status: true) }
 end
