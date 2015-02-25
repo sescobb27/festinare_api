@@ -23,8 +23,9 @@ Rails.application.routes.draw do
           post 'login'
           post 'me'
         end
+        post '/like/:discount_id', controller: 'discounts', action: :like
       end
-      resources :discounts, except: [:new, :destroy, :edit]
+      resources :discounts, only: [:create, :index]
       resources :plans, except: [:new, :destroy, :edit]
     end
   end
