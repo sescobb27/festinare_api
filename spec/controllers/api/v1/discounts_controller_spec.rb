@@ -15,13 +15,15 @@ module API
                     format: :json
                   )
         )
-
-        # token expectations
-        # @auth_token = allow(JWT::AuthToken).to(
-        #   receive(:make_token).and_return('mysecretkey')
-        # )
-        # expect(JWT::AuthToken.make_token({}, 3600)).to eq('mysecretkey')
       end
+
+      let!(:clients) {
+        (1..10).map { FactoryGirl.create :user_with_discounts }
+      }
+
+      let!(:users) {
+        (1..10).map { FactoryGirl.create :user_with_subscriptions }
+      }
 
       describe 'Create Discount' do
 
@@ -61,6 +63,43 @@ module API
           expect(client_discount.status).to eql discount[:status]
           expect(client_discount.duration).to eql discount[:duration]
           expect(client_discount.hashtags).to eql discount[:hashtags]
+        end
+      end
+
+      describe 'Get all available discounts' do
+
+        it 'user should get all available discounts base on his/her subscriptions' do
+          users.map do |user|
+            allow(JWT::AuthToken).to(
+              receive(:validate_token).and_return({
+                _id: user._id,
+                username: user.username,
+                email: user.email
+              })
+            )
+            expect({get: "http://#{request.host}/v1/discounts"}).to(
+              route_to(
+                controller: 'api/v1/discounts',
+                action: 'index',
+                subdomain: 'api',
+                format: :json
+              )
+            )
+            @request.headers['Authorization'] = 'Bearer mysecretkey'
+            get :index, {}, format: :json
+            c_ins_user_cred = assigns :current_user_credentials
+            expect(response.status).to eql 200
+            response_body = JSON.parse(response.body, symbolize_names: true)
+            expect(response_body[:discounts].length).to be > 0
+            response_body[:discounts].each do |client|
+              expect(client[:discounts].length).to be > 0
+              expect(client[:addresses].length).to be > 0
+              expect(client[:locations].length).to be > 0
+              client_categories = client[:categories].map { |c| c[:name] }
+              user_subscriptions = user.categories.map { |c| c[:name] }
+              expect( client_categories & user_subscriptions ).not_to be_empty
+            end
+          end
         end
       end
     end

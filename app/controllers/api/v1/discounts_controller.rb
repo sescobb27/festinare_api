@@ -5,7 +5,7 @@ module API
       before_action :is_authenticated?
       # GET /v1/discounts
       def index
-        user = User.only(:_id, :categories).find( @current_user_credentials._id )
+        user = User.only(:_id, :categories).find( @current_user_credentials[:_id] )
         clients = Client.only(:_id, :name, :rate, :discounts, :addresses, :categories, :locations).
           in('categories.name' => user.categories.map(&:name)).
           batch_size(500).
@@ -20,7 +20,7 @@ module API
       # POST /v1/discounts
       def create
         discount_attr = safe_discount
-        current_user = Client.find( @current_user_credentials._id )
+        current_user = Client.find( @current_user_credentials[:_id] )
         current_user.discounts.push Discount.new(discount_attr)
         if current_user.save
           render nothing: true, status: :ok
@@ -37,7 +37,7 @@ module API
           select do |discount|
             discount.id.to_s == params[:discount_id]
           end.shift
-        current_user = User.find( @current_user_credentials._id )
+        current_user = User.find( @current_user_credentials[:_id] )
         current_user.discounts < like_discount
         current_user.save
       end

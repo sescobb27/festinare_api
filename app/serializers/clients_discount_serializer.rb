@@ -1,3 +1,3 @@
 class ClientsDiscountSerializer < ActiveModel::Serializer
-  attributes :id, :name, :rate, :discounts, :addresses, :locations
+  attributes :_id, :name, :rate, :discounts, :addresses, :categories, :locations
 end

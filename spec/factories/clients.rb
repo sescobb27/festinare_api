@@ -7,9 +7,9 @@ FactoryGirl.define do
     username            { Faker::Internet.user_name }
     email               { Faker::Internet.email }
     password            'qwertyqwerty'
-    name                Faker::Company.name
+    name                { Faker::Company.name }
     rate                0.0
-    image_url           Faker::Internet.http_url
+    image_url           { Faker::Internet.http_url }
     addresses           { (1..5).map { Faker::Address.street_address }}
 
     factory :user_with_discounts do
