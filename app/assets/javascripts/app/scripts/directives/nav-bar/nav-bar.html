@@ -1,0 +1,61 @@
+<md-toolbar layout="row" class="main-nav-bar" layout-align="start center">
+  <div class="logo-main"></div>
+  <div flex></div>
+  <ul class="menu-main" ng-show="isLoggedIn">
+    <li>
+      <a href="" ui-sref="dashboard">Dashboard</a>
+    </li>
+    <li>
+      <a href="" layout="row" layout-align="center center" style="display: flex;">
+        <span>Profile</span>
+        <img class="profile-pic" ng-src="{{user.profile_picture}}" alt="" ng-if="user.provider !== 'password'" />
+
+        <span ng-if="user.provider === 'password'"
+           layout-align="center center"
+           layout="column"
+           class="profile-pic">
+
+          <span class="icon-profile-top fa fa-user"></span>
+
+        </span>
+
+        <span class="fa fa-angle-down down-caret"></span>
+      </a>
+
+      <ul>
+        <li><a href="" ui-sref="profile">Profile</a>
+        </li>
+        <li><a href="" ng-click="logout()">Log Out</a>
+        </li>
+      </ul>
+
+    </li>
+  </ul>
+  <ul class="menu-main" ng-show="!isLoggedIn">
+    <li>
+      <a class="menu-item-comercial-bottom" ui-sref="pricing" href="">
+        Pricing
+      </a>
+    </li>
+    <li>
+      <a class="menu-item-comercial-bottom" ui-sref="support" href="">
+        Support
+      </a>
+    </li>
+    <li>
+      <a class="menu-item-comercial-bottom" ui-sref="about-us" href="">
+        About Us
+      </a>
+    </li>
+    <li>
+      <a class="menu-item-comercial-bottom" ui-sref="contact-us" href="">
+        Contact Us
+      </a>
+    </li>
+    <li>
+      <a class="menu-item-comercial-bottom" ui-sref="login" href="">
+        Log In
+      </a>
+    </li>
+  </ul>
+</md-toolbar>

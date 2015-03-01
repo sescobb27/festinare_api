@@ -9,6 +9,6 @@ class ApplicationController < ActionController::Base
   end
 
   def index
-    render 'layouts/application'
+    render file: "#{Rails.root}/public/public/index.html", layout: false
   end
 end

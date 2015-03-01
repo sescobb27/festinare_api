@@ -1,0 +1,88 @@
+<md-content layout-fill layout="column" layout-align="center center">
+
+  <md-dialog aria-label="Mango (Fruit)" class="dialog-view-temp login-window">
+    <md-content class="no-paddign">
+      <div class="top-modal top-green" layout="column" layout-align="center center">
+        <h2 class="green">Hello and Welcome!</h2>
+        <span>Create your account here:</span>
+        <a href="" ui-sref="edit" class="btn-close-modal fa fa-times"></a>
+      </div>
+
+      <form name="registerform" role="form" novalidate>
+
+        <md-input-container flex class="padding-fields-login">
+          <div class="ico-login-field fa fa-envelope-o"></div>
+          <label>User Email</label>
+          <input type="email" ng-model="user.email"
+                 name="email"
+                 placeholder=""
+                 required
+                 ng-required="true">
+          <div ng-messages="registerform.email.$error" ng-show="submitted">
+            <div ng-message="required">Your Email is required</div>
+          </div>
+        </md-input-container>
+
+        <md-input-container flex class="padding-fields-login">
+          <div class="ico-login-field fa fa-lock"></div>
+          <label>Password</label>
+          <input type="password" ng-model="user.password"
+                 name="password"
+                 placeholder=""
+                 required
+                 ng-required="true">
+          <div ng-messages="registerform.password.$error" ng-show="submitted">
+            <div ng-message="required">Please enter password</div>
+          </div>
+        </md-input-container>
+
+        <md-input-container flex class="padding-fields-login">
+          <div class="ico-login-field fa fa-lock"></div>
+          <label>Confirm Password</label>
+          <input type="password" ng-model="user.passwordConfirmation"
+                 name="passconfirmation"
+                 placeholder=""
+                 required
+                 ng-required="true">
+          <div ng-messages="registerform.passconfirmation.$error" ng-show="submitted">
+            <div ng-message="match">Your Password Confirmation do not match</div>
+          </div>
+        </md-input-container>
+
+        <div layout="row" layout-align="center center" class="checkbox-login-row">
+          <md-checkbox ng-model="user.terms" aria-label="Checkbox 1" class="checkbox-register"
+                       name="terms"
+                       required
+                       ng-required="true">
+            I agree to the
+          </md-checkbox>
+          <a href="">Terms of Service</a>
+          <div ng-messages="registerform.terms.$error" ng-show="submitted">
+            <div ng-message="required">You need to agree to our  Terms and Conditions</div>
+          </div>
+        </div>
+
+        <md-button class="md-raised md-primary btn-full btn-green" ng-click="register()" ng-hide="createMode" style="width: 100%;">Get Started</md-button>
+
+        <div layout="row" layout-align="center center" class="spacer-login-row">OR</div>
+
+        <div layout="row" layout-align="center center" layout-margin>
+
+          <social-button provider="'facebook'" flex="32"></social-button>
+          <social-button provider="'twitter'" flex="32"></social-button>
+          <social-button provider="'google'" flex="32"></social-button>
+
+        </div>
+
+        <div layout="row" class="action-register-back" layout-align="center center">
+          Already a Member?
+          <a href="" ui-sref="login" ng-hide="createMode">Log In Here</a>
+        </div>
+
+      </form>
+
+    </md-content>
+
+  </md-dialog>
+
+</md-content>

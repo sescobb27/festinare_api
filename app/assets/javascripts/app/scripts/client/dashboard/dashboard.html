@@ -1,0 +1,147 @@
+<div layout="column" layout-fill>
+
+  <md-toolbar layout="row" class="sub-nav-bar" layout-align="start center">
+
+    <h2 class="sub-nav-title">Dashboard</h2>
+
+  </md-toolbar>
+
+  <md-button class="md-fab btn-add-disount" ui-sref="new_disount">
+    <div class="plus-sign">+</div>
+  </md-button>
+
+  <div class="dashboard-content">
+
+
+    <div layout="row" layout-padding layout-align="start start" layout-wrap class="disounts-container">
+
+      <a href="" layout="row" flex="100" class="no-decoration" ng-if="showBackBtn">
+        <div class="fa fa-angle-left custom-back"></div>
+        <div class="back-label">Back to Dashboard</div>
+      </a>
+
+      <div layout="row" flex="100" layout-align="start center">
+        <a href="" class="icon-blocks fa fa-th icon-action-dashboard" ng-class="{'dashboard-active-view': dashboardView.thumbsView}" ng-click="dashboardView.showThumbs()">
+        </a>
+        <a href="" class="icon-rows fa fa-bars icon-action-dashboard" ng-class="{'dashboard-active-view': dashboardView.listView}" ng-click="dashboardView.showList()">
+        </a>
+      </div>
+
+      <div class="thumb-disount-view" layout="row" ng-if="dashboardView.thumbsView" layout-wrap>
+
+        <div ng-repeat="disount in disounts | filter:search track by $index" layout="column" class="disount-card">
+
+          <div class="disount-image-container">
+            <img src="" class="disount-thumb-logo" />
+            <img src="" class="disount-thumb-background" />
+            <div class="disount-thumb-title-image">
+              {{ disount.name }}
+            </div>
+          </div>
+
+          <div class="disount-thumb-main-info" layout="row">
+            <div class="active-icon"></div>
+            <div class="disount-plan" flex layout="column">
+              <div class="disount-thumb-info-name">{{ disount.name }}</div>
+              <div class="disount-thumb-info-plan">{{ disount.subscriptions[0].plan.name }}</div>
+            </div>
+            <div class="disount-next-pay" layout="column">
+              <div class="disount-thumb-date">{{ disount.subscriptions[0].current_period_ends_at._ | date:'dd MMM' | uppercase }}</div>
+              <div class="disount-thumb-date-label">Next Payment</div>
+            </div>
+          </div>
+
+          <div class="disount-thumb-actions" layout="row" layout-align="start center">
+            <md-button ng-click="edit_disount(disount)" class="disount-thumb-edit">Edit</md-button>
+            <div flex></div>
+            <div class="fa fa-comment-o fa-2x"></div>
+            <div class="fa fa-line-chart fa-2x"></div>
+            <div class="fa fa-share-alt fa-2x"></div>
+          </div>
+          <!--      {{ disount | json }}-->
+
+        </div>
+
+        <div class="disount-card demo-instruction-add-disount" ng-if="disounts.length <= 2">
+          You can create more disounts by clicking the plus button.
+        </div>
+
+<!--        <div class="arrow-help" ng-if="disounts.length <= 2"></div>-->
+
+      </div>
+
+      <div class="thumb-disount-view" layout="row" ng-if="dashboardView.listView" layout-fill layout-wrap>
+
+        <div class="disount-card-row demo-instruction-add-disount-row" ng-if="disounts.length <= 2" layout="row" flex="100" layout-align="center center">
+          <div class="bg-instruction-row"></div>
+          <span>You can create more disounts by clicking the plus button.</span>
+        </div>
+
+        <div ng-repeat="disount in disounts | filter:search track by $index" layout="row" class="disount-card-row" layout="row" flex="100">
+
+          <div class="logo-list-view" layout="column" layout-align="center center">
+            <img src="" />
+          </div>
+
+          <div layout="column" flex>
+            <div layout="row" class="row-list-view">
+              <div class="active-icon"></div>
+              <div class="disount-list-info-name">{{ disount.name }}</div>
+              <div class="disount-list-info-plan" flex>{{ disount.subscriptions[0].plan.name }}</div>
+              <div class="disount-next-pay" layout="column">
+                <div class="disount-thumb-date">
+                  {{ disount.subscriptions[0].current_period_ends_at._ | date:'dd MMM' | uppercase }}
+                </div>
+                <div class="disount-thumb-date-label">Next Payment</div>
+              </div>
+            </div>
+            <div layout="row" class="row-list-action-view">
+              <div flex></div>
+              <md-button ng-click="edit_disount(disount)" class="disount-list-edit">Edit</md-button>
+              <div class="fa fa-comment-o"></div>
+              <div class="fa fa-line-chart"></div>
+              <div class="fa fa-share-alt"></div>
+            </div>
+          </div>
+          <!--      {{ disount | json }}-->
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="questions" layout="column" layout-align="center center">
+      <div class="text-questions">Have Questions? We have answers.</div>
+      <md-button class="md-raised md-primary btn-contact-us">Contact Us</md-button>
+    </div>
+
+    <div class="hurryupdiscount-menu-commercial" layout="column" layout-align="center center">
+      <div class="footer-logo" layout="row" layout-align="center center">
+        <img alt="Logo" src="" />
+      </div>
+      <div layout="row" layout-align="center center">
+        <a class="menu-item-comercial-bottom" href="">Why</a>
+        <a class="menu-item-comercial-bottom" href="">Pricing</a>
+        <a class="menu-item-comercial-bottom" href="">Support</a>
+        <a class="menu-item-comercial-bottom" href="">About Us</a>
+        <a class="menu-item-comercial-bottom" href="">Contact Us</a>
+        <a class="menu-item-comercial-bottom" href="">Blog</a>
+        <a class="menu-item-comercial-bottom" href="">Log In</a>
+      </div>
+      <div layout="row" layout-align="center center" class="social-links-footer">
+        <a href="" class="no-decoration fa fa-facebook fa-2x" flex></a>
+        <a href="" class="no-decoration fa fa-twitter fa-2x" flex></a>
+        <a href="" class="no-decoration fa fa-google-plus fa-2x" flex></a>
+      </div>
+    </div>
+
+    <div class="copy-right" layout="row" layout-align="center center">
+      © HurryUpDiscount 2014 - All Rights Reserved.
+    </div>
+
+
+  </div>
+
+
+</div>

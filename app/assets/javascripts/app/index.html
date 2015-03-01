@@ -1,0 +1,80 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <base href="/">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- build:css({.tmp,app}) app/vendor.css -->
+      <!-- bower:css -->
+      <link rel="stylesheet" href="assets/javascripts/app/bower_components/angular-material/angular-material.css"/>
+      <!-- endbower -->
+    <!-- endbuild -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900' rel='stylesheet' type='text/css'>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- build:css({.tmp,app}) app/app.css -->
+      <!-- injector:css -->
+      <link rel="stylesheet" href="assets/javascripts/app/styles/docs.css">
+      <link rel="stylesheet" href="assets/javascripts/app/styles/global.css">
+      <!-- endinjector -->
+    <!-- endbuild  -->
+
+  </head>
+  <body ng-app="hurryupdiscount" ng-controller="MainCtrl">
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <nav-bar></nav-bar>
+    <div ui-view="">
+
+    </div>
+    <footer-bar></footer-bar>
+
+
+    <!-- build:js({.tmp,app}) app/oldieshim.js -->
+    <!--[if lt IE 9]>
+    <script src="bower_components/es5-shim/es5-shim.js"></script>
+    <script src="bower_components/json3/lib/json3.js"></script>
+    <![endif]-->
+    <!-- endbuild -->
+
+    <!-- build:js({.tmp,app}) app/vendor.js -->
+      <!-- bower:js -->
+      <script src="assets/javascripts/app/bower_components/angular/angular.js"></script>
+      <script src="assets/javascripts/app/bower_components/angular-resource/angular-resource.js"></script>
+      <script src="assets/javascripts/app/bower_components/angular-cookies/angular-cookies.js"></script>
+      <script src="assets/javascripts/app/bower_components/angular-sanitize/angular-sanitize.js"></script>
+      <script src="assets/javascripts/app/bower_components/angular-animate/angular-animate.js"></script>
+      <script src="assets/javascripts/app/bower_components/angular-touch/angular-touch.js"></script>
+      <script src="assets/javascripts/app/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+      <script src="assets/javascripts/app/bower_components/angular-aria/angular-aria.js"></script>
+      <script src="assets/javascripts/app/bower_components/angular-material/angular-material.js"></script>
+      <script src="assets/javascripts/app/bower_components/angular-uuid-service/uuid-svc.js"></script>
+      <script src="assets/javascripts/app/bower_components/ng-file-upload/angular-file-upload.js"></script>
+      <script src="assets/javascripts/app/bower_components/ng-file-upload-shim/angular-file-upload-shim.js"></script>
+      <script src="assets/javascripts/app/bower_components/angular-messages/angular-messages.js"></script>
+      <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js({.tmp,app}) app/scripts.js -->
+        <script src="assets/javascripts/app/scripts/app.js"></script>
+        <!-- injector:js -->
+        <script src="assets/javascripts/app/scripts/application/main-controller.js"></script>
+        <script src="assets/javascripts/app/scripts/client/auth/client-auth-controller.js"></script>
+        <script src="assets/javascripts/app/scripts/client/dashboard/dashboard-controller.js"></script>
+        <script src="assets/javascripts/app/scripts/components/alert/alert-controller.js"></script>
+        <script src="assets/javascripts/app/scripts/directives/footer-bar/footer-bar-directive.js"></script>
+        <script src="assets/javascripts/app/scripts/directives/nav-bar/nav-bar-directive.js"></script>
+        <script src="assets/javascripts/app/scripts/filters/title-case.js"></script>
+        <script src="assets/javascripts/app/scripts/services/auth-service.js"></script>
+        <script src="assets/javascripts/app/scripts/services/client-service.js"></script>
+        <script src="assets/javascripts/app/scripts/services/discount-service.js"></script>
+        <script src="assets/javascripts/app/scripts/services/session-service.js"></script>
+        <!-- endinjector -->
+    <!-- endbuild -->
+
+</body>
+</html>

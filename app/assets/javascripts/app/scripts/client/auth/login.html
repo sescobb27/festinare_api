@@ -1,0 +1,60 @@
+<md-content layout-fill layout="column" layout-align="center center">
+
+  <md-dialog aria-label="Mango (Fruit)" class="dialog-view-temp login-window">
+    <md-content class="no-paddign">
+      <div class="top-modal top-blue" layout="column" layout-align="center center">
+        <h2 class="gray">Welcome Back!</h2>
+        <span>Log into your account here:</span>
+        <a href="" ui-sref="edit" class="btn-close-modal fa fa-times"></a>
+      </div>
+
+      <form name="loginform" role="form" novalidate>
+
+        <md-input-container flex class="padding-fields-login">
+          <div class="ico-login-field fa fa-envelope-o"></div>
+          <label>Email Address</label>
+          <input type="email" ng-model="user.email"
+                 placeholder=""
+                 name="email"
+                 required
+                 ng-required="true">
+          <div ng-messages="loginform.email.$error" ng-show="submitted">
+            <div ng-message="required">Email is required</div>
+          </div>
+        </md-input-container>
+
+        <md-input-container flex class="padding-fields-login">
+          <div class="ico-login-field fa fa-lock"></div>
+          <label>Password</label>
+          <input type="password" ng-model="user.password"
+                 placeholder=""
+                 name="password"
+                 required
+                 ng-required="true">
+          <div ng-messages="loginform.password.$error" ng-show="submitted">
+            <div ng-message="required">Password is required</div>
+          </div>
+        </md-input-container>
+
+        <md-button class="md-raised md-primary btn-full btn-blue btn-space" ng-click="passwordLogin()" ng-hide="createMode" style="width: 100%;">Log In</md-button>
+
+        <div layout="row" layout-align="center center" class="spacer-login-row">OR</div>
+
+        <div layout="row" layout-align="center center" layout-margin>
+          <social-button provider="'facebook'" flex="32"></social-button>
+          <social-button provider="'twitter'" flex="32"></social-button>
+          <social-button provider="'google'" flex="32"></social-button>
+        </div>
+
+        <div layout="row" layout-align="center center" class="login-actions">
+          <md-button md-no-ink class="md-primary secondary-action-login">Forgot Credentials?</md-button>
+          <div class="vertical-separator"></div>
+          <md-button md-no-ink class="md-primary secondary-action-login" ui-sref="register" ng-hide="createMode">Create an Account</md-button>
+        </div>
+      </form>
+
+    </md-content>
+
+  </md-dialog>
+
+</md-content>
