@@ -1,0 +1,67 @@
+<md-dialog class="modal" layout="column" layout-align="center" aria-label="New Discount">
+  <md-content>
+    <h2 class="gray">New Discount</h2>
+    <form name="disountform" role="form" novalidate>
+      <md-input-container flex>
+        <label>Title</label>
+        <input type="text" ng-model="disount.title"
+               placeholder=""
+               name="title"
+               required
+               ng-required="true">
+        <div ng-messages="disountform.title.$error" ng-show="submitted">
+          <div ng-message="required">Title is required</div>
+        </div>
+      </md-input-container>
+
+      <md-input-container flex>
+        <label>Discount Rate</label>
+        <input type="text" ng-model="disount.discount_rate"
+               placeholder=""
+               name="discount_rate"
+               required
+               ng-required="true">
+        <div ng-messages="disountform.discount_rate.$error" ng-show="submitted">
+          <div ng-message="required">Discount Rate is required</div>
+        </div>
+      </md-input-container>
+
+      <md-input-container flex>
+        <label>Secret Key</label>
+        <input type="text" ng-model="disount.secret_key"
+               placeholder=""
+               name="secret_key"
+               required
+               ng-required="true">
+        <div ng-messages="disountform.secret_key.$error" ng-show="submitted">
+          <div ng-message="required">Secret Key is required</div>
+        </div>
+      </md-input-container>
+
+      <md-radio-group ng-model="discount.duration">
+        <md-radio-button ng-repeat="duration in durations"
+          ng-value="duration"
+          name="duration"
+          required
+          ng-required="true">
+          {{duration + " minutes"}}
+        </md-radio-button>
+        <div ng-messages="disountform.duration.$error" ng-show="submitted">
+          <div ng-message="required">Duration is required</div>
+        </div>
+      </md-radio-group>
+
+      <md-input-container flex>
+        <label>Hashtags</label>
+        <input type="text" ng-model="disount.hashtags"
+               placeholder=""
+               name="hashtags"
+               required
+               ng-required="true">
+        <div ng-messages="disountform.hashtags.$error" ng-show="submitted">
+          <div ng-message="required">Hashtags are required</div>
+        </div>
+      </md-input-container>
+    </form>
+  </md-content>
+</md-dialog>

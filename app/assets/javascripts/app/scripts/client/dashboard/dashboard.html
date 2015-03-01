@@ -6,7 +6,7 @@
 
   </md-toolbar>
 
-  <md-button class="md-fab btn-add-disount" ui-sref="new_disount">
+  <md-button class="md-fab btn-add-disount" ng-click="createDiscount($event)">
     <div class="plus-sign">+</div>
   </md-button>
 
@@ -29,40 +29,31 @@
 
       <div class="thumb-disount-view" layout="row" ng-if="dashboardView.thumbsView" layout-wrap>
 
-        <div ng-repeat="disount in disounts | filter:search track by $index" layout="column" class="disount-card">
+        <div ng-repeat="disount in client.disounts track by $index" layout="column" class="disount-card">
 
           <div class="disount-image-container">
             <img src="" class="disount-thumb-logo" />
             <img src="" class="disount-thumb-background" />
             <div class="disount-thumb-title-image">
-              {{ disount.name }}
+              {{ disount.title }}
             </div>
           </div>
 
           <div class="disount-thumb-main-info" layout="row">
-            <div class="active-icon"></div>
+            <div ng-class="{ 'active-icon': discount.status }"></div>
             <div class="disount-plan" flex layout="column">
-              <div class="disount-thumb-info-name">{{ disount.name }}</div>
+              <div class="disount-thumb-info-name">{{ disount.title }}</div>
               <div class="disount-thumb-info-plan">{{ disount.subscriptions[0].plan.name }}</div>
             </div>
             <div class="disount-next-pay" layout="column">
-              <div class="disount-thumb-date">{{ disount.subscriptions[0].current_period_ends_at._ | date:'dd MMM' | uppercase }}</div>
+              <div class="disount-thumb-date">{{ disount.duration }}</div>
               <div class="disount-thumb-date-label">Next Payment</div>
             </div>
           </div>
 
-          <div class="disount-thumb-actions" layout="row" layout-align="start center">
-            <md-button ng-click="edit_disount(disount)" class="disount-thumb-edit">Edit</md-button>
-            <div flex></div>
-            <div class="fa fa-comment-o fa-2x"></div>
-            <div class="fa fa-line-chart fa-2x"></div>
-            <div class="fa fa-share-alt fa-2x"></div>
-          </div>
-          <!--      {{ disount | json }}-->
-
         </div>
 
-        <div class="disount-card demo-instruction-add-disount" ng-if="disounts.length <= 2">
+        <div class="disount-card demo-instruction-add-disount" ng-if="client.disounts.length <= 2">
           You can create more disounts by clicking the plus button.
         </div>
 
@@ -86,7 +77,7 @@
           <div layout="column" flex>
             <div layout="row" class="row-list-view">
               <div class="active-icon"></div>
-              <div class="disount-list-info-name">{{ disount.name }}</div>
+              <div class="disount-list-info-name">{{ disount.title }}</div>
               <div class="disount-list-info-plan" flex>{{ disount.subscriptions[0].plan.name }}</div>
               <div class="disount-next-pay" layout="column">
                 <div class="disount-thumb-date">

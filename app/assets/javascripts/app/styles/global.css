@@ -1022,3 +1022,7 @@ md-tabs.profile-tabs.md-accent md-tab:not([disabled]) {
   line-height: 14px;
   color: #666;
 }
+
+.modal {
+  min-width: 30%;
+}
