@@ -28,16 +28,16 @@ module API
 
         it 'should return a token' do
           post :create, subdomain: 'api', client: client, format: :json
-          response_body = JSON.parse(response.body, symbolize_names: true)
           expect(response.status).to eql 200
+          response_body = JSON.parse(response.body, symbolize_names: true)
           expect(response_body[:token]).to eql 'mysecretkey'
         end
 
         it 'should return status bad request for short passwords' do
           client['password'] = 'qwerty'
           post :create, subdomain: 'api', client: client, format: :json
-          response_body = JSON.parse(response.body, symbolize_names: true)
           expect(response.status).to eql 400
+          response_body = JSON.parse(response.body, symbolize_names: true)
           expect(response_body[:errors].length).to eql 1
         end
       end
@@ -46,14 +46,14 @@ module API
 
         let!(:client) {
           client_attr = FactoryGirl.attributes_for :client
-          Client.create client_attr
+          Client.create! client_attr
           client_attr
         }
 
         it 'should be successfully logged in' do
-          post :login, client: client, format: :json
-          response_body = JSON.parse response.body, symbolize_names: true
+          post :login, subdomain: 'api', client: client, format: :json
           expect(response.status).to eql 200
+          response_body = JSON.parse response.body, symbolize_names: true
           expect(response_body[:token]).to eql 'mysecretkey'
         end
 

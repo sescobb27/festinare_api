@@ -1,6 +1,5 @@
 class Location
   include Mongoid::Document
-  include Mongoid::Timestamps::Created
   # =============================relationships=================================
     # embedded_in :client
     # embedded_in :user

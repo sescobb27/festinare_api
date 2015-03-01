@@ -8,11 +8,12 @@ module API
       before do
         request.host = 'api.example.com'
         client_id = rand(100)
-        expect({:post => "http://#{request.host}/v1/discounts"}).to(
+        expect({:post => "http://#{request.host}/v1/clients/#{client_id}/discounts"}).to(
           route_to( controller: 'api/v1/discounts',
                     action: 'create',
                     subdomain: 'api',
-                    format: :json
+                    format: :json,
+                    client_id: "#{client_id}"
                   )
         )
       end
@@ -48,7 +49,7 @@ module API
           @request.headers['Accept'] = 'application/json'
           @request.headers['Authorization'] = 'Bearer mysecretkey'
           @request.headers['Content-Type'] = 'application/json'
-          post :create, { discount: discount.to_hash }, subdomain: 'api'
+          post :create, { client_id: client._id, discount: discount.to_hash }, subdomain: 'api'
           expect(response.status).to eql 200
 
           client_discount = Client.where({
@@ -100,6 +101,24 @@ module API
               expect( client_categories & user_subscriptions ).not_to be_empty
             end
           end
+        end
+      end
+
+      describe 'User Likes a discount' do
+        before do
+          users.map do |user|
+            allow(JWT::AuthToken).to(
+              receive(:validate_token).and_return({
+                _id: user._id,
+                username: user.username,
+                email: user.email
+              })
+            )
+          end
+        end
+
+        it 'should get a secret key to redeem a discount' do
+
         end
       end
     end

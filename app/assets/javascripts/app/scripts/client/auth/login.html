@@ -12,14 +12,14 @@
 
         <md-input-container flex class="padding-fields-login">
           <div class="ico-login-field fa fa-envelope-o"></div>
-          <label>Email Address</label>
-          <input type="email" ng-model="user.email"
+          <label>Username</label>
+          <input type="text" ng-model="user.username"
                  placeholder=""
-                 name="email"
+                 name="username"
                  required
                  ng-required="true">
-          <div ng-messages="loginform.email.$error" ng-show="submitted">
-            <div ng-message="required">Email is required</div>
+          <div ng-messages="loginform.username.$error" ng-show="submitted">
+            <div ng-message="required">Username is required</div>
           </div>
         </md-input-container>
 
@@ -36,7 +36,7 @@
           </div>
         </md-input-container>
 
-        <md-button class="md-raised md-primary btn-full btn-blue btn-space" ng-click="passwordLogin()" ng-hide="createMode" style="width: 100%;">Log In</md-button>
+        <md-button class="md-raised md-primary btn-full btn-blue btn-space" ng-click="login()" ng-hide="createMode" style="width: 100%;">Log In</md-button>
 
         <div layout="row" layout-align="center center" class="spacer-login-row">OR</div>
 

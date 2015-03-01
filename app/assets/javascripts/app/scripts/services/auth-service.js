@@ -1,14 +1,18 @@
 'use strict';
 
 angular.module('hurryupdiscount')
-  .factory('AuthService', function ($rootScope, SessionService, $resource, ClientService) {
+  .factory('AuthService', function ($rootScope, SessionService, $resource, ClientService, $q) {
     var AuthService = this;
-    var current_user = null;
+    var client_promise = null;
+    var client;
 
     if(SessionService.getCurrentSession()) {
-      ClientService.get().then(function (client) {
-        current_user = client;
+      client_promise = ClientService.get().then(function (res) {
+        console.log('CLIENT: ', res);
+        client = res.client;
       });
+    } else {
+      client_promise = $q(function (resolve, reject) { reject(); });
     }
 
     $rootScope.$on('logout', function () {
@@ -16,11 +20,13 @@ angular.module('hurryupdiscount')
     });
 
     AuthService.login = function(credentials) {
-      ClientService.login(credentials).then(function (res) {
+      return ClientService.login(credentials).then(function (res) {
         SessionService.addSession(res);
-        ClientService.get().then(function (client) {
-          current_user = client;
+        client_promise = ClientService.get().then(function (res) {
+          client = res;
+          return;
         });
+        return client_promise;
       });
     };
 
@@ -29,7 +35,7 @@ angular.module('hurryupdiscount')
     };
 
     AuthService.logout = function() {
-      current_user = null;
+      client = null;
     };
 
     // TODO
@@ -40,11 +46,17 @@ angular.module('hurryupdiscount')
     AuthService.updatePassword = function(oldPassword, newPassword, userId) {};
 
     AuthService.isLoggedIn = function () {
-      return !!current_user;
+      return client_promise.then(function () {
+        return !!client;
+      }).catch(function () {
+        return false;
+      });
     };
 
     AuthService.getCurrentUser = function() {
-      return current_user || null;
+      return client_promise.then(function () {
+        return client;
+      });
     };
 
     return AuthService;

@@ -1,17 +1,16 @@
 <md-toolbar layout="row" class="main-nav-bar" layout-align="start center">
   <div class="logo-main"></div>
   <div flex></div>
-  <ul class="menu-main" ng-show="isLoggedIn">
+  <ul class="menu-main" ng-show="logged_in">
     <li>
       <a href="" ui-sref="dashboard">Dashboard</a>
     </li>
     <li>
       <a href="" layout="row" layout-align="center center" style="display: flex;">
         <span>Profile</span>
-        <img class="profile-pic" ng-src="{{user.profile_picture}}" alt="" ng-if="user.provider !== 'password'" />
+        <!-- <img class="profile-pic" ng-src="{{user.profile_picture}}" alt="" /> -->
 
-        <span ng-if="user.provider === 'password'"
-           layout-align="center center"
+        <span layout-align="center center"
            layout="column"
            class="profile-pic">
 
@@ -31,7 +30,7 @@
 
     </li>
   </ul>
-  <ul class="menu-main" ng-show="!isLoggedIn">
+  <ul class="menu-main" ng-hide="logged_in">
     <li>
       <a class="menu-item-comercial-bottom" ui-sref="pricing" href="">
         Pricing

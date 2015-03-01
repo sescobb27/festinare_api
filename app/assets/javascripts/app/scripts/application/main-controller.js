@@ -1,13 +1,15 @@
 'use strict';
 
 angular.module('hurryupdiscount')
-  .controller('MainCtrl', function ($scope, $rootScope, $timeout, $mdToast, $animate, AuthService) {
+  .controller('MainCtrl', function ($scope, $rootScope, $state, $mdToast, AuthService) {
 
-    $scope.isLoggedIn = AuthService.isLoggedIn();
+    AuthService.isLoggedIn().then(function (logged_in) {
+      $scope.logged_in = logged_in;
+    });
     $rootScope.$on('alert', function (event, alert) {
       $mdToast.show({
         controller: 'AlertCtrl',
-        templateUrl: 'scripts/components/application/alert/notification.html',
+        templateUrl: 'scripts/components/alert/notification.html',
         locals: {
           alert: alert
         },
@@ -15,4 +17,15 @@ angular.module('hurryupdiscount')
         position: 'top right'
       });
     });
+
+    $rootScope.$on('logout', function () {
+      $scope.logout();
+    });
+
+    $scope.logout = function () {
+      $rootScope.$emit('logout');
+      $scope.logged_in = false;
+      $state.go('index');
+    };
+
   });

@@ -2,7 +2,7 @@ module API
   module V1
     class ClientsController < API::BaseController
 
-      before_action :is_authenticated?, only: [:me]
+      before_action :is_authenticated?, only: [:me, :discounts]
 
       # POST /v1/clients/login
       def login
@@ -18,13 +18,14 @@ module API
         end
       end
 
-      # POST /v1/clients/me
+      # GET /v1/clients/:client_id/me
       def me
         render json: { client: @current_user_credentials }, status: :ok
       end
 
       # GET /v1/clients
       def index
+        render nothing: true
       end
 
       #  POST /v1/clients
@@ -38,17 +39,15 @@ module API
         end
       end
 
-      # GET /v1/clients/:id
-      def show
-      end
-
       # PATCH /v1/clients/:id
       # PUT   /v1/clients/:id
       def update
+        render nothing: true
       end
 
       # DELETE /v1/clients/:id
       def destroy
+        render nothing: true
       end
 
       private

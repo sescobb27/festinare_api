@@ -15,9 +15,12 @@ angular
   ])
   .config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider) {
     $urlRouterProvider.otherwise('/');
-    $locationProvider.html5Mode(true);
+    // $locationProvider.html5Mode(true);
 
     $stateProvider
+      .state('index', {
+        url:'/'
+      })
       .state('login', {
         url: '/client/auth/login',
         templateUrl: 'scripts/client/auth/login.html',
@@ -80,9 +83,14 @@ angular
   .run(function ($rootScope, $state, AuthService) {
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', function (event, next) {
-      if (next.auth && !AuthService.isLoggedIn()) {
-        $state.go('login');
-        event.preventDefault();
+      if (next.auth) {
+        AuthService.isLoggedIn().then(function (logged_in) {
+          if (!logged_in) {
+            console.log('NO LOGGED IN');
+            $state.go('login');
+            event.preventDefault();
+          }
+        });
       }
     });
 

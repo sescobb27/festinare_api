@@ -17,7 +17,7 @@ module API
         render json: clients, each_serializer: ClientsDiscountSerializer
       end
 
-      # POST /v1/discounts
+      # POST /v1/clients/:client_id/discounts
       def create
         discount_attr = safe_discount
         current_user = Client.find( @current_user_credentials[:_id] )
@@ -27,6 +27,14 @@ module API
         else
           render json: { errors: current_user.errors }, status: :bad_request
         end
+      end
+
+      # GET /v1/clients/:client_id/discounts
+      def client_discounts
+        client = Client.unscoped.
+                      only(:_id, :discounts).
+                      find('54f33dec6b69721d70000000')
+        render json: client.discounts, status: :ok
       end
 
       # POST /v1/clients/:client_id/like/:discount_id
