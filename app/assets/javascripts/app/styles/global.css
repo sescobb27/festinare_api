@@ -424,7 +424,6 @@ select:-webkit-autofill {
 
 .dashboard-content {
   overflow: hidden;
-  overflow-y: scroll;
 }
 
 .premium-row {
@@ -577,7 +576,7 @@ select:-webkit-autofill {
 
 .demo-instruction-add-discount {
   background-color: #dfdfdf;
-  background-image: url(../images/img-iphone-sample.png);
+  background-image: url();
   background-repeat: no-repeat;
   background-position: 50% 100%;
   padding: 40px;

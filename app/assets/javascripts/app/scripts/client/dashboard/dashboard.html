@@ -1,9 +1,9 @@
-<div layout="column" layout-fill>
+<div layout="column">
 
   <md-toolbar layout="row" class="sub-nav-bar" layout-align="start center">
-
-    <h2 class="sub-nav-title">Dashboard</h2>
-
+    <h2 class="sub-nav-title">
+      Dashboard
+    </h2>
   </md-toolbar>
 
   <md-button class="md-fab btn-add-discount" ng-click="createDiscount($event)">
@@ -11,7 +11,6 @@
   </md-button>
 
   <div class="dashboard-content">
-
 
     <div layout="row" layout-padding layout-align="start start" layout-wrap class="discounts-container">
 
@@ -30,7 +29,6 @@
       <div class="thumb-discount-view" layout="row" layout-wrap>
 
         <div ng-repeat="discount in client.discounts track by $index" layout="column" class="discount-card">
-
           <div class="discount-image-container">
             <img src="" class="discount-thumb-logo" />
             <img src="" class="discount-thumb-background" />
@@ -50,24 +48,17 @@
               <div class="discount-thumb-date-label">Next Payment</div>
             </div>
           </div>
-
         </div>
 
         <div class="discount-card demo-instruction-add-discount" ng-if="client.discounts.length <= 2">
           You can create more discounts by clicking the plus button.
         </div>
-
-<!--        <div class="arrow-help" ng-if="discounts.length <= 2"></div>-->
-
       </div>
-
     </div>
 
     <div class="questions" layout="column" layout-align="center center">
       <div class="text-questions">Have Questions? We have answers.</div>
       <md-button class="md-raised md-primary btn-contact-us">Contact Us</md-button>
     </div>
-
   </div>
-
 </div>
