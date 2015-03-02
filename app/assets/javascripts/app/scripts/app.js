@@ -23,35 +23,35 @@ angular
       })
       .state('login', {
         url: '/client/auth/login',
-        templateUrl: 'scripts/client/auth/login.html',
+        templateUrl: 'assets/javascripts/app/scripts/client/auth/login.html',
         controller: 'ClientAuthCtrl'
       })
       .state('register', {
         url: '/client/auth/register',
-        templateUrl: 'scripts/client/auth/register.html',
+        templateUrl: 'assets/javascripts/app/scripts/client/auth/register.html',
         controller: 'ClientAuthCtrl'
       })
       .state('dashboard', {
         url:'/client/dashboard',
-        templateUrl: 'scripts/client/dashboard/dashboard.html',
+        templateUrl: 'assets/javascripts/app/scripts/client/dashboard/dashboard.html',
         controller: 'ClientDashboardCtrl',
         auth: true
       })
       .state('about-us', {
         url:'/about-us',
-        templateUrl: 'scripts/application/about-us.html',
+        templateUrl: 'assets/javascripts/app/scripts/application/about-us.html',
       })
       .state('contact-us', {
         url:'/contact-us',
-        templateUrl: 'scripts/application/contact-us.html',
+        templateUrl: 'assets/javascripts/app/scripts/application/contact-us.html',
       })
       .state('pricing', {
         url:'/pricing',
-        templateUrl: 'scripts/application/pricing.html',
+        templateUrl: 'assets/javascripts/app/scripts/application/pricing.html',
       })
       .state('support', {
         url:'/support',
-        templateUrl: 'scripts/application/support.html',
+        templateUrl: 'assets/javascripts/app/scripts/application/support.html',
       });
 
     $httpProvider.interceptors.push('AuthInterceptor');

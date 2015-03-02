@@ -9,7 +9,7 @@ angular.module('hurryupdiscount')
     $rootScope.$on('alert', function (event, alert) {
       $mdToast.show({
         controller: 'AlertCtrl',
-        templateUrl: 'scripts/components/alert/notification.html',
+        templateUrl: 'assets/javascripts/app/scripts/components/alert/notification.html',
         locals: {
           alert: alert
         },

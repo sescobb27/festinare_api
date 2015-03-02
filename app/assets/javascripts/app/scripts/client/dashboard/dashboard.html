@@ -14,18 +14,6 @@
 
     <div layout="row" layout-padding layout-align="start start" layout-wrap class="discounts-container">
 
-      <a href="" layout="row" flex="100" class="no-decoration" ng-if="showBackBtn">
-        <div class="fa fa-angle-left custom-back"></div>
-        <div class="back-label">Back to Dashboard</div>
-      </a>
-
-      <div layout="row" flex="100" layout-align="start center">
-        <a href="" class="icon-blocks fa fa-th icon-action-dashboard" ng-class="{'dashboard-active-view': dashboardView.thumbsView}" ng-click="dashboardView.showThumbs()">
-        </a>
-        <a href="" class="icon-rows fa fa-bars icon-action-dashboard" ng-class="{'dashboard-active-view': dashboardView.listView}" ng-click="dashboardView.showList()">
-        </a>
-      </div>
-
       <div class="thumb-discount-view" layout="row" layout-wrap>
 
         <div ng-repeat="discount in client.discounts track by $index" layout="column" class="discount-card">
@@ -41,11 +29,11 @@
             <div ng-class="{ 'active-icon': discount.status }"></div>
             <div class="discount-plan" flex layout="column">
               <div class="discount-thumb-info-name">{{ discount.title }}</div>
-              <div class="discount-thumb-info-plan">{{ discount.subscriptions[0].plan.name }}</div>
+              <div class="discount-thumb-info-plan">{{ hashtags(discount.hashtags) }}</div>
             </div>
             <div class="discount-next-pay" layout="column">
-              <div class="discount-thumb-date">{{ discount.duration }}</div>
-              <div class="discount-thumb-date-label">Next Payment</div>
+              <div class="discount-thumb-date">{{ discount.duration + ' minutes' }}</div>
+              <div class="discount-thumb-date-label">Duration</div>
             </div>
           </div>
         </div>

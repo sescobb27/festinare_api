@@ -5,6 +5,6 @@ angular.module('hurryupdiscount').
     return {
       restrict: 'E',
       replace: true,
-      templateUrl: 'scripts/directives/nav-bar/nav-bar.html'
+      templateUrl: 'assets/javascripts/app/scripts/directives/nav-bar/nav-bar.html'
     };
   });

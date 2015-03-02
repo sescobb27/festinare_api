@@ -5,6 +5,6 @@ angular.module('hurryupdiscount').
     return {
       restrict: 'E',
       replace: true,
-      templateUrl: 'scripts/directives/footer-bar/footer-bar.html'
+      templateUrl: 'assets/javascripts/app/scripts/directives/footer-bar/footer-bar.html'
     };
   });

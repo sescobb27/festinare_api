@@ -19,7 +19,7 @@ module.exports = function (grunt) {
     // configurable paths
     app: require('./bower.json').appPath || 'app',
     dist: 'public'
-  }
+  };
 
   // Define the configuration for all the tasks
   grunt.initConfig({
@@ -250,8 +250,8 @@ module.exports = function (grunt) {
         usemin: 'app/scripts.js'
       },
       main: {
-        cwd: '<%= yeoman.app %>',
-        src: ['scripts/**/*.html'],
+        cwd: 'app',
+        src: ['assets/javascripts/app/scripts/**/*.html'],
         dest: '.tmp/templates.js'
       },
       tmp: {
@@ -325,11 +325,11 @@ module.exports = function (grunt) {
         },
         files: {
           '<%= yeoman.app %>/index.html': [
-              ['{.tmp,<%= yeoman.app %>}/scripts/**/*.js',
-               '!{.tmp,<%= yeoman.app %>}/scripts/app.js',
-               '!{.tmp,<%= yeoman.app %>}/scripts/**/*.spec.js',
-               '!{.tmp,<%= yeoman.app %>}/scripts/**/*.mock.js']
-            ]
+            ['{.tmp,<%= yeoman.app %>}/scripts/**/*.js',
+             '!{.tmp,<%= yeoman.app %>}/scripts/app.js',
+             '!{.tmp,<%= yeoman.app %>}/scripts/**/*.spec.js',
+             '!{.tmp,<%= yeoman.app %>}/scripts/**/*.mock.js']
+          ]
         }
       },
 
@@ -365,7 +365,7 @@ module.exports = function (grunt) {
     }, 1500);
   });
 
-  grunt.registerTask('serve', function (target) {
+  grunt.registerTask('serve', function () {
 
     grunt.task.run([
       'clean:server',
@@ -378,7 +378,7 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('test', function(target, target2) {
+  grunt.registerTask('test', function(target) {
     if (target === 'server') {
       return grunt.task.run([
         'env:all',
@@ -412,7 +412,9 @@ module.exports = function (grunt) {
       return grunt.task.run(generalTasks);
     }
 
-    else grunt.task.run(['test:server', 'test:client']);
+    else {
+      grunt.task.run(['test:server', 'test:client']);
+    }
   });
 
   grunt.registerTask('build', [

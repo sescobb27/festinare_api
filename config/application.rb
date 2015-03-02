@@ -39,6 +39,5 @@ module HurryUpDiscount
     end
 
     config.autoload_paths << Rails.root.join('lib/constraints')
-    config.assets.paths << Rails.root.join('vendor', 'assets', 'bower_components')
   end
 end

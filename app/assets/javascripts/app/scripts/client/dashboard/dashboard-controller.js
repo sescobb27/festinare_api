@@ -11,9 +11,13 @@ angular.module('hurryupdiscount')
       });
     });
 
+    $scope.hashtags = function (hashtags) {
+      return hashtags.join(' ');
+    };
+
     $scope.createDiscount = function ($event) {
       $mdDialog.show({
-        templateUrl: 'scripts/client/dashboard/discount/new-discount-modal.html',
+        templateUrl: 'assets/javascripts/app/scripts/client/dashboard/discount/new-discount-modal.html',
         controller: 'DiscountCtrl',
         targetEvent: $event
       }).then(function(disount) {

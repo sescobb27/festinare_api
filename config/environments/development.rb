@@ -36,6 +36,7 @@ Rails.application.configure do
   # Raises error for missing translations
   config.action_view.raise_on_missing_translations = true
   config.mongoid.preload_models = false
+  config.serve_static_files = true
   # config.after_initialize do
   #   Bullet.enable = true
   #   Bullet.alert = true
@@ -43,4 +44,6 @@ Rails.application.configure do
   #   Bullet.console = true
   #   Bullet.rails_logger = true
   # end
+
+  config.assets.paths << Rails.root.join('app', 'assets')
 end
