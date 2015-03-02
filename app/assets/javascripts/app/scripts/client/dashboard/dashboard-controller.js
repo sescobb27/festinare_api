@@ -5,8 +5,9 @@ angular.module('hurryupdiscount')
 
     AuthService.getCurrentUser().then(function (client) {
       $scope.client = client;
-      DiscountService.getDiscounts(client._id).then(function (discounts) {
-        $scope.client.discounts = discounts;
+      DiscountService.getDiscounts(client._id).then(function (res) {
+        console.log('DISCOUNTS: ', res.discounts);
+        $scope.client.discounts = res.discounts;
       });
     });
 
@@ -15,6 +16,8 @@ angular.module('hurryupdiscount')
         templateUrl: 'scripts/client/dashboard/discount/new-discount-modal.html',
         controller: 'DiscountCtrl',
         targetEvent: $event
+      }).then(function(disount) {
+        $scope.client.discounts.push(disount);
       });
     };
 

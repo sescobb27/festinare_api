@@ -6,14 +6,14 @@
 
   </md-toolbar>
 
-  <md-button class="md-fab btn-add-disount" ng-click="createDiscount($event)">
+  <md-button class="md-fab btn-add-discount" ng-click="createDiscount($event)">
     <div class="plus-sign">+</div>
   </md-button>
 
   <div class="dashboard-content">
 
 
-    <div layout="row" layout-padding layout-align="start start" layout-wrap class="disounts-container">
+    <div layout="row" layout-padding layout-align="start start" layout-wrap class="discounts-container">
 
       <a href="" layout="row" flex="100" class="no-decoration" ng-if="showBackBtn">
         <div class="fa fa-angle-left custom-back"></div>
@@ -27,76 +27,37 @@
         </a>
       </div>
 
-      <div class="thumb-disount-view" layout="row" ng-if="dashboardView.thumbsView" layout-wrap>
+      <div class="thumb-discount-view" layout="row" layout-wrap>
 
-        <div ng-repeat="disount in client.disounts track by $index" layout="column" class="disount-card">
+        <div ng-repeat="discount in client.discounts track by $index" layout="column" class="discount-card">
 
-          <div class="disount-image-container">
-            <img src="" class="disount-thumb-logo" />
-            <img src="" class="disount-thumb-background" />
-            <div class="disount-thumb-title-image">
-              {{ disount.title }}
+          <div class="discount-image-container">
+            <img src="" class="discount-thumb-logo" />
+            <img src="" class="discount-thumb-background" />
+            <div class="discount-thumb-title-image">
+              {{ discount.title }}
             </div>
           </div>
 
-          <div class="disount-thumb-main-info" layout="row">
+          <div class="discount-thumb-main-info" layout="row">
             <div ng-class="{ 'active-icon': discount.status }"></div>
-            <div class="disount-plan" flex layout="column">
-              <div class="disount-thumb-info-name">{{ disount.title }}</div>
-              <div class="disount-thumb-info-plan">{{ disount.subscriptions[0].plan.name }}</div>
+            <div class="discount-plan" flex layout="column">
+              <div class="discount-thumb-info-name">{{ discount.title }}</div>
+              <div class="discount-thumb-info-plan">{{ discount.subscriptions[0].plan.name }}</div>
             </div>
-            <div class="disount-next-pay" layout="column">
-              <div class="disount-thumb-date">{{ disount.duration }}</div>
-              <div class="disount-thumb-date-label">Next Payment</div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="disount-card demo-instruction-add-disount" ng-if="client.disounts.length <= 2">
-          You can create more disounts by clicking the plus button.
-        </div>
-
-<!--        <div class="arrow-help" ng-if="disounts.length <= 2"></div>-->
-
-      </div>
-
-      <div class="thumb-disount-view" layout="row" ng-if="dashboardView.listView" layout-fill layout-wrap>
-
-        <div class="disount-card-row demo-instruction-add-disount-row" ng-if="disounts.length <= 2" layout="row" flex="100" layout-align="center center">
-          <div class="bg-instruction-row"></div>
-          <span>You can create more disounts by clicking the plus button.</span>
-        </div>
-
-        <div ng-repeat="disount in disounts | filter:search track by $index" layout="row" class="disount-card-row" layout="row" flex="100">
-
-          <div class="logo-list-view" layout="column" layout-align="center center">
-            <img src="" />
-          </div>
-
-          <div layout="column" flex>
-            <div layout="row" class="row-list-view">
-              <div class="active-icon"></div>
-              <div class="disount-list-info-name">{{ disount.title }}</div>
-              <div class="disount-list-info-plan" flex>{{ disount.subscriptions[0].plan.name }}</div>
-              <div class="disount-next-pay" layout="column">
-                <div class="disount-thumb-date">
-                  {{ disount.subscriptions[0].current_period_ends_at._ | date:'dd MMM' | uppercase }}
-                </div>
-                <div class="disount-thumb-date-label">Next Payment</div>
-              </div>
-            </div>
-            <div layout="row" class="row-list-action-view">
-              <div flex></div>
-              <md-button ng-click="edit_disount(disount)" class="disount-list-edit">Edit</md-button>
-              <div class="fa fa-comment-o"></div>
-              <div class="fa fa-line-chart"></div>
-              <div class="fa fa-share-alt"></div>
+            <div class="discount-next-pay" layout="column">
+              <div class="discount-thumb-date">{{ discount.duration }}</div>
+              <div class="discount-thumb-date-label">Next Payment</div>
             </div>
           </div>
-          <!--      {{ disount | json }}-->
 
         </div>
+
+        <div class="discount-card demo-instruction-add-discount" ng-if="client.discounts.length <= 2">
+          You can create more discounts by clicking the plus button.
+        </div>
+
+<!--        <div class="arrow-help" ng-if="discounts.length <= 2"></div>-->
 
       </div>
 

@@ -13,7 +13,7 @@ angular.module('hurryupdiscount')
     };
 
     DiscountService.createDiscount = function (client_id, discount) {
-      return Discounts.save({ client_id: client_id }, discount).$promise;
+      return Discounts.save({ client_id: client_id }, { discount: discount}).$promise;
     };
 
     return DiscountService;

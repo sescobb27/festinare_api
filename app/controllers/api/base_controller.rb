@@ -23,6 +23,9 @@ module API
       token = request.authorization()[7..-1]
       credentials = JWT::AuthToken.validate_token(token)
       if credentials
+        # TODO
+        # BUG: when user still has his credentials but it does not exist in DB
+        # We need to validate it's existence
         @current_user_credentials = credentials.clone
         @current_user_credentials[:_id] = @current_user_credentials[:_id].to_s
       else

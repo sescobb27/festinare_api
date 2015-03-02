@@ -395,7 +395,7 @@ select:-webkit-autofill {
   font-weight: 300;
 }
 
-.btn-add-disount {
+.btn-add-discount {
   position: absolute;
   top: 90px;
   right: 20px;
@@ -415,7 +415,7 @@ select:-webkit-autofill {
   margin: 0 0 0 5px;
 }
 
-.disounts-container {
+.discounts-container {
   background-color: #ececec!important;
   padding: 20px 40px 50px 40px;
   width: 100%;
@@ -485,7 +485,7 @@ select:-webkit-autofill {
   text-decoration: none;
 }
 
-.disount-card {
+.discount-card {
   width: 350px;
   background-color: #fff;
   margin: 10px;
@@ -493,13 +493,13 @@ select:-webkit-autofill {
   z-index: 4;
 }
 
-.disount-image-container {
+.discount-image-container {
   height: 240px;
   background-color: #999;
   position: relative;
 }
 
-.disount-thumb-title-image {
+.discount-thumb-title-image {
   position: absolute;
   height: 90px;
   bottom: 0;
@@ -523,7 +523,7 @@ select:-webkit-autofill {
 
 }
 
-.disount-thumb-main-info {
+.discount-thumb-main-info {
   height: 90px;
   border-bottom: 1px solid #cbcbcb;
   padding: 25px 20px 0 20px;
@@ -535,47 +535,47 @@ select:-webkit-autofill {
   width: 25px;
 }
 
-.disount-thumb-date {
+.discount-thumb-date {
   font-size: 18px;
   color: #8b8b8b;
   text-align: center;
 }
 
-.disount-thumb-date-label {
+.discount-thumb-date-label {
   font-size: 10px;
   color: #a4a4a4;
   text-align: center;
 }
 
-.disount-thumb-info-name {
+.discount-thumb-info-name {
   font-size: 18px;
   color: #333333;
   margin: 0 0 5px 10px;
 }
 
-.disount-thumb-info-plan {
+.discount-thumb-info-plan {
   font-size: 16px;
   color: #a4a4a4;
   font-weight: 300;
   margin: 0 0 0 10px;
 }
 
-.disount-thumb-actions {
+.discount-thumb-actions {
   height: 80px;
   padding: 20px;
   color: #bdbdbd;
 }
 
-.disount-thumb-actions .fa {
+.discount-thumb-actions .fa {
   margin-left: 20px;
 }
 
-.disount-thumb-edit {
+.discount-thumb-edit {
   color: #42c269!important;
   font-size: 18px!important;
 }
 
-.demo-instruction-add-disount {
+.demo-instruction-add-discount {
   background-color: #dfdfdf;
   background-image: url(../images/img-iphone-sample.png);
   background-repeat: no-repeat;
@@ -661,7 +661,7 @@ select:-webkit-autofill {
   margin-bottom: 30px;
 }
 
-.disount-card-row {
+.discount-card-row {
   background-color: #fff;
   margin: 10px;
   height: 100px;
@@ -669,12 +669,12 @@ select:-webkit-autofill {
   padding: 15px 15px 0 15px;
 }
 
-.demo-instruction-add-disount-row {
+.demo-instruction-add-discount-row {
   background-color: #dfdfdf;
   padding: 0;
 }
 
-.demo-instruction-add-disount-row span {
+.demo-instruction-add-discount-row span {
   color: #767676;
   font-size: 20px;
 }
@@ -694,14 +694,14 @@ select:-webkit-autofill {
   margin-right: 15px;
 }
 
-.disount-list-info-name {
+.discount-list-info-name {
   font-size: 18px;
   line-height: 25px;
   color: #333333;
   margin: 0 0 0 10px;
 }
 
-.disount-list-info-plan {
+.discount-list-info-plan {
   font-size: 18px;
   line-height: 19px;
   height: 19px;
@@ -729,13 +729,13 @@ select:-webkit-autofill {
   line-height: 32px;
 }
 
-.disount-list-edit {
+.discount-list-edit {
   color: #42c269!important;
   font-size: 18px!important;
   height: 32px;
 }
 
-.search-disounts {
+.search-discounts {
   padding: 0;
   margin: 0;
 }

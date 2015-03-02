@@ -33,7 +33,7 @@ module API
       def client_discounts
         client = Client.unscoped.
                       only(:_id, :discounts).
-                      find('54f33dec6b69721d70000000')
+                      find(@current_user_credentials[:_id])
         render json: client.discounts, status: :ok
       end
 
