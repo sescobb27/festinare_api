@@ -15,7 +15,7 @@ Rails.application.routes.draw do
           post 'me'
         end
         member do
-          post '/like/:discount_id', controller: 'discounts', action: :like
+          post '/like/:client_id/discount/:discount_id', controller: 'discounts', action: :like
         end
       end
       resources :clients, except: [:new, :edit, :show] do

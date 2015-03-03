@@ -70,6 +70,9 @@ module API
       describe 'Get all available discounts' do
 
         it 'user should get all available discounts base on his/her subscriptions' do
+          @request.headers['Accept'] = 'application/json'
+          @request.headers['Authorization'] = 'Bearer mysecretkey'
+          @request.headers['Content-Type'] = 'application/json'
           users.map do |user|
             allow(JWT::AuthToken).to(
               receive(:validate_token).and_return({
@@ -105,7 +108,10 @@ module API
       end
 
       describe 'User Likes a discount' do
-        before do
+        it 'should get a secret key to redeem a discount' do
+          @request.headers['Accept'] = 'application/json'
+          @request.headers['Authorization'] = 'Bearer mysecretkey'
+          @request.headers['Content-Type'] = 'application/json'
           users.map do |user|
             allow(JWT::AuthToken).to(
               receive(:validate_token).and_return({
@@ -114,16 +120,22 @@ module API
                 email: user.email
               })
             )
+            clients.each do |client|
+              discount = client_discount = Client.find(client._id).discounts.sample
+              post :like, { id: user._id, client_id:  client._id, discount_id: discount._id }, subdomain: 'api'
+              expect(response.status).to eql 200
+              u = User.find(user._id)
+              expect(u.discounts).to include discount
+            end
           end
-        end
-
-        it 'should get a secret key to redeem a discount' do
-
         end
       end
 
       describe 'Client Get all his/her discounts' do
         it 'should return all client discounts' do
+          @request.headers['Accept'] = 'application/json'
+          @request.headers['Authorization'] = 'Bearer mysecretkey'
+          @request.headers['Content-Type'] = 'application/json'
           clients.each do |client|
             allow(JWT::AuthToken).to(
               receive(:validate_token).and_return({
@@ -132,9 +144,6 @@ module API
                 email: client.email
               })
             )
-            @request.headers['Accept'] = 'application/json'
-            @request.headers['Authorization'] = 'Bearer mysecretkey'
-            @request.headers['Content-Type'] = 'application/json'
             get :client_discounts, { client_id: client._id }, subdomain: 'api'
             expect(response.status).to eql 200
             response_body = JSON.parse(response.body, symbolize_names: true)

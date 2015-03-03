@@ -37,7 +37,7 @@ module API
         render json: client.discounts, status: :ok
       end
 
-      # POST /v1/clients/:client_id/like/:discount_id
+      # POST /v1/users/:id/like/:client_id/discount/:discount_id
       def like
         like_discount = Client.only(:_id, :discounts).
           find(params[:client_id]).
@@ -46,8 +46,9 @@ module API
             discount.id.to_s == params[:discount_id]
           end.shift
         current_user = User.find( @current_user_credentials[:_id] )
-        current_user.discounts < like_discount
+        current_user.discounts << like_discount
         current_user.save
+        render nothing: true, status: :ok
       end
 
       private
