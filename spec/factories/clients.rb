@@ -12,7 +12,7 @@ FactoryGirl.define do
     image_url           { Faker::Internet.http_url }
     addresses           { (1..5).map { Faker::Address.street_address }}
 
-    factory :user_with_discounts do
+    factory :client_with_discounts do
       discounts { (1..5).map { FactoryGirl.build(:discount) }}
     end
     factory :client_with_plans do

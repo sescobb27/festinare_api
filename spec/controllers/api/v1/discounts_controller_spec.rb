@@ -19,7 +19,7 @@ module API
       end
 
       let!(:clients) {
-        (1..10).map { FactoryGirl.create :user_with_discounts }
+        (1..10).map { FactoryGirl.create :client_with_discounts }
       }
 
       let!(:users) {
@@ -119,6 +119,27 @@ module API
 
         it 'should get a secret key to redeem a discount' do
 
+        end
+      end
+
+      describe 'Client Get all his/her discounts' do
+        it 'should return all client discounts' do
+          clients.each do |client|
+            allow(JWT::AuthToken).to(
+              receive(:validate_token).and_return({
+                _id: client._id,
+                username: client.username,
+                email: client.email
+              })
+            )
+            @request.headers['Accept'] = 'application/json'
+            @request.headers['Authorization'] = 'Bearer mysecretkey'
+            @request.headers['Content-Type'] = 'application/json'
+            get :client_discounts, { client_id: client._id }, subdomain: 'api'
+            expect(response.status).to eql 200
+            response_body = JSON.parse(response.body, symbolize_names: true)
+            expect(response_body[:discounts].length).to be == 5
+          end
         end
       end
     end

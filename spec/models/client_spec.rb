@@ -5,7 +5,7 @@ RSpec.describe Client, :type => :model do
   describe 'Create Client' do
     let!(:client) { FactoryGirl.build(:client) }
     let!(:c_plan) { FactoryGirl.build(:client_with_plans) }
-    let!(:c_discount) { FactoryGirl.build(:user_with_discounts) }
+    let!(:c_discount) { FactoryGirl.build(:client_with_discounts) }
 
     it 'should create a raw client' do
       expect(client.categories.length).to be > 0
