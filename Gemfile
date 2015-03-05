@@ -55,3 +55,5 @@ gem 'bson_ext'
 # Abort requests that are taking too long
 gem 'rack-timeout'
 gem 'websocket-rails'
+gem 'hiredis'
+gem 'redis'
