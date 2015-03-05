@@ -1,6 +1,7 @@
 class Discount
   include Mongoid::Document
   include Mongoid::Timestamps::Created
+  include Mongoid::Paranoia
   # =============================relationships=================================
     embeds_many :categories, as: :categorizable
     embedded_in :discountable, polymorphic: true
