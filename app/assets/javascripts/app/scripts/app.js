@@ -56,7 +56,7 @@ angular
 
     $httpProvider.interceptors.push('AuthInterceptor');
   })
-  .factory('AuthInterceptor', function ($rootScope, $q, SessionService, $location) {
+  .factory('AuthInterceptor', function ($rootScope, $q, SessionService, $location, $injector) {
     return {
       // Add authorization token to headers
       request: function (config) {
@@ -72,7 +72,9 @@ angular
       responseError: function(response) {
         console.log('RESPONSE ERROR:', response);
         if(response.status === 401) {
-          $location.path('/');
+          var $state = $injector.get('$state');
+          $state.go('login');
+          $rootScope.$emit('alert', { msg: 'You are not authorized to enter here, please Log In' });
           $rootScope.$emit('logout');
           // remove any state tokens
         }

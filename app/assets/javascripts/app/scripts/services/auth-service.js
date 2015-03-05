@@ -23,8 +23,8 @@ angular.module('hurryupdiscount')
       return ClientService.login(credentials).then(function (res) {
         SessionService.addSession(res);
         client_promise = ClientService.get().then(function (res) {
-          client = res;
-          return;
+          client = res.client;
+          return client;
         });
         return client_promise;
       });

@@ -8,6 +8,8 @@ angular.module('hurryupdiscount')
     $scope.client = null;
     AuthService.getCurrentUser().then(function (client) {
       $scope.client = client;
+    }).catch(function (error) {
+      $rootScope.$emit('alert', { msg: error.message });
     });
 
     var hashtags = function() {

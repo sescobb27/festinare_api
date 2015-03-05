@@ -1,5 +1,6 @@
 <md-toolbar layout="row" class="main-nav-bar" layout-align="start center">
-  <div class="logo-main"></div>
+  <a href="" class="logo-main" ng-show="logged_in" ui-sref="dashboard"></a>
+  <a href="" class="logo-main" ng-hide="logged_in" ui-sref="index"></a>
   <div flex></div>
   <ul class="menu-main" ng-show="logged_in">
     <li>

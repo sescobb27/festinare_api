@@ -19,7 +19,8 @@ angular.module('hurryupdiscount')
     });
 
     $rootScope.$on('logout', function () {
-      $scope.logout();
+      $scope.logged_in = false;
+      $state.go('index');
     });
 
     $scope.logout = function () {

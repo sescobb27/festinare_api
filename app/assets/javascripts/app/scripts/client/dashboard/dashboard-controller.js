@@ -8,6 +8,8 @@ angular.module('hurryupdiscount')
       DiscountService.getDiscounts(client._id).then(function (res) {
         console.log('DISCOUNTS: ', res.discounts);
         $scope.client.discounts = res.discounts;
+      }).catch(function (error) {
+        $rootScope.$emit('alert', { msg: error.message });
       });
     });
 
