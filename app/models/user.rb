@@ -17,6 +17,7 @@ class User
     embeds_many :locations, as: :localizable
     embeds_many :discounts , as: :discountable
     embeds_many :categories, as: :categorizable
+    embeds_one  :mobile
   # =============================END relationships=============================
 
   # =============================Schema========================================
@@ -51,7 +52,7 @@ class User
 
     index({ username: 1 }, { unique: true, name: 'username_index' })
     index({ email: 1 }, { unique: true, name: 'email_index' })
-    index({ confirmation_token: 1}, { unique: true, name: 'confirmation_token_index' })
+    # index({ confirmation_token: 1}, { unique: true, name: 'confirmation_token_index' })
   # =============================END Schema====================================
 
   # =============================User Schema Validations=======================

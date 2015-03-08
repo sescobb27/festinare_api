@@ -57,3 +57,5 @@ gem 'rack-timeout'
 gem 'websocket-rails'
 gem 'hiredis'
 gem 'redis'
+gem 'whenever', :require => false
+gem 'gcm'

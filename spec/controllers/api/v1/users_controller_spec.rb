@@ -40,6 +40,16 @@ module API
           expect(response.status).to eql 400
           expect(response_body[:errors].length).to eql 1
         end
+
+        it 'should have mobile' do
+          User.new(@user).save
+          user = User.only(:_id).find_by username: @user[:username]
+          expect(user._id.to_s).not_to eql ''
+          mobile = FactoryGirl.attributes_for :mobile
+          post :mobile, { id: user._id, user: { mobile: mobile } }, format: :json
+          expect(response.status).to eql 200
+          expect(mobile[:token]).to eql User.find(user._id).mobile.token
+        end
       end
 
       describe 'User Login' do

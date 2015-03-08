@@ -32,12 +32,17 @@ module API
       end
 
       def update
-        req_params = update_params
-        current_user = User.new req_params
-        if current_user.save
+      end
+
+      # POST /v1/users/:id/mobile
+      def mobile
+        secure_params = mobile_params
+        user = User.find( params[:id] )
+        user.mobile = Mobile.new secure_params[:mobile]
+        if user.save
           render nothing: true, status: :ok
         else
-          render json: { errors: current_user.errors }, status: :bad_request
+          render json: { errors: user.errors }, status: :bad_request
         end
       end
 
@@ -52,6 +57,10 @@ module API
 
         def update_params
           params.require(:user).permit(:lastname, :name, :password)
+        end
+
+        def mobile_params
+          params.require(:user).permit(mobile: [:token, :platform])
         end
     end
   end

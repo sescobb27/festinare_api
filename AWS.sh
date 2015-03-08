@@ -24,6 +24,7 @@ echo "export PUMA_MAX_THREADS=16" >> .bashrc
 echo "export PUMA_MIN_THREADS=8" >> .bashrc
 echo "export PORT=8080" >> .bashrc
 echo "export RACK_ENV='production'" >> .bashrc
+echo "export GCM_API_KEY=''" >> .bashrc
 KEY=$(ruby -e "require 'securerandom'; puts SecureRandom.hex(64)")
 echo "export SECRET_KEY_BASE=\"$KEY\"" >> .bashrc
 source .bashrc
