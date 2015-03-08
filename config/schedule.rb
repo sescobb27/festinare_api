@@ -25,3 +25,7 @@ set :output, {
 every 10.minutes do
   rake 'send:notification'
 end
+
+every 10.minutes do
+  rake 'invalidate:discounts'
+end

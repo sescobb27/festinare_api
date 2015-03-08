@@ -27,6 +27,8 @@ echo "export RACK_ENV='production'" >> .bashrc
 echo "export GCM_API_KEY=''" >> .bashrc
 KEY=$(ruby -e "require 'securerandom'; puts SecureRandom.hex(64)")
 echo "export SECRET_KEY_BASE=\"$KEY\"" >> .bashrc
+MAX=$(cat /proc/sys/kernel/threads-max)
+echo "export MAX_THREADS=$MAX" >> .bashrc
 source .bashrc
 
 sudo gem install bundle
