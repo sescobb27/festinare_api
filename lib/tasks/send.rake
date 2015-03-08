@@ -11,7 +11,7 @@ namespace :send do
     }
     users_num = User.count
     batch_size = 1000
-    iterations = users_num / batch_size
+    iterations = users_num.fdiv(batch_size).ceil
 
     iterations.times do |x|
       registration_ids = User.only(:_id, :mobile).limit(batch_size).offset(batch_size * x).map(&:mobile).map(&:token)
