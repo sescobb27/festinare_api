@@ -27,7 +27,7 @@ module API
           token = authenticate_user user
           render json: { token: token }, status: :ok
         else
-          render json: { errors: user.errors }, status: :bad_request
+          render json: { errors: user.errors.full_messages }, status: :bad_request
         end
       end
 
@@ -42,7 +42,7 @@ module API
         if user.save
           render nothing: true, status: :ok
         else
-          render json: { errors: user.errors }, status: :bad_request
+          render json: { errors: user.errors.full_messages }, status: :bad_request
         end
       end
 

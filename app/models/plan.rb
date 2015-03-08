@@ -15,5 +15,5 @@ class Plan
     index({ status: 1 }, { unique: false, name: 'plan_status_index' })
   # =============================END Schema====================================
 
-  default_scope -> { asc(:price) }
+  default_scope -> { where(status: true).asc(:price) }
 end

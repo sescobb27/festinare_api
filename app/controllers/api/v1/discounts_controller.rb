@@ -21,11 +21,12 @@ module API
       def create
         discount_attr = safe_discount
         current_user = Client.find( @current_user_credentials[:_id] )
-        current_user.discounts.push Discount.new(discount_attr)
-        if current_user.save
+        discount = current_user.discounts.create discount_attr
+        if discount.errors.empty?
+          DiscountCache::cache discount
           render nothing: true, status: :ok
         else
-          render json: { errors: current_user.errors }, status: :bad_request
+          render json: { errors: discount.errors.full_messages }, status: :bad_request
         end
       end
 

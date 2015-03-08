@@ -20,5 +20,9 @@ class Discount
   # =============================END Schema====================================
   default_scope -> { where(status: true) }
   DURATION_TERM = 'minutes'.freeze
-  DURATIONS = [10, 20, 30, 60, 90, 120].freeze;
+  DURATIONS = [10, 20, 30, 60, 90, 120].freeze
+  validates :duration, inclusion: {
+    in: DURATIONS,
+    message: "Invalid Discount duration, valid ones are #{DURATIONS.join(', ')}"
+  }
 end

@@ -26,6 +26,8 @@ module API
         (1..10).map { FactoryGirl.create :user_with_subscriptions }
       }
 
+      let!(:redis) { Cache::RedisCache.instance }
+
       describe 'Create Discount' do
 
         let!(:client) {
@@ -64,6 +66,24 @@ module API
           expect(client_discount.status).to eql discount[:status]
           expect(client_discount.duration).to eql discount[:duration]
           expect(client_discount.hashtags).to eql discount[:hashtags]
+
+          len = redis.llen('discounts')
+          expect(len).to be > 0
+          obj = redis.lrange('discounts', len - 1, len - 1)[0]
+          cache_discount = JSON.parse(obj)
+          expect(cache_discount['title']).to eql client_discount.title
+          expect(cache_discount['_id']['$oid']).to eql client_discount._id.to_s
+        end
+
+        it 'should not be able to create a discount' do
+          @request.headers['Accept'] = 'application/json'
+          @request.headers['Authorization'] = 'Bearer mysecretkey'
+          @request.headers['Content-Type'] = 'application/json'
+          discount[:duration] = [0, 15, 25, 35, 65, 95, 125].sample
+          post :create, { client_id: client._id, discount: discount.to_hash }, subdomain: 'api'
+          expect(response.status).to eql 400
+          response_body = JSON.parse response.body, symbolize_names: true
+          expect(response_body[:errors].length).to be > 0
         end
       end
 

@@ -35,7 +35,7 @@ module API
           token = authenticate_user client
           render json: { token: token }, status: :ok
         else
-          render json: { errors: client.errors }, status: :bad_request
+          render json: { errors: client.errors.full_messages }, status: :bad_request
         end
       end
 
