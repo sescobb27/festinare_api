@@ -3,9 +3,16 @@
 angular.module('hurryupdiscount')
   .controller('MainCtrl', function ($scope, $rootScope, $state, $mdToast, AuthService) {
 
+    AuthService.subscribe(this);
+
+    this.notify = function () {
+      $scope.logged_in = true;
+    };
+
     AuthService.isLoggedIn().then(function (logged_in) {
       $scope.logged_in = logged_in;
     });
+
     $rootScope.$on('alert', function (event, alert) {
       $mdToast.show({
         controller: 'AlertCtrl',

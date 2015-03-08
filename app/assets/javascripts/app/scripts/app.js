@@ -73,9 +73,9 @@ angular
         console.log('RESPONSE ERROR:', response);
         if(response.status === 401) {
           var $state = $injector.get('$state');
+          $rootScope.$emit('logout');
           $state.go('login');
           $rootScope.$emit('alert', { msg: 'You are not authorized to enter here, please Log In' });
-          $rootScope.$emit('logout');
           // remove any state tokens
         }
         return $q.reject(response);

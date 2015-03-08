@@ -18,8 +18,8 @@ angular.module('hurryupdiscount')
 
       AuthService.login($scope.user).then(function () {
         $state.go('dashboard');
-      }).catch(function (error) {
-        $rootScope.$emit('alert', { msg: error.message });
+      }).catch(function () {
+        $rootScope.$emit('alert', { msg: 'Invalid username or password' });
       });
     };
 

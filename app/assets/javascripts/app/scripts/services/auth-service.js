@@ -5,6 +5,7 @@ angular.module('hurryupdiscount')
     var AuthService = this;
     var client_promise = null;
     var client;
+    var subscriptors = [];
 
     if(SessionService.getCurrentSession()) {
       client_promise = ClientService.get().then(function (res) {
@@ -24,6 +25,7 @@ angular.module('hurryupdiscount')
         SessionService.addSession(res);
         client_promise = ClientService.get().then(function (res) {
           client = res.client;
+          notify(client);
           return client;
         });
         return client_promise;
@@ -56,6 +58,20 @@ angular.module('hurryupdiscount')
     AuthService.getCurrentUser = function() {
       return client_promise.then(function () {
         return client;
+      });
+    };
+
+    AuthService.subscribe = function(subscriptor) {
+      return subscriptors.push(subscriptor) - 1;
+    };
+
+    AuthService.unsuscribe = function(index) {
+      subscriptors.splice(index, 1);
+    };
+
+    var notify = function(user) {
+      angular.forEach(subscriptors, function (subscriptor) {
+        subscriptor.notify(user);
       });
     };
 
