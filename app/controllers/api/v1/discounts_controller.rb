@@ -23,7 +23,7 @@ module API
         current_user = Client.find( @current_user_credentials[:_id] )
         discount = current_user.discounts.create discount_attr
         if discount.errors.empty?
-          DiscountCache::cache discount
+          DiscountCache::cache discount, current_user.categories
           render nothing: true, status: :ok
         else
           render json: { errors: discount.errors.full_messages }, status: :bad_request

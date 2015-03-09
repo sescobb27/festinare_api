@@ -25,4 +25,8 @@ class Discount
     in: DURATIONS,
     message: "Invalid Discount duration, valid ones are #{DURATIONS.join(', ')}"
   }
+
+  def expired?
+    !self.status
+  end
 end
