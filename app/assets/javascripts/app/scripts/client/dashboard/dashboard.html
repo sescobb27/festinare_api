@@ -1,5 +1,6 @@
 <div layout="column">
 
+  <loading ng-if="isLoading"></loading>
   <md-toolbar layout="row" class="sub-nav-bar" layout-align="start center">
     <h2 class="sub-nav-title">
       Dashboard
@@ -26,16 +27,18 @@
           </div>
 
           <div class="discount-thumb-main-info" layout="row">
-            <div ng-class="{ 'active-icon': discount.status }"></div>
+            <i class="fa fa-circle active-icon" ng-show="discount.status"></i>
+            <i class="fa fa-circle inactive-icon" ng-hide="discount.status"></i>
             <div class="discount-plan" flex layout="column">
               <div class="discount-thumb-info-name">{{ discount.title }}</div>
               <div class="discount-thumb-info-plan">{{ hashtags(discount.hashtags) }}</div>
             </div>
             <div class="discount-next-pay" layout="column">
-              <div class="discount-thumb-date">{{ discount.duration + ' minutes' }}</div>
               <div class="discount-thumb-date-label">Duration</div>
+              <div class="discount-thumb-date">{{ discount.duration + ' min' }}</div>
             </div>
           </div>
+              <div class="discount-thumb-date">until: {{ discount.until_date | date:'dd/MMM hh:ma' }}</div>
         </div>
 
         <div class="discount-card demo-instruction-add-discount" ng-if="client.discounts.length <= 2">

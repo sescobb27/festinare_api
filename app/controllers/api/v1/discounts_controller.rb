@@ -32,10 +32,9 @@ module API
 
       # GET /v1/clients/:client_id/discounts
       def client_discounts
-        client = Client.unscoped.
-                      only(:_id, :discounts).
+        client = Client.only(:_id, :discounts).
                       find(@current_user_credentials[:_id])
-        render json: client.discounts, status: :ok
+        render json: client.discounts.unscoped, status: :ok
       end
 
       # POST /v1/users/:id/like/:client_id/discount/:discount_id

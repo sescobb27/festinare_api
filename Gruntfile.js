@@ -27,6 +27,11 @@ module.exports = function (grunt) {
     // Project settings
     pkg: grunt.file.readJSON('package.json'),
     yeoman: appConfig,
+    open: {
+      server: {
+        url: 'http://api.hurry-up.co:3000/'
+      }
+    },
     watch: {
       injectJS: {
         files: [
@@ -373,7 +378,7 @@ module.exports = function (grunt) {
       'wiredep',
       'autoprefixer',
       'wait',
-      'connect:livereload',
+      'open',
       'watch'
     ]);
   });

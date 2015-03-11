@@ -9,7 +9,7 @@ class DiscountCache
 
     def invalidate
       redis = Cache::RedisCache.instance
-      now = DateTime.now.to_i
+      now = DateTime.now
       len = redis.llen('discounts')
       invalidated = []
       (0..len).each do |x|
@@ -17,7 +17,7 @@ class DiscountCache
         obj = redis.lrange('discounts', 0, 0)[0]
         break if obj.nil?
         tmp = JSON.parse obj, symbolize_names: true
-        expiry_time = DateTime.parse(tmp[:discount][:created_at]).to_i + (tmp[:discount][:duration] * 60)
+        expiry_time = DateTime.parse(tmp[:discount][:created_at]) + (tmp[:discount][:duration] * 60).seconds
         if now > expiry_time
           redis.lpop('discounts')
           invalidated << tmp
@@ -28,11 +28,11 @@ class DiscountCache
 
     def load
       redis = Cache::RedisCache.instance
-      now = DateTime.now.to_i
+      now = DateTime.now
       redis.pipelined do
         Client.batch_size(500).map do |client|
           client.discounts.each do |discount|
-            expiry_time = discount.created_at.to_i + discount['duration'] * 60
+            expiry_time = discount.created_at + (discount['duration'] * 60).seconds
             if !discount.expired? && (now < expiry_time)
               tmp = { discount: discount, categories: client.categories }
               redis.rpush 'discounts', tmp.to_json
@@ -52,3 +52,4 @@ class DiscountCache
     end
   end
 end
+

@@ -529,9 +529,15 @@ select:-webkit-autofill {
 }
 
 .active-icon {
-  background-image: url(../images/icn-status-green.png);
-  height: 25px;
-  width: 25px;
+  color: #98BF11;
+  text-align: center;
+  padding-top: 10px;
+}
+
+.inactive-icon {
+  color: #F14641;
+  text-align: center;
+  padding-top: 10px;
 }
 
 .discount-thumb-date {
@@ -1024,4 +1030,47 @@ md-tabs.profile-tabs.md-accent md-tab:not([disabled]) {
 
 .modal {
   min-width: 30%;
+}
+
+.background-loading {
+  background-color: rgba(255,255,255,0.75);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 9999;
+}
+
+.background-loading h2 {
+  font-weight: 300;
+  color: red;
+  margin-top: -60px;
+  font-size: 16px;
+}
+
+.background-loading md-progress-circular {
+  width: 100px;
+  height: 100px;
+}
+
+.background-loading md-progress-circular .md-inner {
+  width: 100px;
+  height: 100px;
+}
+
+.background-loading md-progress-circular .md-inner .md-gap {
+  position: absolute;
+  left: 49px;
+  right: 49px;
+}
+
+.background-loading md-progress-circular .md-inner .md-left,
+.background-loading md-progress-circular .md-inner .md-right {
+  height: 100px;
+  width: 50px;
+}
+
+.background-loading md-progress-circular .md-inner .md-left .md-half-circle,
+.background-loading md-progress-circular .md-inner .md-right .md-half-circle {
+  width: 100px;
+  height: 100px;
 }
