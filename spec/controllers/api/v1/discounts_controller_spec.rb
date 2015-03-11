@@ -16,6 +16,9 @@ module API
                     client_id: "#{client_id}"
                   )
         )
+        @request.headers['Accept'] = 'application/json'
+        @request.headers['Authorization'] = 'Bearer mysecretkey'
+        @request.headers['Content-Type'] = 'application/json'
       end
 
       let!(:clients) {
@@ -48,17 +51,10 @@ module API
         end
 
         it 'should be able to create a discount' do
-          @request.headers['Accept'] = 'application/json'
-          @request.headers['Authorization'] = 'Bearer mysecretkey'
-          @request.headers['Content-Type'] = 'application/json'
           post :create, { client_id: client._id, discount: discount.to_hash }, subdomain: 'api'
           expect(response.status).to eql 200
 
-          client_discount = Client.where({
-            _id: client._id,
-            username: client.username,
-            email: client.email
-          }).first.discounts.first
+          client_discount = Client.find(client._id).discounts.first
 
           expect(client_discount.discount_rate).to eql discount[:discount_rate]
           expect(client_discount.title).to eql discount[:title]
@@ -71,14 +67,11 @@ module API
           expect(len).to be > 0
           obj = redis.lrange('discounts', len - 1, len - 1)[0]
           cache_discount = JSON.parse(obj)
-          expect(cache_discount['title']).to eql client_discount.title
-          expect(cache_discount['_id']['$oid']).to eql client_discount._id.to_s
+          expect(cache_discount['discount']['title']).to eql client_discount.title
+          expect(cache_discount['discount']['_id']['$oid']).to eql client_discount._id.to_s
         end
 
         it 'should not be able to create a discount' do
-          @request.headers['Accept'] = 'application/json'
-          @request.headers['Authorization'] = 'Bearer mysecretkey'
-          @request.headers['Content-Type'] = 'application/json'
           discount[:duration] = [0, 15, 25, 35, 65, 95, 125].sample
           post :create, { client_id: client._id, discount: discount.to_hash }, subdomain: 'api'
           expect(response.status).to eql 400
@@ -90,9 +83,6 @@ module API
       describe 'Get all available discounts' do
 
         it 'user should get all available discounts base on his/her subscriptions' do
-          @request.headers['Accept'] = 'application/json'
-          @request.headers['Authorization'] = 'Bearer mysecretkey'
-          @request.headers['Content-Type'] = 'application/json'
           users.map do |user|
             allow(JWT::AuthToken).to(
               receive(:validate_token).and_return({
@@ -129,9 +119,6 @@ module API
 
       describe 'User Likes a discount' do
         it 'should get a secret key to redeem a discount' do
-          @request.headers['Accept'] = 'application/json'
-          @request.headers['Authorization'] = 'Bearer mysecretkey'
-          @request.headers['Content-Type'] = 'application/json'
           users.map do |user|
             allow(JWT::AuthToken).to(
               receive(:validate_token).and_return({
@@ -153,9 +140,6 @@ module API
 
       describe 'Client Get all his/her discounts' do
         it 'should return all client discounts' do
-          @request.headers['Accept'] = 'application/json'
-          @request.headers['Authorization'] = 'Bearer mysecretkey'
-          @request.headers['Content-Type'] = 'application/json'
           clients.each do |client|
             allow(JWT::AuthToken).to(
               receive(:validate_token).and_return({

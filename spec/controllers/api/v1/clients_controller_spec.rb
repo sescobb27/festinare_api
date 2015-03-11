@@ -60,14 +60,14 @@ module API
         it 'should return status unauthorized if password not match' do
           client['password'] = 'wrong_password'
           post :login, client: client, format: :json
-          expect(response.status).to eql 401
+          expect(response.status).to eql 400
           expect(response.body).to eql ''
         end
 
         it 'should return status unauthorized if username not match' do
           client['username'] = 'wrong_username'
           post :login, client: client, format: :json
-          expect(response.status).to eql 401
+          expect(response.status).to eql 400
           expect(response.body).to eql ''
         end
       end
