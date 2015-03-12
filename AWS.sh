@@ -27,14 +27,30 @@ echo "export RACK_ENV='production'" >> .bashrc
 echo "export GCM_API_KEY=''" >> .bashrc
 KEY=$(ruby -e "require 'securerandom'; puts SecureRandom.hex(64)")
 echo "export SECRET_KEY_BASE=\"$KEY\"" >> .bashrc
-MAX=$(cat /proc/sys/kernel/threads-max)
-echo "export MAX_THREADS=$MAX" >> .bashrc
 source .bashrc
 
-sudo gem install bundle
+# REDIS
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+make -j$(nproc)
+sudo make install
+sudo mkdir /etc/redis
+sudo mkdir -p /var/redis/6379
+sudo cp utils/redis_init_script /etc/init.d/redis_6379
+cd ..
+
+sudo sysctl -w net.core.somaxconn=1024
+sudo sysctl vm.overcommit_memory=1
+
 cd hurry-app-discount
-bundle install
+sudo cp redis.conf /etc/redis/6379.conf # redis.conf inside repo
+sudo update-rc.d redis_6379 defaults # redis
+/etc/init.d/redis_6379 start # redis
+
 # RUBY
+sudo gem install bundle
+bundle install
 echo -e "production:\n  secret_key_base: <%= ENV[\"SECRET_KEY_BASE\"] %>" >> config/secrets.yml
 bower install
 bundle exec rake assets:precompile
