@@ -5,6 +5,16 @@ module API
   module V1
     RSpec.describe DiscountsController, :type => :controller  do
 
+      def jwt_validate_token user
+        @auth_token = allow(JWT::AuthToken).to(
+          receive(:validate_token).and_return({
+            _id: user._id,
+            username: user.username,
+            email: user.email
+          })
+        )
+      end
+
       before do
         request.host = 'api.example.com'
         client_id = rand(100)
@@ -21,12 +31,18 @@ module API
         @request.headers['Content-Type'] = 'application/json'
       end
 
+      # let!(:clients) {
+      #   c_with_discounts = (1..10).map { FactoryGirl.attributes_for :client_with_discounts }
+      #   Client.create c_with_discounts
+      # }
+
       let!(:clients) {
         (1..10).map { FactoryGirl.create :client_with_discounts }
       }
 
       let!(:users) {
-        (1..10).map { FactoryGirl.create :user_with_subscriptions }
+        u_with_subscriptions = (1..10).map { FactoryGirl.attributes_for :user_with_subscriptions }
+        User.create u_with_subscriptions
       }
 
       let!(:redis) { Cache::RedisCache.instance }
@@ -41,13 +57,7 @@ module API
         let!(:discount) { FactoryGirl.attributes_for(:discount) }
 
         before do
-          @auth_token = allow(JWT::AuthToken).to(
-            receive(:validate_token).and_return({
-              _id: client._id,
-              username: client.username,
-              email: client.email
-            })
-          )
+          jwt_validate_token client
         end
 
         it 'should be able to create a discount' do
@@ -84,13 +94,7 @@ module API
 
         it 'user should get all available discounts base on his/her subscriptions' do
           users.map do |user|
-            allow(JWT::AuthToken).to(
-              receive(:validate_token).and_return({
-                _id: user._id,
-                username: user.username,
-                email: user.email
-              })
-            )
+            jwt_validate_token user
             expect({get: "http://#{request.host}/v1/discounts"}).to(
               route_to(
                 controller: 'api/v1/discounts',
@@ -101,7 +105,6 @@ module API
             )
             @request.headers['Authorization'] = 'Bearer mysecretkey'
             get :index, {}, format: :json
-            c_ins_user_cred = assigns :current_user_credentials
             expect(response.status).to eql 200
             response_body = JSON.parse(response.body, symbolize_names: true)
             expect(response_body[:discounts].length).to be > 0
@@ -120,13 +123,7 @@ module API
       describe 'User Likes a discount' do
         it 'should get a secret key to redeem a discount' do
           users.map do |user|
-            allow(JWT::AuthToken).to(
-              receive(:validate_token).and_return({
-                _id: user._id,
-                username: user.username,
-                email: user.email
-              })
-            )
+            jwt_validate_token user
             clients.each do |client|
               discount = client_discount = Client.find(client._id).discounts.sample
               post :like, { id: user._id, client_id:  client._id, discount_id: discount._id }, subdomain: 'api'
@@ -141,13 +138,7 @@ module API
       describe 'Client Get all his/her discounts' do
         it 'should return all client discounts' do
           clients.each do |client|
-            allow(JWT::AuthToken).to(
-              receive(:validate_token).and_return({
-                _id: client._id,
-                username: client.username,
-                email: client.email
-              })
-            )
+            jwt_validate_token client
             get :client_discounts, { client_id: client._id }, subdomain: 'api'
             expect(response.status).to eql 200
             response_body = JSON.parse(response.body, symbolize_names: true)

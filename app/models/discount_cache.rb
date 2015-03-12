@@ -18,7 +18,7 @@ class DiscountCache
         break if obj.nil?
         tmp = JSON.parse obj, symbolize_names: true
         expiry_time = DateTime.parse(tmp[:discount][:created_at]) + (tmp[:discount][:duration] * 60).seconds
-        if now > expiry_time
+        if now >= expiry_time
           redis.lpop('discounts')
           invalidated << tmp
         end

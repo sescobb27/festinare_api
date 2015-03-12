@@ -29,4 +29,31 @@ class Discount
   def expired?
     !self.status
   end
+
+  def self.invalidate_expired_ones
+    mongo_thread = Thread.new do
+      now = DateTime.now
+      threads = []
+      threads = Client.batch_size(500).map do |client|
+        Thread.new(client) do |t_client|
+          t_client.discounts.map do |discount|
+            expire_time = discount.created_at + (discount.duration * 60).seconds
+            if now >= expire_time
+              discount.update_attribute :status, false
+              Rails.logger.info "CLIENT: { id: #{t_client._id}, name: #{t_client.name} }\nDISCOUNT(invalidated): #{discount.inspect}"
+            end
+          end
+        end
+      end
+      threads.map(&:join)
+    end
+
+    cache_thread = Thread.new do
+      invalidated = DiscountCache::invalidate
+      Rails.logger.info "DISCOUNTS_CACHE(invalidated): #{invalidated}"
+    end
+
+    mongo_thread.join
+    cache_thread.join
+  end
 end
