@@ -18,7 +18,7 @@ class Client
     embeds_many :categories, as: :categorizable
     embeds_many :locations, as: :localizable
     embeds_many :discounts, as: :discountable
-    has_and_belongs_to_many :plans
+    embeds_many :client_plans
   # =============================END relationships=============================
   # =============================Schema========================================
   # Database Authenticatable: this module responsible for encrypting password and validating authenticity of a user while signing in.

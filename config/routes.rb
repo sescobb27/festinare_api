@@ -23,12 +23,13 @@ Rails.application.routes.draw do
         collection do
           post 'login'
           get 'me'
+          post '/purshase/:plan_id', action: :purshase_plan
         end
         get 'discounts', controller: 'discounts', action: :client_discounts
         post 'discounts', controller: 'discounts', action: :create
       end
       resources :discounts, only: [:index]
-      resources :plans, except: [:new, :destroy, :edit]
+      resources :plans, only: :index # except: [:new, :destroy, :edit]
     end
   end
 end

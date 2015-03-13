@@ -4,21 +4,8 @@ module API
 
       # GET /v1/plans
       def index
+        render json: { plans: Plan.all.cache }, status: :ok
       end
-
-      # POST /v1/plans
-      def create
-      end
-
-      # GET /v1/plans/:id
-      def show
-      end
-
-      # PATCH /v1/plans/:id
-      # PUT   /v1/plans/:id
-      def update
-      end
-
     end
   end
 end

@@ -43,4 +43,48 @@ client = {
   image_url:  'http://placehold.it/200x200',
   addresses:  []
 }
-Client.create! client
+if Client.count == 0
+  Client.create! client
+end
+
+default_plans = [
+  {
+    name: 'Hurry Up!',
+    description: '',
+    price: 10000,
+    currency: 'COP',
+    num_of_discounts: 1,
+    expired_rate: 1,
+    expired_time: 'day'
+  },
+  {
+    name: 'Discount Novice!',
+    description: '10% de ahorro',
+    price: 90000,
+    currency: 'COP',
+    num_of_discounts: 10,
+    expired_rate: 1,
+    expired_time: 'month'
+  },
+  {
+    name: 'Discount Assassin!',
+    description: '15% de ahorro',
+    price: 127500,
+    currency: 'COP',
+    num_of_discounts: 15,
+    expired_rate: 1,
+    expired_time: 'month'
+  },
+  {
+    name: 'Discount Machine!',
+    description: '20% de ahorro',
+    price: 240000,
+    currency: 'COP',
+    num_of_discounts: 30,
+    expired_rate: 1,
+    expired_time: 'month'
+  }
+]
+if Plan.count == 0
+  Plan.create! default_plans
+end

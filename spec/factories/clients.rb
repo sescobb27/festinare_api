@@ -16,8 +16,8 @@ FactoryGirl.define do
     factory :client_with_discounts do
       discounts { (1..5).map { FactoryGirl.build(:discount) }}
     end
-    factory :client_with_plans do
-      plans { (1..5).map { FactoryGirl.create(:plan) }}
+    factory :client_with_plan do
+      client_plans { [Plan.all.sample] }
     end
   end
 
