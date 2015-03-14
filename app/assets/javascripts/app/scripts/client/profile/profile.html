@@ -1,0 +1,86 @@
+<div layout="column" layout-fill>
+
+  <md-toolbar layout="row" class="profile-green-bar no-shadow" layout-align="center center">
+
+    <div layout="row" flex="50" style="position: relative;">
+      <div class="fa fa-pencil custom-edit-profile" ng-click="triggerFile($event)" ng-if="client.image_url"></div>
+      <input ng-model="file"
+             ng-file-select
+             name="image"
+             type="file"
+             id="imagefield" style="height: 0; width: 0;"/>
+      <div class="profile-pic-big" layout-align="center center" layout="column">
+        <a href="" ng-if="!client.image_url" layout-align="center center" layout="column" style="text-decoration: none;" ng-click="triggerFile($event)">
+          <span class="icon-profile-add fa fa-user"></span>
+          <span class="label-profile-pic">+ profile pic</span>
+        </a>
+        <div upload file="file" set-profile-image="setProfileImage(value)"></div>
+      </div>
+      <h2 class="profile-green-title" flex>{{client.name}}</h2>
+    </div>
+
+  </md-toolbar>
+
+  <div layout-align="center start" layout="row">
+    <md-content layout="column" flex="50" style="background-color: transparent;">
+      <loading ng-if="showLoading"></loading>
+
+      <div class="spacer"></div>
+
+      <form role="form" name="profileForm" ng-submit="updateProfile()" novalidate>
+
+        <md-input-container flex>
+          <label>Company Name</label>
+          <input type="text" name="name" ng-model="client.name">
+        </md-input-container>
+
+        <md-input-container flex>
+          <label>Email</label>
+          <input type="text" name="email" ng-model="client.email">
+        </md-input-container>
+
+        <md-input-container flex>
+          <label>Industry</label>
+          <input type="text" name="industry" ng-model="client.industry">
+        </md-input-container>
+
+        <div layout="row" layout-align="center center">
+          <md-button class="md-raised md-primary btn-float btn-green" style="width: 45%" type="submit">
+            Save!
+          </md-button>
+        </div>
+
+      </form>
+
+      <h4 class="gray-text">Change Password</h4>
+      <form role="form" name="passwordForm" ng-submit="changePassword(oldpass, newpass, confirm)">
+        <md-input-container flex>
+          <label>Old Password</label>
+          <input type="password" ng-keypress="clear()" ng-model="oldpass">
+        </md-input-container>
+
+        <md-input-container flex>
+          <label>New Password</label>
+          <input type="password" ng-keypress="clear()" ng-model="newpass">
+        </md-input-container>
+
+        <md-input-container flex>
+          <label>Confirm New Password</label>
+          <input type="password" ng-keypress="clear()" ng-model="confirm">
+        </md-input-container>
+
+        <div layout="row" layout-align="center center">
+          <md-button class="md-raised md-primary btn-float btn-green" style="width: 45%" type="submit">
+            Change Password
+          </md-button>
+        </div>
+      </form>
+
+    </md-content>
+
+  </div>
+
+  <div layout-align="center start" layout="row">
+    <p class="gray-text">All your personal information will be safe and will not be given to others.</p>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<div layout="column" layout-fill>
+  <loading ng-if="showLoading"></loading>
+  <div class="dashboard-content gray-bg" flex layout-align="center center" layout="row" layout-wrap>
+
+    <md-toolbar layout="row" class="steps-payment">
+
+      <div flex class="step-col" layout-align="center center" layout="row">
+        <span class="step-circle white-circle" layout-align="center center" layout="row">1</span> Choose Plan
+      </div>
+      <div class="arrow-right arrow-orange"></div>
+      <div flex class="step-col unselected-step" layout-align="center center" layout="row">
+        <span class="step-circle" layout-align="center center" layout="row">2</span> Payment Method
+      </div>
+
+    </md-toolbar>
+
+    <div layout="row" flex="80" style="padding: 50px 0;" layout-align="center center">
+
+      <div class="plan-card" ng-repeat="plan in plans track by $index" ng-class="{'planSelected':plan.selected}" layout="column" ng-click="selectPlan(plan._id.$oid)" flex>
+
+        <div class="plan-header" layout="row" layout-align="center center">{{plan.name}}</div>
+        <div class="plan-price" layout="row" layout-align="center center"><span>$</span>{{plan.price | currency:"":0}} {{plan.currency}}</div>
+
+        <div class="plan-body" layout="column">
+          <ul class="plan-features">
+            <li>Number of Discounts: {{plan.num_of_discounts}}</li>
+            <li>Expires in: {{plan.expired_rate}} {{plan.expired_time}}</li>
+            <li>{{plan.description}}</li>
+          </ul>
+        </div>
+
+        <md-button class="md-raised md-primary btn-full" ng-class="{'btn-green':plan.selected, 'btn-gray':!plan.selected}" ng-hide="createMode" style="width: 100%;">Select</md-button>
+
+      </div>
+
+    </div>
+
+    <div layout="row" class="footer border-top" flex="100" layout-align="center center">
+      <div flex></div>
+      <p class="gray-text">Subtotal </p>
+      <p class="price-subtotal" layout="row" layout-align="center center"><span>$</span>{{subtotal}}</p>
+      <md-button class="md-raised md-primary btn-float btn-green custom-continue" ng-click="subscribe(selected_plan_code)" ng-disabled="selected_plan_code === 0">
+        Continue
+        <a href="" ui-sref="dashboard" class="fa fa-angle-right no-decoration"></a>
+      </md-button>
+    </div>
+
+  </div>
+
+</div>

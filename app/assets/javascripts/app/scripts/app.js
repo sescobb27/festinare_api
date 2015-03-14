@@ -37,21 +37,28 @@ angular
         controller: 'ClientDashboardCtrl',
         auth: true
       })
+      .state('profile', {
+        url:'/client/profile',
+        templateUrl: 'assets/javascripts/app/scripts/client/profile/profile.html',
+        controller: 'ProfileCtrl',
+        auth: true
+      })
       .state('about-us', {
         url:'/about-us',
-        templateUrl: 'assets/javascripts/app/scripts/application/about-us.html',
+        templateUrl: 'assets/javascripts/app/scripts/application/about-us.html'
       })
       .state('contact-us', {
         url:'/contact-us',
-        templateUrl: 'assets/javascripts/app/scripts/application/contact-us.html',
+        templateUrl: 'assets/javascripts/app/scripts/application/contact-us.html'
       })
       .state('pricing', {
         url:'/pricing',
-        templateUrl: 'assets/javascripts/app/scripts/application/pricing.html',
+        templateUrl: 'assets/javascripts/app/scripts/application/pricing/pricing.html',
+        controller: 'PricingCtrl'
       })
       .state('support', {
         url:'/support',
-        templateUrl: 'assets/javascripts/app/scripts/application/support.html',
+        templateUrl: 'assets/javascripts/app/scripts/application/support.html'
       });
 
     $httpProvider.interceptors.push('AuthInterceptor');

@@ -9,6 +9,9 @@ angular.module('hurryupdiscount')
     }, {
       login: {
         method: 'POST'
+      },
+      update: {
+        method: 'PUT'
       }
     });
 
@@ -18,6 +21,10 @@ angular.module('hurryupdiscount')
 
     ClientService.login = function (credentials) {
       return Client.login({action: 'login'}, {client: credentials}).$promise;
+    };
+
+    ClientService.update = function (data) {
+      return Client.update({client: data}).$promise;
     };
 
     return ClientService;
