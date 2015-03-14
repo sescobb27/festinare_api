@@ -49,8 +49,13 @@ module API
 
       describe 'Create Discount' do
 
-        let!(:client) {
+        let!(:raw_client) {
           client_attr = FactoryGirl.attributes_for :client
+          Client.create client_attr
+        }
+
+        let!(:client) {
+          client_attr = FactoryGirl.attributes_for :client_with_plan
           Client.create client_attr
         }
 
@@ -87,6 +92,28 @@ module API
           expect(response.status).to eql 400
           response_body = JSON.parse response.body, symbolize_names: true
           expect(response_body[:errors].length).to be > 0
+        end
+
+        describe 'Forbidden attempt to create discount', :focus => true do
+          it 'Plan Discounts Exhausted' do
+            c = Client.find(client._id)
+            c.client_plans.first.num_of_discounts_left = 0
+            c.save!
+            post :create, { client_id: client._id, discount: discount.to_hash }, subdomain: 'api'
+            expect(response.status).to eql 403
+            response_body = JSON.parse response.body, symbolize_names: true
+            expect(response_body[:errors].length).to eql 1
+            expect(response_body[:errors][0]).to eql 'You have exhausted your plan discounts, you need to purchase a new plan'
+          end
+
+          it 'Does not have plan' do
+            jwt_validate_token raw_client
+            post :create, { client_id: raw_client._id, discount: discount.to_hash }, subdomain: 'api'
+            expect(response.status).to eql 403
+            response_body = JSON.parse response.body, symbolize_names: true
+            expect(response_body[:errors].length).to eql 1
+            expect(response_body[:errors][0]).to eql 'You need a plan to create a discount'
+          end
         end
       end
 

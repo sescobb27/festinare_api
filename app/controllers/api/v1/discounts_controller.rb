@@ -1,6 +1,7 @@
 module API
   module V1
     class DiscountsController < API::BaseController
+      rescue_from Plan::PlanDiscountsExhausted, :with => :plan_discounts_exhausted
 
       before_action :is_authenticated?
       # GET /v1/discounts
@@ -21,12 +22,18 @@ module API
       def create
         discount_attr = safe_discount
         current_user = Client.find( @current_user_credentials[:_id] )
-        discount = current_user.discounts.create discount_attr
-        if discount.errors.empty?
-          DiscountCache::cache discount, current_user.categories
-          render nothing: true, status: :ok
+        if current_user.has_plan?
+          # if the client has an active plan but had spend all discounts it would rise Plan::PlanDiscountsExhausted exception
+          current_user.decrement_num_of_discounts_left!
+          discount = current_user.discounts.create discount_attr
+          if discount.errors.empty?
+            DiscountCache::cache discount, current_user.categories
+            render nothing: true, status: :ok
+          else
+            render json: { errors: discount.errors.full_messages }, status: :bad_request
+          end
         else
-          render json: { errors: discount.errors.full_messages }, status: :bad_request
+          render json: { errors: ['You need a plan to create a discount'] }, status: :forbidden
         end
       end
 
@@ -54,6 +61,11 @@ module API
       private
         def safe_discount
           params.require(:discount).permit(:title, :secret_key, :duration, :discount_rate, hashtags: [])
+        end
+
+      protected
+        def plan_discounts_exhausted
+          render json: { errors: ['You have exhausted your plan discounts, you need to purchase a new plan'] }, status: :forbidden
         end
     end
   end

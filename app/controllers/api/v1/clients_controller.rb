@@ -56,25 +56,7 @@ module API
       def purshase_plan
         current_user = Client.find @current_user_credentials[:_id]
         plan = Plan.find params[:plan_id]
-        purchased_plan = ClientPlan.new plan.clone.attributes
-        purchased_plan._type = 'ClientPlan'
-        # the purchased plan is going to expire depending on the plan specifications
-        # so for example:
-        # DateTime.now => Thu, 12 Mar 2015 21:17:33 -0500
-        # plan => {
-        #             :currency => "COP",
-        #           :deleted_at => nil,
-        #          :description => "15% de ahorro",
-        #         :expired_rate => 1,
-        #         :expired_time => "month",
-        #                 :name => "Hurry Up!",
-        #     :num_of_discounts => 15,
-        #                :price => 127500,
-        #               :status => true
-        # }
-        # the purchased_plan.expired_date = Thu, 12 Apr 2015 21:17:33 -0500
-        # 1 month after today
-        purchased_plan.expired_date = DateTime.now + plan.expired_rate.send(plan.expired_time)
+        purchased_plan = plan.to_client_plan
         current_user.client_plans.push purchased_plan
         render nothing: true, status: :ok
       end

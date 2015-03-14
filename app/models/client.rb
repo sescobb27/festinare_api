@@ -58,4 +58,20 @@ class Client
     index({ email: 1 }, { unique: true, name: 'client_email_index' })
     index({ name: 1 }, { unique: true, name: 'client_name_index' })
   # =============================END Schema====================================
+
+  def has_plan?
+    now = DateTime.now
+    return !self.client_plans.empty? && self.client_plans.one? { |plan| now < plan.expired_date }
+  end
+
+  def decrement_num_of_discounts_left!
+    current_plan = self.client_plans.first
+    if current_plan.num_of_discounts_left > 0
+      current_plan.inc(num_of_discounts_left: -1)
+    else
+      current_plan.status = false
+      self.save
+      raise Plan::PlanDiscountsExhausted
+    end
+  end
 end
