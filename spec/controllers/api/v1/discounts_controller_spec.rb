@@ -78,6 +78,10 @@ module API
           expect(client_discount.duration).to eql discount[:duration]
           expect(client_discount.hashtags).to eql discount[:hashtags]
 
+          c = Client.find(client._id)
+          plan = c.client_plans.first
+          expect(plan.num_of_discounts_left).to eql plan.num_of_discounts - 1
+
           len = redis.llen('discounts')
           expect(len).to be > 0
           obj = redis.lrange('discounts', len - 1, len - 1)[0]
@@ -94,7 +98,7 @@ module API
           expect(response_body[:errors].length).to be > 0
         end
 
-        describe 'Forbidden attempt to create discount', :focus => true do
+        describe 'Forbidden attempt to create discount' do
           it 'Plan Discounts Exhausted' do
             c = Client.find(client._id)
             c.client_plans.first.num_of_discounts_left = 0
@@ -104,6 +108,8 @@ module API
             response_body = JSON.parse response.body, symbolize_names: true
             expect(response_body[:errors].length).to eql 1
             expect(response_body[:errors][0]).to eql 'You have exhausted your plan discounts, you need to purchase a new plan'
+            c.reload
+            expect(c.client_plans).to be_empty
           end
 
           it 'Does not have plan' do
