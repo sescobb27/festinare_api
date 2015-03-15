@@ -5,8 +5,8 @@ FactoryGirl.define do
   factory :client do
     after(:build)       { |client| client.categories.concat( (1..2).map { FactoryGirl.build(:category) }) }
     locations           { (1..5).map { FactoryGirl.build(:location) }}
-    username            { "#{SecureRandom.base64(4)}#{Faker::Internet.user_name}" }
-    email               { "#{SecureRandom.base64(4)}#{Faker::Internet.email}" }
+    username            { "#{SecureRandom.base64(4)}#{Faker::Internet.user_name}".downcase }
+    email               { "#{SecureRandom.base64(4)}#{Faker::Internet.email}".downcase }
     password            'qwertyqwerty'
     name                { "#{Faker::Company.name}#{SecureRandom.base64(4)}" }
     rate                0.0

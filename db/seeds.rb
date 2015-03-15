@@ -92,7 +92,7 @@ clients = [
       Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
     end,
     username:   'test4echo',
-    email:      'test4echo@gmail.com',
+    email:      'sescobb27@notemail.com',
     password:   'qwerty123!',
     name:       'test4echo Test',
     rate:       0.0,
@@ -109,7 +109,7 @@ clients = [
     end,
     client_plans: [ Plan.all.sample.to_client_plan ],
     username:   'sescob',
-    email:      'sescob@gmail.com',
+    email:      'test4echo@notemail.com',
     password:   'qwerty123!',
     name:       'Client Test Plan',
     rate:       0.0,

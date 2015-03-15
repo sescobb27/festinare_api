@@ -30,8 +30,8 @@ class Client
     devise  :database_authenticatable,
             :registerable,
             :validatable,
-            :recoverable
-            # :confirmable
+            :recoverable,
+            :confirmable
     ## Database authenticatable
     field :email
     field :encrypted_password
@@ -40,7 +40,6 @@ class Client
     field :confirmation_token
     field :confirmed_at, type: DateTime
     field :confirmation_sent_at, type: DateTime
-    field :unconfirmed_email
 
     ## Recoverable
     field :reset_password_token
@@ -57,21 +56,29 @@ class Client
     index({ username: 1 }, { unique: true, name: 'client_username_index' })
     index({ email: 1 }, { unique: true, name: 'client_email_index' })
     index({ name: 1 }, { unique: true, name: 'client_name_index' })
+    index({ confirmation_token: 1 }, { unique: true, name: 'confirmation_token_index' })
   # =============================END Schema====================================
 
-  def has_plan?
-    now = DateTime.now
-    return !self.client_plans.empty? && self.client_plans.one? { |plan| now < plan.expired_date }
-  end
+    before_validation :downcase_credentials
 
-  def decrement_num_of_discounts_left!
-    current_plan = self.client_plans.first
-    if current_plan.num_of_discounts_left > 0
-      current_plan.inc(num_of_discounts_left: -1)
-    else
-      current_plan.status = false
-      self.save
-      raise Plan::PlanDiscountsExhausted
+    def downcase_credentials
+      self.username = self.username.downcase
+      self.email = self.email.downcase
     end
-  end
+
+    def has_plan?
+      now = DateTime.now
+      return !self.client_plans.empty? && self.client_plans.one? { |plan| now < plan.expired_date }
+    end
+
+    def decrement_num_of_discounts_left!
+      current_plan = self.client_plans.first
+      if current_plan.num_of_discounts_left > 0
+        current_plan.inc(num_of_discounts_left: -1)
+      else
+        current_plan.status = false
+        self.save
+        raise Plan::PlanDiscountsExhausted
+      end
+    end
 end

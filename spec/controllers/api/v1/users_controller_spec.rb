@@ -43,7 +43,7 @@ module API
 
         it 'should have mobile' do
           User.new(@user).save
-          user = User.only(:_id).find_by username: @user[:username]
+          user = User.find_by username: @user[:username]
           expect(user._id.to_s).not_to eql ''
           mobile = FactoryGirl.attributes_for :mobile
           post :mobile, { id: user._id, user: { mobile: mobile } }, format: :json

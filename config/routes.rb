@@ -9,6 +9,8 @@ Rails.application.routes.draw do
     # namespace :v1, constraints: ApiVersionConstraint.new(version: 1, default: true) do
     namespace :v1 do
 
+      devise_for :users, skip: [:sessions, :registrations]
+      devise_for :clients, skip: [:sessions, :registrations]
       resources :users, except: [:new, :edit, :index] do
         collection do
           post 'login'

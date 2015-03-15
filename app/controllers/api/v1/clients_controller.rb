@@ -36,7 +36,7 @@ module API
       #  POST /v1/clients
       def create
         safe_params = safe_auth_params
-        client = Client.new()
+        client = Client.new(safe_params)
         if client.save
           token = authenticate_user client
           render json: { token: token }, status: :ok

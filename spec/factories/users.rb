@@ -3,10 +3,10 @@ require 'securerandom'
 
 FactoryGirl.define do
   factory :user do
-    username  { "#{Faker::Internet.user_name}#{SecureRandom.base64(4)}" }
+    username  { "#{Faker::Internet.user_name}#{SecureRandom.base64(4)}".downcase }
     name      { Faker::Name.name }
     lastname  { Faker::Name.last_name }
-    email     { "#{SecureRandom.base64(4)}#{Faker::Internet.email}" }
+    email     { "#{SecureRandom.base64(4)}#{Faker::Internet.email}".downcase }
     password  'qwertyqwerty'
 
     factory :user_with_subscriptions do

@@ -60,6 +60,13 @@ class User
       :name
   # =============================END User Schema Validations===================
 
+    before_validation :downcase_credentials
+
+    def downcase_credentials
+      self.username = self.username.downcase
+      self.email = self.email.downcase
+    end
+
     def send_notifications
       gcm = Gcm::Notification.instance
       # For sending to 1 or more devices (up to 1000). When you send a message to
