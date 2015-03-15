@@ -14,4 +14,5 @@ class Category
 
     index({ name: 1 }, { unique: true, name: 'type_name_index' })
   # =============================END Schema====================================
+  CATEGORIES = ['Bar', 'Disco', 'Restaurant'].freeze
 end

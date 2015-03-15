@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('hurryupdiscount')
-  .controller('PricingCtrl', function ($scope, $rootScope, AuthService, PlanService) {
+  .controller('PricingCtrl', function ($scope, $rootScope, AuthService, PlanService, $state) {
 
+    var selectedPlan = null;
     PlanService.all().then(function (res) {
       $scope.plans = res.plans;
     });
@@ -11,9 +12,18 @@ angular.module('hurryupdiscount')
       angular.forEach($scope.plans, function (plan) {
         if (plan._id.$oid === planId) {
           plan.selected = true;
+          selectedPlan = plan;
         } else {
           plan.selected = false;
         }
       });
+    };
+
+    $scope.purchasePlan = function () {
+      if (selectedPlan) {
+        PlanService.select(selectedPlan);
+        // TODO
+        // GOTO PAYU-LATAM or PAYMENT PAGE
+      }
     };
   });

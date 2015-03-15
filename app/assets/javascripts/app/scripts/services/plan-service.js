@@ -10,5 +10,13 @@ angular.module('hurryupdiscount')
       return Plan.get().$promise;
     };
 
+    PlanService.select = function (plan) {
+      sessionStorage.plan = JSON.stringify(plan);
+    };
+
+    PlanService.get = function () {
+      return JSON.parse(sessionStorage.plan);
+    };
+
     return PlanService;
   });

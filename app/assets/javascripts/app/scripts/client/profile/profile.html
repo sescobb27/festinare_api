@@ -15,6 +15,7 @@
           <span class="label-profile-pic">+ profile pic</span>
         </a>
         <div upload file="file" set-profile-image="setProfileImage(value)"></div>
+        <img height="100%" ng-src="{{client.image_url}}" alt="" ng-if="client.image_url" />
       </div>
       <h2 class="profile-green-title" flex>{{client.name}}</h2>
     </div>
@@ -36,12 +37,14 @@
 
         <md-input-container flex>
           <label>Email</label>
-          <input type="text" name="email" ng-model="client.email">
+          <input type="text" name="email" ng-model="client.email" disable>
         </md-input-container>
 
-        <md-input-container flex>
-          <label>Industry</label>
-          <input type="text" name="industry" ng-model="client.industry">
+        <label>Categories</label>
+        <md-input-container>
+          <md-checkbox ng-repeat="(category, value) in categories" ng-model="value" ng-disabled="disable_categories">
+            {{category}}
+          </md-checkbox>
         </md-input-container>
 
         <div layout="row" layout-align="center center">

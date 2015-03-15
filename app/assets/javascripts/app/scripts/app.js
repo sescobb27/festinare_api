@@ -10,7 +10,6 @@ angular
     'ui.router',
     'ngMaterial',
     'ngMessages',
-    'uuid',
     'angularFileUpload',
   ])
   .config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider) {
@@ -53,7 +52,7 @@ angular
       })
       .state('pricing', {
         url:'/pricing',
-        templateUrl: 'assets/javascripts/app/scripts/application/pricing/pricing.html',
+        templateUrl: 'assets/javascripts/app/scripts/pricing/pricing.html',
         controller: 'PricingCtrl'
       })
       .state('support', {

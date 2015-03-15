@@ -36,10 +36,7 @@
     </div>
 
     <div layout="row" class="footer border-top" flex="100" layout-align="center center">
-      <div flex></div>
-      <p class="gray-text">Subtotal </p>
-      <p class="price-subtotal" layout="row" layout-align="center center"><span>$</span>{{subtotal}}</p>
-      <md-button class="md-raised md-primary btn-float btn-green custom-continue" ng-click="subscribe(selected_plan_code)" ng-disabled="selected_plan_code === 0">
+      <md-button class="md-raised md-primary btn-float btn-green custom-continue" ng-click="purchasePlan()" ng-disabled="selected_plan_code === 0">
         Continue
         <a href="" ui-sref="dashboard" class="fa fa-angle-right no-decoration"></a>
       </md-button>

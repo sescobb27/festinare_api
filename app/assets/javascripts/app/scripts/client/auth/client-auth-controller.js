@@ -17,7 +17,7 @@ angular.module('hurryupdiscount')
       }
 
       AuthService.login($scope.user).then(function () {
-        $state.go('dashboard');
+        $state.go('profile');
       }).catch(function () {
         $rootScope.$emit('alert', { msg: 'Invalid username or password' });
       });

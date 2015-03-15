@@ -27,24 +27,38 @@
 # end
 require 'ffaker'
 require 'factory_girl_rails'
-client = {
-  categories: [
-    Category.new(name: 'Bar'),
-    Category.new(name: 'Disco')
-  ],
-  locations:  (1..5).map do
-    Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
-  end,
-  username:   'sescobb27',
-  email:      'sescobb27@gmail.com',
-  password:   'qwerty123!',
-  name:       'Client Test',
-  rate:       0.0,
-  image_url:  'http://placehold.it/200x200',
-  addresses:  []
-}
+clients = [
+  {
+    categories: [
+      Category.new(name: 'Bar'),
+      Category.new(name: 'Disco')
+    ],
+    locations:  (1..5).map do
+      Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
+    end,
+    username:   'sescobb27',
+    email:      'sescobb27@gmail.com',
+    password:   'qwerty123!',
+    name:       'Client Test',
+    rate:       0.0,
+    image_url:  'http://placehold.it/200x200',
+    addresses:  []
+  },
+  {
+    locations:  (1..5).map do
+      Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
+    end,
+    username:   'test4echo',
+    email:      'test4echo@gmail.com',
+    password:   'qwerty123!',
+    name:       'test4echo Test',
+    rate:       0.0,
+    image_url:  '',
+    addresses:  []
+  }
+]
 if Client.count == 0
-  Client.create! client
+  Client.create! clients
 end
 
 default_plans = [

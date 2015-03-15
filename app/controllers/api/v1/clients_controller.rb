@@ -20,7 +20,12 @@ module API
 
       # GET /v1/clients/:client_id/me
       def me
-        render json: { client: @current_user_credentials }, status: :ok
+        begin
+          client = Client.find(@current_user_credentials[:_id])
+          render json: { client: client }, status: :ok
+        rescue Mongoid::Errors::DocumentNotFound
+          render nothing: true, status: :unauthorized
+        end
       end
 
       # GET /v1/clients
