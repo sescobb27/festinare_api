@@ -1,8 +1,15 @@
+
+require 'connection_pool'
+pool_size = Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 5)
+
+REDIS_POOL = ConnectionPool.new(size: pool_size, timeout: 10) { Redis.new(db: 'hurryupdiscount', driver: :hiredis) }
 module Cache
   module RedisCache
     class << self
       def instance
-        @redis ||= Redis.new(db: 'hurryupdiscount', driver: :hiredis)
+        REDIS_POOL.with do |conn|
+          yield conn
+        end
       end
     end
   end
