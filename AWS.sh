@@ -54,5 +54,6 @@ bundle install
 echo -e "production:\n  secret_key_base: <%= ENV[\"SECRET_KEY_BASE\"] %>" >> config/secrets.yml
 bower install
 bundle exec rake assets:precompile
+rake db:mongoid:create_indexes
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 8080
 bundle exec puma -C config/puma.rb
