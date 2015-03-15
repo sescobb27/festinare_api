@@ -3,21 +3,29 @@
 angular.module('hurryupdiscount')
   .controller('ProfileCtrl', function ($scope, $rootScope, AuthService, ClientService) {
 
-    $scope.categories = {
-      'Bar': false,
-      'Disco': false,
-      'Restaurant': false
-    };
+    $scope.categories = [
+      {
+        name: 'Bar',
+        enabled: false,
+      },
+      {
+        name: 'Disco',
+        enabled: false,
+      },
+      {
+        name: 'Restaurant',
+        enabled: false,
+      }
+    ];
 
     AuthService.getCurrentUser().then(function (client) {
       $scope.client = client;
-      if (client.categories && client.categories.length > 0) {
-        $scope.disable_categories = true;
-      }
-      angular.forEach(client.categories, function (category) {
-        if ( $scope.categories[category.name] !== undefined ) {
-          $scope.categories[category.name] = true;
-        }
+      angular.forEach(client.categories, function (cliCategory) {
+        angular.forEach($scope.categories, function (defCategory) {
+          if ( defCategory.name === cliCategory.name ) {
+            defCategory.enabled = true;
+          }
+        });
       });
     });
 
@@ -31,5 +39,16 @@ angular.module('hurryupdiscount')
       ClientService.update({image_url: imageUrl}).then(function () {
 
       });
+    };
+
+    $scope.updateProfile = function () {
+      if ( !$scope.profileForm.$valid ) {
+        return;
+      }
+      // ClientService.update($scope.client).then(function () {
+
+      // }).catch(function (error) {
+
+      // });
     };
   });

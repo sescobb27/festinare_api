@@ -5,6 +5,12 @@
     <h2 class="sub-nav-title">
       Dashboard
     </h2>
+    <h2 class="sub-nav-title" ng-if="current_plan">
+      {{current_plan.name}} ({{current_plan.num_of_discounts}}/{{current_plan.num_of_discounts_left}})
+    </h2>
+    <h2 class="sub-nav-title" ng-if="!current_plan">
+      There's no current plan, <a href="" title="purchase one" ui-sref="pricing">purchase one</a>
+    </h2>
   </md-toolbar>
 
   <md-button class="md-fab btn-add-discount" ng-click="createDiscount($event)">

@@ -37,13 +37,13 @@
 
         <md-input-container flex>
           <label>Email</label>
-          <input type="text" name="email" ng-model="client.email" disable>
+          <input type="text" name="email" ng-model="client.email" disabled>
         </md-input-container>
 
         <label>Categories</label>
         <md-input-container>
-          <md-checkbox ng-repeat="(category, value) in categories" ng-model="value" ng-disabled="disable_categories">
-            {{category}}
+          <md-checkbox ng-repeat="category in categories track by $index" ng-model="category.enabled" ng-disabled="true">
+            {{category.name}}
           </md-checkbox>
         </md-input-container>
 

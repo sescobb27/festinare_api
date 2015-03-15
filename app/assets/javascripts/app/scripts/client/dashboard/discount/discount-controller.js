@@ -9,7 +9,7 @@ angular.module('hurryupdiscount')
     AuthService.getCurrentUser().then(function (client) {
       $scope.client = client;
     }).catch(function (error) {
-      $rootScope.$emit('alert', { msg: error.message });
+      $rootScope.$emit('alert', { msg: error.data.errors.join(' ') });
     });
 
     var hashtags = function() {
@@ -31,7 +31,7 @@ angular.module('hurryupdiscount')
       DiscountService.createDiscount($scope.client._id, $scope.discount).then(function () {
         $mdDialog.hide($scope.discount);
       }).catch(function (error) {
-        $rootScope.$emit('alert', { msg: error.message });
+        $rootScope.$emit('alert', { msg: error.data.errors.join(' ') });
       });
     };
   });

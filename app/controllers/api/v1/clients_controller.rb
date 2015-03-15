@@ -6,11 +6,11 @@ module API
 
       # POST /v1/clients/login
       def login
-        req_params = safe_params
+        safe_params = safe_auth_params
         client = Client.only(:_id, :username, :email, :encrypted_password).where({
-          username: req_params[:username]
+          username: safe_params[:username]
         }).first
-        if !client.nil? && client.valid_password?(req_params[:password])
+        if !client.nil? && client.valid_password?(safe_params[:password])
           token = authenticate_user client
           render json: { token: token }, status: :ok
         else
@@ -35,7 +35,8 @@ module API
 
       #  POST /v1/clients
       def create
-        client = Client.new(safe_params)
+        safe_params = safe_auth_params
+        client = Client.new()
         if client.save
           token = authenticate_user client
           render json: { token: token }, status: :ok
@@ -72,8 +73,8 @@ module API
       end
 
       private
-        def safe_params
-          params.require(:client).permit(:username, :email, :name, :password, addresses: [])
+        def safe_auth_params
+          params.require(:client).permit(:username, :email, :name, :password, addresses: [], categories: [])
         end
 
         def safe_update_params
