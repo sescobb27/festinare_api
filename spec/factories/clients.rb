@@ -22,6 +22,14 @@ FactoryGirl.define do
         [plan.to_client_plan]
       }
     end
+    factory :client_with_expired_plan do
+      client_plans {
+        plan = Plan.all.sample
+        plan = plan.to_client_plan
+        plan.expired_date = DateTime.now - 1.minute
+        [plan]
+      }
+    end
   end
 
 end

@@ -29,3 +29,7 @@ end
 every 10.minutes do
   rake 'invalidate:discounts'
 end
+
+every 1.hour do
+  rake 'invalidate:plans'
+end

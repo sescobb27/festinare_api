@@ -9,6 +9,8 @@ production:
       options:
         pool_size: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 5) %>
         timeout: 20
+  options:
+    use_activesupport_time_zone: true
 development:
   # Configure available database sessions. (required)
   sessions:
@@ -42,6 +44,7 @@ development:
         # retry_interval: 0.25
   # Configure Mongoid specific options. (optional)
   options:
+    use_activesupport_time_zone: true
     # Includes the root model name in json serialization. (default: false)
     # include_root_in_json: false
 
@@ -80,3 +83,5 @@ test:
         # low amounts for fast failures.
         max_retries: 1
         retry_interval: 0
+  options:
+    use_activesupport_time_zone: true

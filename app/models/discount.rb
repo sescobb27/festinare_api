@@ -45,7 +45,7 @@ class Discount
           end
         end
       end
-      threads.map(&:join)
+      threads.map!(&:join)
     end
 
     cache_thread = Thread.new do

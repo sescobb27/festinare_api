@@ -3,4 +3,9 @@ namespace :invalidate do
   task discounts: :environment do
     Discount.invalidate_expired_ones
   end
+
+  desc "Search client's plans and invalidate the expired ones"
+  task plans: :environment do
+    ClientPlan.invalidate_expired_ones
+  end
 end
