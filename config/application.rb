@@ -39,5 +39,6 @@ module HurryUpDiscount
     end
 
     config.autoload_paths << Rails.root.join('lib/constraints')
+    config.middleware.use Rack::Deflater
   end
 end
