@@ -18,7 +18,7 @@ Rails.application.routes.draw do
         end
         member do
           post '/like/:client_id/discount/:discount_id', controller: 'discounts', action: :like
-          post 'mobile'
+          put 'mobile'
         end
       end
       resources :clients, except: [:new, :edit, :show] do

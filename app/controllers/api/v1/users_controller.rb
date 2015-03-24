@@ -2,14 +2,19 @@ module API
   module V1
     class UsersController < API::BaseController
 
-      before_action :is_authenticated?, only: [:me]
+      before_action :is_authenticated?, only: [:me, :update, :mobile]
 
       def me
-        render json: { user: @current_user_credentials }, status: :ok
+        begin
+          user = User.find(@current_user_credentials[:_id])
+          render json: { user: user }, status: :ok
+        rescue Mongoid::Errors::DocumentNotFound
+          render nothing: true, status: :unauthorized
+        end
       end
 
       def login
-        req_params = safe_params
+        req_params = post_params
         user = User.only(:_id, :username, :email, :encrypted_password).where({
           username: req_params[:username]
         }).first
@@ -22,7 +27,7 @@ module API
       end
 
       def create
-        user = User.new(safe_params)
+        user = User.new(post_params)
         if user.save
           token = authenticate_user user
           render json: { token: token }, status: :ok
@@ -31,15 +36,35 @@ module API
         end
       end
 
+      # PUT /v1/users/:id
       def update
+        secure_params = update_params
+        user = User.find( @current_user_credentials[:_id] )
+        if secure_params[:categories]
+          user_categories = user.categories.map(&:name)
+          secure_params[:categories].map do |category|
+            # category would have field for adding or removing an element
+            should_add = category.delete :status
+            if should_add
+              unless user_categories.include? category[:name]
+                user.categories.push Category.new(category)
+              end
+            else
+              user.pull({ categories: { name: category[:name] } })
+            end
+          end
+        end
+        if secure_params[:name] && !secure_params[:name].empty? && secure_params[:lastname] && !secure_params[:lastname].empty?
+          user.update_attributes(name: secure_params[:name], lastname: secure_params[:lastname])
+        end
+        render nothing: true, status: :ok
       end
 
-      # POST /v1/users/:id/mobile
+      # PUT /v1/users/:id/mobile
       def mobile
         secure_params = mobile_params
-        user = User.find( params[:id] )
-        user.mobile = Mobile.new secure_params[:mobile]
-        if user.save
+        user = User.find( @current_user_credentials[:_id] )
+        if user.create_mobile secure_params[:mobile]
           render nothing: true, status: :ok
         else
           render json: { errors: user.errors.full_messages }, status: :bad_request
@@ -51,12 +76,12 @@ module API
       end
 
       private
-        def safe_params
+        def post_params
           params.require(:user).permit(:username, :email, :lastname, :name, :password, :rate)
         end
 
         def update_params
-          params.require(:user).permit(:lastname, :name, :password)
+          params.require(:user).permit(:lastname, :name, categories: [:status, :name, :description])
         end
 
         def mobile_params
