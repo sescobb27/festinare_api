@@ -10,8 +10,11 @@ class Category
   # =============================Schema========================================
     field :name
     field :description
-
-    index({ name: 1 }, { unique: true, name: 'type_name_index' })
+    CATEGORIES = ['Bar', 'Disco', 'Restaurant'].freeze
   # =============================END Schema====================================
-  CATEGORIES = ['Bar', 'Disco', 'Restaurant'].freeze
+
+  # =============================Schema Validations============================
+    validates :name, inclusion: { in: CATEGORIES }
+  # =============================END Schema Validations========================
+
 end

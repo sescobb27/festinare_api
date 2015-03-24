@@ -9,5 +9,10 @@ class Mobile
     field :enabled, type: Boolean, default:  true
     field :platform
     index({ token: 1 }, { unique: true, name: 'token_index' })
+    index({ platform: 1 }, { unique: false, name: 'platform_index' })
   # =============================END Schema====================================
+  # =============================Schema Validations============================
+    validates_presence_of :token, :platform
+  # =============================END Schema Validations========================
+
 end

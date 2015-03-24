@@ -21,12 +21,12 @@ class User
   # =============================END relationships=============================
 
   # =============================Schema========================================
-    # Database Authenticatable: this module responsible for encrypting password and validating authenticity of a user while signing in.
-    # Registerable: handles signing up users through a registration process, also allowing them to edit and destroy their account.
-    # Recoverable: resets the user password and sends reset instructions.
-    # Validatable: provides validations of email and password.
-    # Omniauthable: adds Omniauth support.
-    # Confirmable: sends emails with confirmation instructions and verifies whether an account is already confirmed during sign in.
+  # Database Authenticatable: this module responsible for encrypting password and validating authenticity of a user while signing in.
+  # Registerable: handles signing up users through a registration process, also allowing them to edit and destroy their account.
+  # Recoverable: resets the user password and sends reset instructions.
+  # Validatable: provides validations of email and password.
+  # Omniauthable: adds Omniauth support.
+  # Confirmable: sends emails with confirmation instructions and verifies whether an account is already confirmed during sign in.
     devise  :database_authenticatable,
             :registerable,
             :validatable,
@@ -55,10 +55,9 @@ class User
     # index({ confirmation_token: 1}, { unique: true, name: 'confirmation_token_index' })
   # =============================END Schema====================================
 
-  # =============================User Schema Validations=======================
-    validates_presence_of :email, :encrypted_password, :username, :lastname,
-      :name
-  # =============================END User Schema Validations===================
+  # =============================Schema Validations============================
+    validates_presence_of :email, :encrypted_password, :username, :lastname, :name
+  # =============================END Schema Validations========================
 
     before_validation :downcase_credentials
 
@@ -80,11 +79,31 @@ class User
       batch_size = 1000
       iterations = users_num.fdiv(batch_size).ceil
 
+      categories = nil;
+      Cache::RedisCache.instance do |redis|
+        len = redis.llen('discounts')
+        if len > 0
+          categories = redis.lrange('discounts', 0, len).map(&:categories)
+        else
+          return
+        end
+      end
       iterations.times do |x|
-        registration_ids = User.only(:_id, :mobile).limit(batch_size).offset(batch_size * x).map(&:mobile).map(&:token)
-        response = gcm.send(registration_ids, options)
-        awesome_print "GCM RESPONSE:"
-        awesome_print response
+        users = User.only(:_id, :categories, :mobile).limit(batch_size).offset(batch_size * x)
+        notify_users = users.select do |user|
+          !(user.categories.map(&:name) & obj[:categories]).empty?
+        end
+        registration_ids.concat notify_users.map(&:mobile).map(&:token)
+        if registration_ids.length <= 1000
+          response = gcm.send(registration_ids, options)
+          awesome_print "GCM RESPONSE:"
+          awesome_print response
+        elsif registration_ids.length > 1000
+          response = gcm.send(registration_ids[0...1000], options)
+          awesome_print "GCM RESPONSE:"
+          awesome_print response
+          registration_ids = registration_ids[1000..-1]
+        end
       end
     end
 end

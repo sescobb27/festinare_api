@@ -59,6 +59,9 @@ class Client
     index({ confirmation_token: 1 }, { unique: true, name: 'confirmation_token_index' })
   # =============================END Schema====================================
 
+  # =============================Schema Validations============================
+    validates_presence_of :username, :name, :encrypted_password
+  # =============================END Schema Validations========================
     before_validation :downcase_credentials
 
     def downcase_credentials

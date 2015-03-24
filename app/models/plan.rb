@@ -13,9 +13,29 @@ class Plan
 
     index({ name: 1 }, { unique: true, name: 'plan_name_index' })
     index({ status: 1 }, { unique: false, name: 'plan_status_index' })
+    EXPIRED_TIMES = %w(day days month months).freeze
+    default_scope -> { where(status: true).asc(:price) }
   # =============================END Schema====================================
 
-    default_scope -> { where(status: true).asc(:price) }
+  # =============================Schema Validations============================
+    validates_presence_of :name,
+                          :description,
+                          :price,
+                          :num_of_discounts,
+                          :currency,
+                          :expired_rate
+    validates :expired_time, inclusion: { in: EXPIRED_TIMES }
+    validates :price, numericality: { only_integer: true }
+    validates :num_of_discounts, numericality: {
+      only_integer: true,
+      greater_than_or_equal_to: 1
+    }
+    validates :expired_rate, numericality: {
+      only_integer: true,
+      greater_than_or_equal_to: 1,
+      less_than_or_equal_to: 31
+    }
+  # =============================END Schema Validations========================
 
     def to_client_plan
       plan = ClientPlan.new self.clone.attributes

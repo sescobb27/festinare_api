@@ -5,8 +5,8 @@ class ClientPlan < Plan
   # =============================Schema========================================
     field :expired_date, type: DateTime
     field :num_of_discounts_left, type: Integer
-  # =============================END Schema====================================
     default_scope -> { where(status: true) }
+  # =============================END Schema====================================
 
     def self.invalidate_expired_ones
       now = DateTime.now
