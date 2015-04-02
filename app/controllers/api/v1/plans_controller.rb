@@ -2,15 +2,15 @@ module API
   module V1
     class PlansController < API::BaseController
 
-      before_action :is_authenticated?, only: :purshase_plan
+      before_action :is_authenticated?, only: :purchase_plan
 
       # GET /v1/plans
       def index
         render json: Plan.all.cache, status: :ok
       end
 
-      # POST /v1/plans/:plan_id/purshase
-      def purshase_plan
+      # POST /v1/plans/:plan_id/purchase
+      def purchase_plan
         begin
           current_user = Client.find @current_user_credentials[:_id]
         rescue Mongoid::Errors::DocumentNotFound

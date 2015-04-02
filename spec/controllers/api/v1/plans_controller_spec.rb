@@ -47,7 +47,7 @@ module API
           expect(clients.length).to eql 10
           clients.each do |client|
             jwt_validate_token client
-            post :purshase_plan, subdomain: 'api', plan_id: plan._id.to_s, format: :json
+            post :purchase_plan, subdomain: 'api', plan_id: plan._id.to_s, format: :json
             expect(response.status).to eql 200
             client_plans = Client.find(client._id).client_plans
             expect(client_plans.length).to eql 1

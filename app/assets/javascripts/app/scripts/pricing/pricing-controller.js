@@ -25,6 +25,9 @@ angular.module('hurryupdiscount')
         PlanService.select(selectedPlan);
         // TODO
         // GOTO PAYU-LATAM or PAYMENT PAGE
+        PlanService.purchase(selectedPlan._id).then(function () {
+          $state.go('dashboard');
+        });
       }
     };
   });

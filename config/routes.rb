@@ -31,7 +31,7 @@ Rails.application.routes.draw do
       end
       resources :discounts, only: [:index]
       resources :plans, only: :index do # except: [:new, :destroy, :edit]
-        post '/purshase', action: :purshase_plan
+        post '/purchase', action: :purchase_plan
       end
     end
   end
