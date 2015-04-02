@@ -14,8 +14,11 @@ angular.module('hurryupdiscount')
 
     var hashtags = function() {
       if ( $scope.hashtags ) {
-        return $scope.hashtags.split(',').map(function (hashtag) {
-          return hashtag.trim();
+        return $scope.hashtags.split(/[ ,]+/).filter(Boolean).map(function (hashtag) {
+          if (hashtag[0] !== '#') {
+            return '#' + hashtag;
+          }
+          return hashtag;
         });
       }
       return [];
