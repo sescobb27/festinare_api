@@ -15,9 +15,11 @@ module API
 
       def login
         req_params = post_params
-        user = User.only(:_id, :username, :email, :encrypted_password).where({
-          username: req_params[:username]
-        }).first
+        begin
+          user = User.only(:_id, :username, :email, :encrypted_password).find_by username: req_params[:username]
+        rescue Mongoid::Errors::DocumentNotFound
+          return render nothing: true, status: :unauthorized
+        end
         if !user.nil? && user.valid_password?(req_params[:password])
           token = authenticate_user user
           render json: { token: token }, status: :ok
@@ -39,7 +41,11 @@ module API
       # PUT /v1/users/:id
       def update
         secure_params = update_params
-        user = User.find( @current_user_credentials[:_id] )
+        begin
+          user = User.find @current_user_credentials[:_id]
+        rescue Mongoid::Errors::DocumentNotFound
+          return render nothing: true, status: :unauthorized
+        end
         if secure_params[:categories]
           user_categories = user.categories.map(&:name)
           secure_params[:categories].map do |category|
@@ -63,7 +69,11 @@ module API
       # PUT /v1/users/:id/mobile
       def mobile
         secure_params = mobile_params
-        user = User.find( @current_user_credentials[:_id] )
+        begin
+          user = User.find( @current_user_credentials[:_id] )
+        rescue Mongoid::Errors::DocumentNotFound
+          return render nothing: true, status: :unauthorized
+        end
         if user.create_mobile secure_params[:mobile]
           render nothing: true, status: :ok
         else

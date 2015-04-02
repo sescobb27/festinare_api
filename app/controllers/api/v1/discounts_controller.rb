@@ -4,6 +4,7 @@ module API
       rescue_from Plan::PlanDiscountsExhausted, :with => :plan_discounts_exhausted
 
       before_action :is_authenticated?
+
       # GET /v1/discounts
       def index
         user = User.only(:_id, :categories).find( @current_user_credentials[:_id] )
@@ -21,7 +22,13 @@ module API
       # POST /v1/clients/:client_id/discounts
       def create
         discount_attr = safe_discount
-        current_user = Client.find( @current_user_credentials[:_id] )
+
+        begin
+          current_user = Client.find @current_user_credentials[:_id]
+        rescue Mongoid::Errors::DocumentNotFound
+          return render nothing: true, status: :unauthorized
+        end
+
         if current_user.has_plan?
           # if the client has an active plan but had spend all discounts it would rise Plan::PlanDiscountsExhausted exception
           current_user.decrement_num_of_discounts_left!
@@ -40,8 +47,7 @@ module API
       # GET /v1/clients/:client_id/discounts
       def client_discounts
         begin
-          client = Client.only(:_id, :discounts).
-                        find(@current_user_credentials[:_id])
+          client = Client.only(:_id, :discounts).find(@current_user_credentials[:_id])
           render json: client.discounts.unscoped, status: :ok
         rescue Mongoid::Errors::DocumentNotFound
           render nothing: true, status: :unauthorized
@@ -67,7 +73,6 @@ module API
           params.require(:discount).permit(:title, :secret_key, :duration, :discount_rate, hashtags: [])
         end
 
-      protected
         def plan_discounts_exhausted
           render json: { errors: ['You have exhausted your plan discounts, you need to purchase a new plan'] }, status: :forbidden
         end

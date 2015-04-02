@@ -2,12 +2,18 @@ module API
   module V1
     class ClientsController < API::BaseController
 
-      before_action :is_authenticated?, only: [:me, :discounts, :update, :purshase_plan]
+      before_action :is_authenticated?, only: [:me, :discounts, :update]
 
       # POST /v1/clients/login
       def login
         safe_params = safe_auth_params
-        client = Client.only(:_id, :username, :email, :encrypted_password).find_by(username: safe_params[:username])
+
+        begin
+          client = Client.only(:_id, :username, :email, :encrypted_password).find_by(username: safe_params[:username])
+        rescue Mongoid::Errors::DocumentNotFound
+          return render nothing: true, status: :bad_request
+        end
+
         if !client.nil? && client.valid_password?(safe_params[:password])
           token = authenticate_user client
           render json: { token: token }, status: :ok
@@ -47,7 +53,13 @@ module API
       # PUT   /v1/clients/:id
       def update
         safe_params = safe_update_params
-        current_user = Client.find @current_user_credentials[:_id]
+
+        begin
+          current_user = Client.find @current_user_credentials[:_id]
+        rescue Mongoid::Errors::DocumentNotFound
+          return render nothing: true, status: :unauthorized
+        end
+
         if safe_params[:current_password] && safe_params[:password_confirmation] && safe_params[:password]
           if current_user.valid_password? safe_params[:current_password]
             if safe_params[:password] != safe_params[:password_confirmation]
@@ -66,15 +78,6 @@ module API
         else
           render json: { errors: current_user.errors.full_messages }, status: :bad_request
         end
-      end
-
-      # POST /v1/clients/purshase/:plan_id
-      def purshase_plan
-        current_user = Client.find @current_user_credentials[:_id]
-        plan = Plan.find params[:plan_id]
-        purchased_plan = plan.to_client_plan
-        current_user.client_plans.push purchased_plan
-        render nothing: true, status: :ok
       end
 
       # DELETE /v1/clients/:id
