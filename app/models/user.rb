@@ -50,9 +50,10 @@ class User
     field :lastname
     field :name
 
-    index({ username: 1 }, { unique: true, name: 'username_index' })
-    index({ email: 1 }, { unique: true, name: 'email_index' })
-    # index({ confirmation_token: 1}, { unique: true, name: 'confirmation_token_index' })
+    index({ username: 1 }, { unique: true })
+    index({ email: 1 }, { unique: true })
+    index({ 'categories.name' => 1 }, { unique: true })
+    # index({ confirmation_token: 1}, { unique: true })
   # =============================END Schema====================================
 
   # =============================Schema Validations============================

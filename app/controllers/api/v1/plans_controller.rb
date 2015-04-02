@@ -4,7 +4,7 @@ module API
 
       # GET /v1/plans
       def index
-        render json: { plans: Plan.all.cache }, status: :ok
+        render json: Plan.all.cache, status: :ok
       end
     end
   end

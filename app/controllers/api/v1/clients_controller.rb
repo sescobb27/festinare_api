@@ -7,9 +7,7 @@ module API
       # POST /v1/clients/login
       def login
         safe_params = safe_auth_params
-        client = Client.only(:_id, :username, :email, :encrypted_password).where({
-          username: safe_params[:username]
-        }).first
+        client = Client.only(:_id, :username, :email, :encrypted_password).find_by(username: safe_params[:username])
         if !client.nil? && client.valid_password?(safe_params[:password])
           token = authenticate_user client
           render json: { token: token }, status: :ok
@@ -22,7 +20,7 @@ module API
       def me
         begin
           client = Client.find(@current_user_credentials[:_id])
-          render json: { client: client }, status: :ok
+          render json: client, status: :ok
         rescue Mongoid::Errors::DocumentNotFound
           render nothing: true, status: :unauthorized
         end
@@ -50,8 +48,20 @@ module API
       def update
         safe_params = safe_update_params
         current_user = Client.find @current_user_credentials[:_id]
-        current_user.update_attributes safe_params
-        if current_user.errors.empty?
+        if safe_params[:current_password] && safe_params[:password_confirmation] && safe_params[:password]
+          if current_user.valid_password? safe_params[:current_password]
+            if safe_params[:password] != safe_params[:password_confirmation]
+              safe_params.delete :current_password
+              safe_params.delete :password
+              safe_params.delete :password_confirmation
+            else
+              safe_params.delete :current_password
+              safe_params.delete :password_confirmation
+            end
+          end
+        end
+
+        if current_user.update safe_params
           render nothing: true, status: :ok
         else
           render json: { errors: current_user.errors.full_messages }, status: :bad_request
@@ -78,7 +88,7 @@ module API
         end
 
         def safe_update_params
-          params.require(:client).permit(:name, :password, :image_url, addresses: [])
+          params.require(:client).permit(:name, :password, :current_password, :password_confirmation, :image_url, addresses: [])
         end
     end
   end

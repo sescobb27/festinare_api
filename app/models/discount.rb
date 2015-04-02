@@ -15,8 +15,8 @@ class Discount
     field :duration_term
     field :hashtags, type: Array
 
-    index({ status: 1 }, { unique: false, name: 'discount_status_index' })
-    index({ hashtags: 1 }, { unique: false, name: 'discount_hashtags_index' })
+    index({ status: 1 }, { unique: false })
+    index({ hashtags: 1 }, { unique: false })
     default_scope -> { where(status: true) }
     DURATION_TERM = 'minutes'.freeze
     DURATIONS = [10, 20, 30, 60, 90, 120].freeze

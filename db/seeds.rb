@@ -31,7 +31,7 @@ require 'factory_girl_rails'
 default_plans = [
   {
     name: 'Hurry Up!',
-    description: '',
+    description: 'Now! now! now!, time is over!!!!',
     price: 10000,
     currency: 'COP',
     num_of_discounts: 1,
