@@ -10,7 +10,8 @@ angular.module('hurryupdiscount')
 
     $scope.selectPlan = function (planId) {
       angular.forEach($scope.plans, function (plan) {
-        if (plan._id.$oid === planId) {
+        console.log(plan);
+        if (plan._id === planId) {
           plan.selected = true;
           selectedPlan = plan;
         } else {

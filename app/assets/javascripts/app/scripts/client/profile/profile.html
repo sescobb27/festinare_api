@@ -41,11 +41,26 @@
         </md-input-container>
 
         <label>Categories</label>
-        <md-input-container>
-          <md-checkbox ng-repeat="category in categories track by $index" ng-model="category.enabled" ng-disabled="true">
+        <md-input-container flex>
+          <md-checkbox ng-repeat="category in categories track by $index" ng-model="category.enabled">
             {{category.name}}
           </md-checkbox>
         </md-input-container>
+
+        <md-input-container flex>
+          <label>Address</label>
+          <input type="text" name="email" ng-model="address">
+          <md-button ng-click="addAddress(address)" type="button">Add Address</md-button>
+        </md-input-container>
+
+
+        <md-list>
+          <md-subheader class="md-no-sticky">{{client.name}} Addresses</md-subheader>
+          <md-item ng-repeat="(index, c_address) in client.addresses track by $index">
+            <p><i class="md-avatar fa fa-globe"></i> {{c_address}} <md-button ng-click="deleteAddress(index)" type="button">X</md-button></p>
+          </md-item>
+        </md-list>
+
 
         <div layout="row" layout-align="center center">
           <md-button class="md-raised md-primary btn-float btn-green" style="width: 45%" type="submit">
@@ -59,17 +74,17 @@
       <form role="form" name="passwordForm" ng-submit="changePassword(oldpass, newpass, confirm)">
         <md-input-container flex>
           <label>Old Password</label>
-          <input type="password" ng-keypress="clear()" ng-model="oldpass">
+          <input type="password" ng-model="oldpass" required ng-required="true">
         </md-input-container>
 
         <md-input-container flex>
           <label>New Password</label>
-          <input type="password" ng-keypress="clear()" ng-model="newpass">
+          <input type="password" ng-model="newpass" required ng-required="true">
         </md-input-container>
 
         <md-input-container flex>
           <label>Confirm New Password</label>
-          <input type="password" ng-keypress="clear()" ng-model="confirm">
+          <input type="password" ng-model="confirm" required ng-required="true">
         </md-input-container>
 
         <div layout="row" layout-align="center center">

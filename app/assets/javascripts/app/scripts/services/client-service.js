@@ -4,8 +4,9 @@ angular.module('hurryupdiscount')
   .factory('ClientService', function ($resource) {
 
     var ClientService = this;
-    var Client = $resource('/v1/clients/:action', {
-      action: '@action'
+    var Client = $resource('/v1/clients/:action/:id', {
+      action: '@action',
+      id: '@id'
     }, {
       login: {
         method: 'POST'
@@ -23,8 +24,8 @@ angular.module('hurryupdiscount')
       return Client.login({action: 'login'}, {client: credentials}).$promise;
     };
 
-    ClientService.update = function (data) {
-      return Client.update({client: data}).$promise;
+    ClientService.update = function (id, data) {
+      return Client.update({ id: id }, {client: data}).$promise;
     };
 
     return ClientService;

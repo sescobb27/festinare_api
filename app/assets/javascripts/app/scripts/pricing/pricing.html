@@ -16,7 +16,7 @@
 
     <div layout="row" flex="80" style="padding: 50px 0;" layout-align="center center">
 
-      <div class="plan-card" ng-repeat="plan in plans track by $index" ng-class="{'planSelected':plan.selected}" layout="column" ng-click="selectPlan(plan._id.$oid)" flex>
+      <div class="plan-card" ng-repeat="plan in plans track by $index" ng-class="{'planSelected':plan.selected}" layout="column" ng-click="selectPlan(plan._id)" flex>
 
         <div class="plan-header" layout="row" layout-align="center center">{{plan.name}}</div>
         <div class="plan-price" layout="row" layout-align="center center"><span>$</span>{{plan.price | currency:"":0}} {{plan.currency}}</div>

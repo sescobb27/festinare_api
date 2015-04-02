@@ -9,8 +9,9 @@ angular.module('hurryupdiscount')
 
     if(SessionService.getCurrentSession()) {
       client_promise = ClientService.get().then(function (res) {
-        console.log('CLIENT: ', res);
+        console.log('CLIENT: ', res.client);
         client = res.client;
+        notify(client);
       });
     } else {
       client_promise = $q(function (resolve, reject) { reject(); });
