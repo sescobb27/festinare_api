@@ -3,6 +3,7 @@ class DiscountSerializer < MongoDocumentSerializer
              :title,
              :secret_key,
              :status,
+             :created_at,
              :duration,
              :duration_term,
              :hashtags,
