@@ -67,7 +67,7 @@ class User
       self.email = self.email.downcase
     end
 
-    def send_notifications
+    def self.send_notifications
       gcm = Gcm::Notification.instance
       # For sending to 1 or more devices (up to 1000). When you send a message to
       # multiple registration IDs, that is called a multicast message.
@@ -80,27 +80,20 @@ class User
       batch_size = 1000
       iterations = users_num.fdiv(batch_size).ceil
 
-      categories = nil;
-      Cache::RedisCache.instance do |redis|
-        len = redis.llen('discounts')
-        if len > 0
-          categories = redis.lrange('discounts', 0, len).map(&:categories)
-        else
-          return
-        end
-      end
+      categories = Discount.get_categories_from_discounts
+
       iterations.times do |x|
         users = User.only(:_id, :categories, :mobile).limit(batch_size).offset(batch_size * x)
         notify_users = users.select do |user|
-          !(user.categories.map(&:name) & obj[:categories]).empty?
+          !(user.categories.map(&:name) & categories).empty? && user.mobile
         end
         registration_ids.concat notify_users.map(&:mobile).map(&:token)
         if registration_ids.length <= 1000
-          response = gcm.send(registration_ids, options)
+          response = gcm.send_notification(registration_ids, options)
           awesome_print "GCM RESPONSE:"
           awesome_print response
         elsif registration_ids.length > 1000
-          response = gcm.send(registration_ids[0...1000], options)
+          response = gcm.send_notification(registration_ids[0...1000], options)
           awesome_print "GCM RESPONSE:"
           awesome_print response
           registration_ids = registration_ids[1000..-1]

@@ -1,3 +1,13 @@
+GIT
+  remote: git://github.com/wandenberg/moped.git
+  revision: 2f129903455e1fb467de38db464ac5a8f55d780c
+  branch: operation_timeout
+  specs:
+    moped (2.0.4)
+      bson (~> 2.2)
+      connection_pool (~> 2.0)
+      optionable (~> 0.2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -55,7 +65,7 @@ GEM
       slop (~> 3.6)
     chronic (0.10.2)
     columnize (0.9.0)
-    connection_pool (2.1.1)
+    connection_pool (2.1.3)
     daemons (1.1.9)
     debug_inspector (0.0.2)
     debugger-linecache (1.2.0)
@@ -118,10 +128,6 @@ GEM
       rspec (~> 3.1)
     mongoid_paranoia (0.1.2)
       mongoid (> 3)
-    moped (2.0.3)
-      bson (~> 2.2)
-      connection_pool (~> 2.0)
-      optionable (~> 0.2.0)
     multi_json (1.10.1)
     multi_xml (0.5.5)
     nokogiri (1.6.6.2)
@@ -262,6 +268,7 @@ DEPENDENCIES
   mongoid (~> 4.0.1)
   mongoid-rspec (~> 2.1.0)
   mongoid_paranoia (~> 0.1.2)
+  moped (= 2.0.4)!
   puma
   rack-timeout
   rails (= 4.2.0)

@@ -14,6 +14,13 @@ FactoryGirl.define do
     end
 
     factory :user_with_mobile do
+      categories {
+        tmp = Category::CATEGORIES.sample(2)
+        [
+          Category.new(name: tmp[0]),
+          Category.new(name: tmp[1])
+        ]
+      }
       mobile { FactoryGirl.build(:mobile) }
     end
   end

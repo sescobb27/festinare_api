@@ -60,4 +60,40 @@ class Discount
       mongo_thread.join
       cache_thread.join
     end
+
+    def self.get_categories_from_discounts
+      categories = nil
+      Cache::RedisCache.instance do |redis|
+        len = redis.llen('discounts')
+        if len > 0
+          redis.lrange('discounts', 0, len).map do |r_discount|
+            json_result = JSON.parse r_discount, symbolize_names: true
+            categories = json_result[:categories].map { |category| category[:name] }
+          end
+        end
+      end
+
+      if !categories
+        threads = []
+        now = DateTime.now
+        threads = Client.batch_size(500).map do |client|
+          Thread.new(client) do |t_client|
+            Thread.current[:categories] = []
+            t_client.discounts.map do |discount|
+              expire_time = discount.created_at + (discount.duration * 60).seconds
+              if now < expire_time
+                Thread.current[:categories].push discount.map(&:categories).map(&:name)
+              end
+            end
+          end
+        end
+        categories = []
+        threads.map do |thread|
+          thread.join
+          categories.concat thread[:discounts]
+        end
+      end
+
+      return categories
+    end
 end

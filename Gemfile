@@ -46,6 +46,7 @@ gem 'puma'
 gem 'jwt-rb'
 gem 'mongoid', '~> 4.0.1'
 gem 'mongoid_paranoia', '~> 0.1.2'
+gem 'moped', '2.0.4', github: 'wandenberg/moped', branch: 'operation_timeout' # https://github.com/mongoid/moped/pull/359 => ConnectionPool::PoolShuttingDownError
 gem 'devise'
 gem 'bson_ext'
 # Abort requests that are taking too long
