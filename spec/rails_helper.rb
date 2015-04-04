@@ -24,11 +24,14 @@ require 'factory_girl'
 RSpec.configure do |config|
 
   config.include FactoryGirl::Syntax::Methods
-
-  config.before(:all) do
-    Mongoid::Sessions.default.collections.select {|c| c.name !~ /system/ }.each(&:drop)
-    FactoryGirl.reload
-    Rails.application.load_seed
+  Mongoid::Sessions.default.collections.select {|c| c.name !~ /system/ }.each(&:drop)
+  FactoryGirl.reload
+  Rails.application.load_seed
+  Cache::RedisCache.instance do |redis|
+    puts '| -------------------------------------- |'
+    puts '|        Deleting Redis Discounts        |'
+    puts '| -------------------------------------- |'
+    redis.del 'discounts'
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests

@@ -3,7 +3,10 @@ require 'securerandom'
 
 FactoryGirl.define do
   factory :client do
-    after(:build)       { |client| client.categories.concat( (1..2).map { FactoryGirl.build(:category) }) }
+    categories {
+      tmp = Category::CATEGORIES.sample(2)
+      [ Category.new(name: tmp[0]), Category.new(name: tmp[1]) ]
+    }
     locations           { (1..5).map { FactoryGirl.build(:location) }}
     username            { "#{SecureRandom.base64(4)}#{Faker::Internet.user_name}".downcase }
     email               { "#{SecureRandom.base64(4)}#{Faker::Internet.email}".downcase }

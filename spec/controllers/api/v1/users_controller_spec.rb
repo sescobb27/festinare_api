@@ -98,7 +98,7 @@ module API
       end
 
       describe 'User Update' do
-        let!(:users) {
+        let(:users) {
           users = (1..10).map { FactoryGirl.attributes_for :user_with_subscriptions }
           User.create users
         }

@@ -37,8 +37,8 @@ module API
           @request.headers['Authorization'] = 'Bearer mysecretkey'
           @request.headers['Content-Type'] = 'application/json'
         end
-        let!(:plan) { Plan.all.entries.sample }
-        let!(:clients) {
+        let(:plan) { Plan.all.to_a.sample }
+        let(:clients) {
           clients = (1..10).map { FactoryGirl.attributes_for :client }
           Client.create clients
         }

@@ -70,53 +70,55 @@ if Plan.count == 0
   Plan.create! default_plans
 end
 
-clients = [
-  {
-    categories: [
-      Category.new(name: 'Bar'),
-      Category.new(name: 'Disco')
-    ],
-    locations:  (1..5).map do
-      Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
-    end,
-    username:   'sescobb27',
-    email:      'sescobb27@gmail.com',
-    password:   'qwerty123!',
-    name:       'Client Test',
-    rate:       0.0,
-    image_url:  'http://placehold.it/200x200',
-    addresses:  []
-  },
-  {
-    locations:  (1..5).map do
-      Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
-    end,
-    username:   'test4echo',
-    email:      'sescobb27@notemail.com',
-    password:   'qwerty123!',
-    name:       'test4echo Test',
-    rate:       0.0,
-    image_url:  '',
-    addresses:  []
-  },
-  {
-    categories: [
-      Category.new(name: 'Bar'),
-      Category.new(name: 'Restaurant')
-    ],
-    locations:  (1..5).map do
-      Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
-    end,
-    client_plans: [ Plan.all.sample.to_client_plan ],
-    username:   'sescob',
-    email:      'test4echo@notemail.com',
-    password:   'qwerty123!',
-    name:       'Client Test Plan',
-    rate:       0.0,
-    image_url:  '',
-    addresses:  []
-  }
-]
-if Client.count == 0
-  Client.create! clients
+if Rails.env == 'development'
+  clients = [
+    {
+      categories: [
+        Category.new(name: 'Bar'),
+        Category.new(name: 'Disco')
+      ],
+      locations:  (1..5).map do
+        Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
+      end,
+      username:   'sescobb27',
+      email:      'sescobb27@gmail.com',
+      password:   'qwerty123!',
+      name:       'Client Test',
+      rate:       0.0,
+      image_url:  'http://placehold.it/200x200',
+      addresses:  []
+    },
+    {
+      locations:  (1..5).map do
+        Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
+      end,
+      username:   'test4echo',
+      email:      'sescobb27@notemail.com',
+      password:   'qwerty123!',
+      name:       'test4echo Test',
+      rate:       0.0,
+      image_url:  '',
+      addresses:  []
+    },
+    {
+      categories: [
+        Category.new(name: 'Bar'),
+        Category.new(name: 'Restaurant')
+      ],
+      locations:  (1..5).map do
+        Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
+      end,
+      client_plans: [ Plan.all.sample.to_client_plan ],
+      username:   'sescob',
+      email:      'test4echo@notemail.com',
+      password:   'qwerty123!',
+      name:       'Client Test Plan',
+      rate:       0.0,
+      image_url:  '',
+      addresses:  []
+    }
+  ]
+  if Client.count == 0
+    Client.create! clients
+  end
 end

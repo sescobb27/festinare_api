@@ -2,7 +2,10 @@ require 'rails_helper'
 require 'rake'
 
 RSpec::Matchers.define :array_length_greater_than_or_eql do |x|
-  match { |actual| actual.length >= x }
+  match { |actual|
+    puts "ACTUAL ==> #{actual.length}"
+    actual.length >= 1000
+  }
 end
 
 RSpec.describe User, :type => :model do
@@ -35,6 +38,7 @@ RSpec.describe User, :type => :model do
     end
 
     it 'should send notification to users' do
+      User.delete_all('$or': [{categories: {'$exists' => false}}, {mobile: {'$exists' => false}}])
       client_with_discounts = (1..20).map { FactoryGirl.attributes_for :client_with_discounts }
       clients = Client.create client_with_discounts
 

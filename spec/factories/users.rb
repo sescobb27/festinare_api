@@ -10,7 +10,13 @@ FactoryGirl.define do
     password  'qwertyqwerty'
 
     factory :user_with_subscriptions do
-      categories { (1..2).map { FactoryGirl.build(:category) }}
+      categories {
+        tmp = Category::CATEGORIES.sample(2)
+        [
+          Category.new(name: tmp[0]),
+          Category.new(name: tmp[1])
+        ]
+      }
     end
 
     factory :user_with_mobile do

@@ -97,6 +97,7 @@ class User
         registration_ids.concat notify_users.map(&:mobile).map(&:token)
         if registration_ids.length <= 1000
           response = gcm.send_notification(registration_ids, options)
+          registration_ids.clear
           awesome_print "GCM RESPONSE:"
           awesome_print response
         elsif registration_ids.length > 1000

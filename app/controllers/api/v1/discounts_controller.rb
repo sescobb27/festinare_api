@@ -7,7 +7,7 @@ module API
 
       # GET /v1/discounts
       def index
-        user = User.only(:_id, :categories).find( @current_user_credentials[:_id] )
+        user = User.only(:_id, :categories).find @current_user_credentials[:_id]
         clients = Client.only(:_id, :name, :rate, :discounts, :addresses, :categories, :locations).
           in('categories.name' => user.categories.map(&:name)).
           batch_size(500).

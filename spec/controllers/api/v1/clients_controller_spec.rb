@@ -34,7 +34,7 @@ module API
 
       describe 'Create Client' do
 
-        let!(:client) { FactoryGirl.attributes_for(:client) }
+        let(:client) { FactoryGirl.attributes_for(:client) }
 
         it 'should return a token' do
           post :create, subdomain: 'api', client: client, format: :json
@@ -54,7 +54,7 @@ module API
 
       describe 'Client Login' do
 
-        let!(:client) {
+        let(:client) {
           client_attr = FactoryGirl.attributes_for :client
           Client.create! client_attr
           client_attr

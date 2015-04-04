@@ -31,33 +31,33 @@ module API
         @request.headers['Content-Type'] = 'application/json'
       end
 
-      # let!(:clients) {
-      #   c_with_discounts = (1..10).map { FactoryGirl.attributes_for :client_with_discounts }
-      #   Client.create c_with_discounts
-      # }
-
-      let!(:clients) {
-        (1..10).map { FactoryGirl.create :client_with_discounts }
+      let(:clients) {
+        c_with_discounts = (1..10).map { FactoryGirl.attributes_for :client_with_discounts }
+        Client.create c_with_discounts
       }
 
-      let!(:users) {
+      # let(:clients) {
+      #   (1..10).map { FactoryGirl.create :client_with_discounts }
+      # }
+
+      let(:users) {
         u_with_subscriptions = (1..10).map { FactoryGirl.attributes_for :user_with_subscriptions }
         User.create u_with_subscriptions
       }
 
       describe 'Create Discount' do
 
-        let!(:raw_client) {
+        let(:raw_client) {
           client_attr = FactoryGirl.attributes_for :client
           Client.create client_attr
         }
 
-        let!(:client) {
+        let(:client) {
           client_attr = FactoryGirl.attributes_for :client_with_plan
           Client.create client_attr
         }
 
-        let!(:discount) { FactoryGirl.attributes_for(:discount) }
+        let(:discount) { FactoryGirl.attributes_for(:discount) }
 
         before do
           jwt_validate_token client
@@ -126,17 +126,17 @@ module API
       describe 'Get all available discounts' do
 
         it 'user should get all available discounts base on his/her subscriptions' do
+          expect({get: "http://#{request.host}/v1/discounts"}).to(
+            route_to(
+              controller: 'api/v1/discounts',
+              action: 'index',
+              subdomain: 'api',
+              format: :json
+            )
+          )
+
           users.map do |user|
             jwt_validate_token user
-            expect({get: "http://#{request.host}/v1/discounts"}).to(
-              route_to(
-                controller: 'api/v1/discounts',
-                action: 'index',
-                subdomain: 'api',
-                format: :json
-              )
-            )
-            @request.headers['Authorization'] = 'Bearer mysecretkey'
             get :index, {}, format: :json
             expect(response.status).to eql 200
             response_body = JSON.parse(response.body, symbolize_names: true)
@@ -158,7 +158,7 @@ module API
           users.map do |user|
             jwt_validate_token user
             clients.each do |client|
-              discount = client_discount = Client.find(client._id).discounts.sample
+              discount = Client.find(client._id).discounts.sample
               post :like, { id: user._id, client_id:  client._id, discount_id: discount._id }, subdomain: 'api'
               expect(response.status).to eql 200
               u = User.find(user._id)
