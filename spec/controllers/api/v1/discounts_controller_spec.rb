@@ -45,6 +45,11 @@ module API
         User.create u_with_subscriptions
       }
 
+      let(:raw_users) {
+        user_s = (1..10).map { FactoryGirl.attributes_for :user }
+        User.create user_s
+      }
+
       describe 'Create Discount' do
 
         let(:raw_client) {
@@ -148,6 +153,24 @@ module API
               client_categories = client[:categories].map { |c| c[:name] }
               user_subscriptions = user.categories.map { |c| c[:name] }
               expect( client_categories & user_subscriptions ).not_to be_empty
+            end
+          end
+        end
+
+        it 'should get all available discounts if doesn\'t have subscriptions' do
+          raw_users.map do |user|
+            jwt_validate_token user
+            get :index, {}, format: :json
+            expect(response.status).to eql 200
+            response_body = JSON.parse(response.body, symbolize_names: true)
+            expect(response_body[:discounts].length).to be > 0
+            response_body[:discounts].each do |client|
+              expect(client[:discounts].length).to be > 0
+              expect(client[:addresses].length).to be > 0
+              expect(client[:locations].length).to be > 0
+              client_categories = client[:categories].map { |c| c[:name] }
+              user_subscriptions = user.categories.map { |c| c[:name] }
+              expect( client_categories & user_subscriptions ).to be_empty
             end
           end
         end

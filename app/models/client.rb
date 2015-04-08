@@ -59,6 +59,8 @@ class Client
     index({ confirmation_token: 1 }, { unique: true })
     index({ 'categories.name' => 1 }, { unique: false })
     index({ discounts: 1 }, { unique: false })
+
+    scope :has_active_discount, -> { where('discounts.status' => true) }
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
@@ -85,5 +87,28 @@ class Client
         self.save
         raise Plan::PlanDiscountsExhausted
       end
+    end
+
+    def self.get_all_available_discounts categories
+      query = Client.has_active_discount
+      query.in('categories.name' => categories) unless categories.empty?
+      threads = []
+
+      now = DateTime.now
+      threads = query.batch_size(500).map do |client|
+        Thread.new(client) do |t_client|
+          Thread.current[:client] = t_client
+          Thread.current[:client].discounts = t_client.discounts.select do |discount|
+            now < discount.expire_time
+          end
+        end
+      end
+
+      clients = []
+      threads.map do |thread|
+        thread.join
+        clients << thread[:client]
+      end
+      clients
     end
 end

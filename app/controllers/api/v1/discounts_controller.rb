@@ -8,23 +8,15 @@ module API
       # GET /v1/discounts
       def index
         user = User.only(:_id, :categories).find @current_user_credentials[:_id]
-        clients = []
-        if user.categories.empty?
-          clients = Client.only(:_id, :name, :rate, :discounts, :addresses, :categories, :locations).
-            batch_size(500).
-            select do |db_client|
-              db_client.discounts.length > 0
-            end
-        else
-          clients = Client.only(:_id, :name, :rate, :discounts, :addresses, :categories, :locations).
-            in('categories.name' => user.categories.map(&:name)).
-            batch_size(500).
-            select do |db_client|
-              db_client.discounts.length > 0
-            end
-        end
+        categories = user.categories.empty? ? [] : user.categories.map(&:name)
+        # clients = Client.only(:_id, :name, :rate, :discounts, :addresses, :categories, :locations).
+        #   in('categories.name' => user.categories.map(&:name)).
+        #   batch_size(500).
+        #   select do |db_client|
+        #     db_client.discounts.length > 0
+        #   end
+        clients = Client.get_all_available_discounts categories
 
-        # render json: clients.map(&:discounts)
         render json: clients, each_serializer: ClientsDiscountSerializer
       end
 
