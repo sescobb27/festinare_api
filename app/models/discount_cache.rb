@@ -32,7 +32,7 @@ class DiscountCache
       Cache::RedisCache.instance do |redis|
         now = DateTime.now
         redis.pipelined do
-          Client.batch_size(500).map do |client|
+          Client.has_active_discounts.batch_size(500).map do |client|
             client.discounts.each do |discount|
               if !discount.expired? && (now < discount.expire_time)
                 tmp = { discount: discount, categories: client.categories }

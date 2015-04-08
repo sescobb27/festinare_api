@@ -60,7 +60,7 @@ class Client
     index({ 'categories.name' => 1 }, { unique: false })
     index({ discounts: 1 }, { unique: false })
 
-    scope :has_active_discount, -> { where('discounts.status' => true) }
+    scope :has_active_discounts, -> { where('discounts.status' => true) }
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
@@ -90,7 +90,7 @@ class Client
     end
 
     def self.get_all_available_discounts categories
-      query = Client.has_active_discount
+      query = Client.has_active_discounts
       query.in('categories.name' => categories) unless categories.empty?
       threads = []
 

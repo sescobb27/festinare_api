@@ -53,7 +53,7 @@ class Discount
       mongo_thread = Thread.new do
         now = DateTime.now
         threads = []
-        threads = Client.batch_size(500).map do |client|
+        threads = Client.has_active_discounts.batch_size(500).map do |client|
           Thread.new(client) do |t_client|
             t_client.discounts.map do |discount|
               if now >= discount.expire_time
@@ -90,7 +90,7 @@ class Discount
       if !categories || categories.empty?
         threads = []
         now = DateTime.now
-        threads = Client.batch_size(500).map do |client|
+        threads = Client.has_active_discounts.batch_size(500).map do |client|
           Thread.new(client) do |t_client|
             Thread.current[:categories] = []
             t_client.discounts.map do |discount|

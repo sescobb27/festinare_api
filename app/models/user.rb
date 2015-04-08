@@ -85,11 +85,6 @@ class User
       iterations.times do |x|
         users = User.only(:_id, :categories, :mobile).limit(batch_size).offset(batch_size * x)
         notify_users = users.select do |user|
-          # u = user.categories.map(&:name)
-          # c = categories
-          # awesome_print "User: #{u}"
-          # awesome_print "categories: #{c}"
-          # awesome_print u & c
           !(user.categories.map(&:name) & categories).empty? && user.mobile
         end
         awesome_print "(x: #{x})(iterations: #{iterations})(batch_size: #{batch_size})(users_num: #{users_num})(users.length: #{users.length})(notify_users.length: #{notify_users.length})"
