@@ -34,8 +34,7 @@ class DiscountCache
         redis.pipelined do
           Client.batch_size(500).map do |client|
             client.discounts.each do |discount|
-              expiry_time = discount.created_at + (discount['duration'] * 60).seconds
-              if !discount.expired? && (now < expiry_time)
+              if !discount.expired? && (now < discount.expire_time)
                 tmp = { discount: discount, categories: client.categories }
                 redis.rpush 'discounts', tmp.to_json
               end

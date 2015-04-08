@@ -34,6 +34,10 @@ class Discount
       !self.status
     end
 
+    def expire_time
+      self.created_at + (self.duration * 60).seconds
+    end
+
     def self.invalidate_expired_ones
       mongo_thread = Thread.new do
         now = DateTime.now
@@ -41,8 +45,7 @@ class Discount
         threads = Client.batch_size(500).map do |client|
           Thread.new(client) do |t_client|
             t_client.discounts.map do |discount|
-              expire_time = discount.created_at + (discount.duration * 60).seconds
-              if now >= expire_time
+              if now >= discount.expire_time
                 discount.update_attribute :status, false
                 Rails.logger.info "CLIENT: { id: #{t_client._id}, name: #{t_client.name} }\nDISCOUNT(invalidated): #{discount.inspect}"
               end
@@ -80,8 +83,7 @@ class Discount
           Thread.new(client) do |t_client|
             Thread.current[:categories] = []
             t_client.discounts.map do |discount|
-              expire_time = discount.created_at + (discount.duration * 60).seconds
-              if now < expire_time
+              if now < discount.expire_time
                 Thread.current[:categories].push discount.categories.map(&:name)
               end
             end
