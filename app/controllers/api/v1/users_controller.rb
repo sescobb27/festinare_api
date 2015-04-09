@@ -7,7 +7,7 @@ module API
       def me
         begin
           user = User.find(@current_user_credentials[:_id])
-          render json: { user: user }, status: :ok
+          render json: user, status: :ok
         rescue Mongoid::Errors::DocumentNotFound
           render nothing: true, status: :unauthorized
         end
