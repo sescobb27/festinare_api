@@ -18,11 +18,11 @@ module API
       before do
         request.host = 'api.example.com'
         expect({:post => "http://#{request.host}/v1/clients"}).to(
-          route_to( controller: 'api/v1/clients',
-                    action: 'create',
-                    subdomain: 'api',
-                    format: :json
-                  )
+          route_to(
+            controller: 'api/v1/clients',
+              action: 'create',
+              format: :json
+            )
         )
 
         # token expectations

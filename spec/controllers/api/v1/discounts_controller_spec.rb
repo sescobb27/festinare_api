@@ -18,13 +18,22 @@ module API
       before do
         request.host = 'api.example.com'
         client_id = rand(100)
+
         expect({:post => "http://#{request.host}/v1/clients/#{client_id}/discounts"}).to(
-          route_to( controller: 'api/v1/discounts',
-                    action: 'create',
-                    subdomain: 'api',
-                    format: :json,
-                    client_id: "#{client_id}"
-                  )
+          route_to(
+            controller: 'api/v1/discounts',
+              action: 'create',
+              format: :json,
+              client_id: "#{client_id}"
+            )
+        )
+
+        expect({get: "http://#{request.host}/v1/discounts"}).to(
+          route_to(
+            controller: 'api/v1/discounts',
+            action: 'index',
+            format: :json
+          )
         )
         @request.headers['Accept'] = 'application/json'
         @request.headers['Authorization'] = 'Bearer mysecretkey'
@@ -131,15 +140,6 @@ module API
       describe 'Get all available discounts' do
 
         it 'user should get all available discounts base on his/her subscriptions' do
-          expect({get: "http://#{request.host}/v1/discounts"}).to(
-            route_to(
-              controller: 'api/v1/discounts',
-              action: 'index',
-              subdomain: 'api',
-              format: :json
-            )
-          )
-
           users.map do |user|
             jwt_validate_token user
             get :index, {}, format: :json

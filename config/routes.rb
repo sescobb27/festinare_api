@@ -1,13 +1,13 @@
-require 'api_version_constraints'
+require 'api_constraint'
 
 Rails.application.routes.draw do
   root 'application#index'
   namespace :api,
             path: '/',
-            constraints: { subdomain: 'api' },
+            constraints: ApiConstraint::ApiSubdomainConstraint.new(subdomain: 'api'),
             defaults: { format: :json } do
-    # namespace :v1, constraints: ApiVersionConstraint.new(version: 1, default: true) do
-    namespace :v1 do
+    namespace :v1, constraints: ApiConstraint::ApiVersionConstraint.new(version: 1, default: true) do
+    # namespace :v1 do
 
       devise_for :users, skip: [:sessions, :registrations]
       devise_for :clients, skip: [:sessions, :registrations]

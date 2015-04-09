@@ -16,11 +16,11 @@ module API
       before do
         request.host = 'api.example.com'
         expect({:post => "http://#{request.host}/v1/users"}).to(
-          route_to( controller: 'api/v1/users',
-                    action: 'create',
-                    subdomain: 'api',
-                    format: :json
-                  )
+          route_to(
+            controller: 'api/v1/users',
+            action: 'create',
+            format: :json
+          )
         )
 
         @request.headers['Accept'] = 'application/json'
@@ -106,13 +106,13 @@ module API
           users.each do |user|
             jwt_validate_token user
             put(:update, {
-                            id: user._id, user: {
-                              categories: [
-                                { status: true, name: 'Bar', description: '' },
-                                { status: true, name: 'Restaurant', description: '' }
-                              ]
-                            }
-                          }, format: :json)
+              id: user._id, user: {
+                categories: [
+                  { status: true, name: 'Bar', description: '' },
+                  { status: true, name: 'Restaurant', description: '' }
+                ]
+              }
+            }, format: :json)
             expect(response.status).to eql 200
             u = User.find user._id
             user_categories = u.categories.map(&:name)
@@ -125,13 +125,13 @@ module API
           users.each do |user|
             jwt_validate_token user
             put(:update, {
-                            id: user._id, user: {
-                              categories: [
-                                { status: false, name: 'Bar', description: '' },
-                                { status: false, name: 'Restaurant', description: '' }
-                              ]
-                            }
-                          }, format: :json)
+              id: user._id, user: {
+                categories: [
+                  { status: false, name: 'Bar', description: '' },
+                  { status: false, name: 'Restaurant', description: '' }
+                ]
+              }
+            }, format: :json)
             expect(response.status).to eql 200
             u = User.find user._id
             user_categories = u.categories.map(&:name)
@@ -144,13 +144,13 @@ module API
           users.each do |user|
             jwt_validate_token user
             put(:update, {
-                            id: user._id, user: {
-                              categories: [
-                                { status: true, name: 'Bar', description: '' },
-                                { status: false, name: 'Restaurant', description: '' }
-                              ]
-                            }
-                          }, format: :json)
+              id: user._id, user: {
+                categories: [
+                  { status: true, name: 'Bar', description: '' },
+                  { status: false, name: 'Restaurant', description: '' }
+                ]
+              }
+            }, format: :json)
             expect(response.status).to eql 200
             u = User.find user._id
             user_categories = u.categories.map(&:name)
