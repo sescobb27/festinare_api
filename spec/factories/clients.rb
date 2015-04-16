@@ -8,13 +8,13 @@ FactoryGirl.define do
       [ Category.new(name: tmp[0]), Category.new(name: tmp[1]) ]
     }
     locations           { (1..5).map { FactoryGirl.build(:location) }}
-    username            { "#{SecureRandom.base64(4)}#{Faker::Internet.user_name}".downcase }
-    email               { "#{SecureRandom.base64(4)}#{Faker::Internet.email}".downcase }
+    username            { "#{SecureRandom.base64(4)}#{FFaker::Internet.user_name}".downcase }
+    email               { "#{SecureRandom.base64(4)}#{FFaker::Internet.email}".downcase }
     password            'qwertyqwerty'
-    name                { "#{Faker::Company.name}#{SecureRandom.base64(4)}" }
+    name                { "#{FFaker::Company.name}#{SecureRandom.base64(4)}" }
     rate                0.0
-    image_url           { Faker::Internet.http_url }
-    addresses           { (1..5).map { Faker::Address.street_address }}
+    image_url           { FFaker::Internet.http_url }
+    addresses           { (1..5).map { FFaker::Address.street_address }}
 
     factory :client_with_discounts do
       discounts { (1..5).map { FactoryGirl.build(:discount) }}

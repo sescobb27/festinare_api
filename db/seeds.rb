@@ -78,7 +78,7 @@ if Rails.env == 'development'
         Category.new(name: 'Disco')
       ],
       locations:  (1..5).map do
-        Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
+        Location.new latitude: FFaker::Geolocation.lat, longitude: FFaker::Geolocation.lng
       end,
       username:   'sescobb27',
       email:      'sescobb27@gmail.com',
@@ -90,7 +90,7 @@ if Rails.env == 'development'
     },
     {
       locations:  (1..5).map do
-        Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
+        Location.new latitude: FFaker::Geolocation.lat, longitude: FFaker::Geolocation.lng
       end,
       username:   'test4echo',
       email:      'sescobb27@notemail.com',
@@ -106,7 +106,7 @@ if Rails.env == 'development'
         Category.new(name: 'Restaurant')
       ],
       locations:  (1..5).map do
-        Location.new latitude: Faker::Geolocation.lat, longitude: Faker::Geolocation.lng
+        Location.new latitude: FFaker::Geolocation.lat, longitude: FFaker::Geolocation.lng
       end,
       client_plans: [ Plan.all.sample.to_client_plan ],
       username:   'sescob',
