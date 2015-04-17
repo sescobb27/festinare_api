@@ -57,7 +57,7 @@ class User
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
-    validates_presence_of :email, :encrypted_password, :username, :lastname, :name
+    # validates_presence_of :email, :encrypted_password, :username, :lastname, :name
   # =============================END Schema Validations========================
 
     before_validation :downcase_credentials
