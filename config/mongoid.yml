@@ -1,7 +1,7 @@
 production:
   sessions:
     default:
-      database: hurry_up_discount
+      database: festinare_api
       hosts:
       - <%= ENV['MONGODB_DB_HOST'] || 'localhost' %>:<%= ENV['MONGODB_DB_PORT'] || 27017 %>
       username: <%= ENV['MONGODB_DB_USERNAME'] %>
@@ -18,7 +18,7 @@ development:
     default:
       # Defines the name of the default database that Mongoid can connect to.
       # (required).
-      database: hurry_up_discount_development
+      database: festinare_api_development
       # Provides the hosts the default session can connect to. Must be an array
       # of host:port pairs. (required)
       hosts:
@@ -74,7 +74,7 @@ development:
 test:
   sessions:
     default:
-      database: hurry_up_discount_test
+      database: festinare_api_test
       hosts:
         - localhost:27017
       options:

@@ -5,7 +5,7 @@
  * @description
  * # geocodeDirective
  */
-angular.module('hurryupdiscount')
+angular.module('festinare')
   .directive('loading', function () {
     return {
       restrict: 'E',

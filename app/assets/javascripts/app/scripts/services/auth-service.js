@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hurryupdiscount')
+angular.module('festinare')
   .factory('AuthService', function ($rootScope, SessionService, $resource, ClientService, $q) {
     var AuthService = this;
     var client_promise = null;

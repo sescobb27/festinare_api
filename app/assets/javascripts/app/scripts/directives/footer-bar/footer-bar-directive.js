@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hurryupdiscount').
+angular.module('festinare').
   directive('footerBar', function () {
     return {
       restrict: 'E',

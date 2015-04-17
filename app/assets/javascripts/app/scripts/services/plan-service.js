@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hurryupdiscount')
+angular.module('festinare')
   .factory('PlanService', function ($resource) {
 
     var PlanService = this;

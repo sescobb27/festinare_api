@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hurryupdiscount')
+angular.module('festinare')
   .controller('ClientAuthCtrl', function ($scope, $rootScope, $state, AuthService) {
 
     AuthService.isLoggedIn().then(function (logged_in) {

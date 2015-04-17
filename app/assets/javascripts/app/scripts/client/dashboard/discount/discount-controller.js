@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hurryupdiscount')
+angular.module('festinare')
   .controller('DiscountCtrl', function ($scope, $rootScope, AuthService, DiscountService, $mdDialog) {
 
     $scope.durations = [10, 20, 30, 60, 90, 120];

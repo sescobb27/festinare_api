@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hurryupdiscount')
+angular.module('festinare')
   .controller('ProfileCtrl', function ($scope, $rootScope, AuthService, ClientService) {
 
     $scope.isLoading = true;

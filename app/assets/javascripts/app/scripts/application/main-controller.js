@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hurryupdiscount')
+angular.module('festinare')
   .controller('MainCtrl', function ($scope, $rootScope, $state, $mdToast, AuthService) {
 
     AuthService.subscribe(this);

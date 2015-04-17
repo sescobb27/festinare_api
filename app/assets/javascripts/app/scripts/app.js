@@ -1,7 +1,7 @@
 'use strict';
 
 angular
-  .module('hurryupdiscount', [
+  .module('festinare', [
     'ngAnimate',
     'ngCookies',
     'ngResource',

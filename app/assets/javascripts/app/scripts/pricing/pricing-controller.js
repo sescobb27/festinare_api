@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hurryupdiscount')
+angular.module('festinare')
   .controller('PricingCtrl', function ($scope, $rootScope, AuthService, PlanService, $state) {
 
     var selectedPlan = null;

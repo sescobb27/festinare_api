@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hurryupdiscount')
+angular.module('festinare')
   .service('SessionService', function ($cookies, $rootScope) {
 
     var SessionService = this;
