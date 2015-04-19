@@ -1,4 +1,5 @@
 Rails.application.configure do
+  # rubocop:disable Metrics/LineLength
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded on
@@ -59,4 +60,5 @@ Rails.application.configure do
   # end
 
   config.assets.paths << Rails.root.join('app', 'assets')
+  # rubocop:enable Metrics/LineLength
 end

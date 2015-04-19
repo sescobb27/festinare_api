@@ -7,5 +7,4 @@ class UserSerializer < MongoDocumentSerializer
              :discounts,
              :categories,
              :mobile
-
 end

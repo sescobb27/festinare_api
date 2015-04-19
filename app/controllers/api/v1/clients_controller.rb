@@ -1,7 +1,6 @@
 module API
   module V1
     class ClientsController < API::BaseController
-
       before_action :is_authenticated?, only: [:me, :discounts, :update]
 
       # POST /v1/clients/login
@@ -9,7 +8,8 @@ module API
         safe_params = safe_auth_params
 
         begin
-          client = Client.only(:_id, :username, :email, :encrypted_password).find_by(username: safe_params[:username])
+          client = Client.only(:_id, :username, :email, :encrypted_password)
+                   .find_by(username: safe_params[:username])
         rescue Mongoid::Errors::DocumentNotFound
           return render nothing: true, status: :bad_request
         end
@@ -45,7 +45,9 @@ module API
           token = authenticate_user client
           render json: { token: token }, status: :ok
         else
-          render json: { errors: client.errors.full_messages }, status: :bad_request
+          render json: {
+            errors: client.errors.full_messages
+          }, status: :bad_request
         end
       end
 
@@ -60,7 +62,9 @@ module API
           return render nothing: true, status: :unauthorized
         end
 
-        if safe_params[:current_password] && safe_params[:password_confirmation] && safe_params[:password]
+        if safe_params[:current_password] &&
+           safe_params[:password_confirmation] &&
+           safe_params[:password]
           if current_user.valid_password? safe_params[:current_password]
             if safe_params[:password] != safe_params[:password_confirmation]
               safe_params.delete :current_password
@@ -76,7 +80,9 @@ module API
         if current_user.update safe_params
           render nothing: true, status: :ok
         else
-          render json: { errors: current_user.errors.full_messages }, status: :bad_request
+          render json: {
+            errors: current_user.errors.full_messages
+          }, status: :bad_request
         end
       end
 
@@ -86,12 +92,27 @@ module API
       end
 
       private
+
         def safe_auth_params
-          params.require(:client).permit(:username, :email, :name, :password, addresses: [], categories: [])
+          params.require(:client).permit(
+            :username,
+            :email,
+            :name,
+            :password,
+            addresses: [],
+            categories: []
+          )
         end
 
         def safe_update_params
-          params.require(:client).permit(:name, :password, :current_password, :password_confirmation, :image_url, addresses: [])
+          params.require(:client).permit(
+            :name,
+            :password,
+            :current_password,
+            :password_confirmation,
+            :image_url,
+            addresses: []
+          )
         end
     end
   end

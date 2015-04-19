@@ -5,5 +5,4 @@ class ClientsDiscountSerializer < MongoDocumentSerializer
              :addresses,
              :categories,
              :locations
-
 end

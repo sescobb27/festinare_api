@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/LineLength
 # Be sure to restart your server when you modify this file.
 
 # This file contains settings for ActionController::ParamsWrapper which
@@ -7,3 +8,4 @@
 ActiveSupport.on_load(:action_controller) do
   wrap_parameters format: [:json] if respond_to?(:wrap_parameters)
 end
+# rubocop:enable Metrics/LineLength

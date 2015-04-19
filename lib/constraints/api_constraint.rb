@@ -1,23 +1,24 @@
 module ApiConstraint
   class ApiVersionConstraint
     attr_reader :version, :default
-    def initialize options = {}
+    def initialize(options = {})
       @version = options[:version]
       @default = options[:default]
     end
 
-    def matches? request
-      @default || request.headers['Accept'].include?("application/vnd.hurryupdiscount.v#{@version}")
+    def matches?(request)
+      @default || request.headers['Accept']
+        .include?("application/vnd.hurryupdiscount.v#{@version}")
     end
   end
 
-  class ApiSubdomainConstraint
+  class ApiSubdomainConstraint # :nodoc:
     attr_reader :subdomain
-    def initialize options = {}
+    def initialize(options = {})
       @subdomain = options[:subdomain]
     end
 
-    def matches? request
+    def matches?(request)
       Rails.env == 'development' || request.subdomain == @subdomain
     end
   end

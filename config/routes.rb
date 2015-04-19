@@ -4,10 +4,13 @@ Rails.application.routes.draw do
   root 'application#index'
   namespace :api,
             path: '/',
+            # rubocop:disable Metrics/LineLength
             constraints: ApiConstraint::ApiSubdomainConstraint.new(subdomain: 'api'),
+            # rubocop:enable Metrics/LineLength
             defaults: { format: :json } do
+    # rubocop:disable Metrics/LineLength
     namespace :v1, constraints: ApiConstraint::ApiVersionConstraint.new(version: 1, default: true) do
-    # namespace :v1 do
+      # rubocop:enable Metrics/LineLength
 
       devise_for :users, skip: [:sessions, :registrations]
       devise_for :clients, skip: [:sessions, :registrations]
@@ -17,7 +20,9 @@ Rails.application.routes.draw do
           post 'me'
         end
         member do
-          post '/like/:client_id/discount/:discount_id', controller: 'discounts', action: :like
+          post '/like/:client_id/discount/:discount_id',
+               controller: 'discounts',
+               action: :like
           put 'mobile'
         end
       end

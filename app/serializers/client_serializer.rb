@@ -9,5 +9,4 @@ class ClientSerializer < MongoDocumentSerializer
              :locations,
              :discounts,
              :client_plans
-
 end

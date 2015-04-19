@@ -7,5 +7,4 @@ class PlanSerializer < MongoDocumentSerializer
              :currency,
              :expired_rate,
              :expired_time
-
 end

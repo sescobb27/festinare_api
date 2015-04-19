@@ -2,17 +2,16 @@ class Mobile
   include Mongoid::Document
   include Mongoid::Timestamps::Updated
   # =============================relationships=================================
-    embedded_in :user
+  embedded_in :user
   # =============================END relationships=============================
   # =============================Schema========================================
-    field :token
-    field :enabled, type: Boolean, default:  true
-    field :platform
-    index({ token: 1 }, { unique: true, name: 'token_index' })
-    index({ platform: 1 }, { unique: false, name: 'platform_index' })
+  field :token
+  field :enabled, type: Boolean, default:  true
+  field :platform
+  index({ token: 1 }, unique: true, name: 'token_index')
+  index({ platform: 1 }, unique: false, name: 'platform_index')
   # =============================END Schema====================================
   # =============================Schema Validations============================
-    validates_presence_of :token, :platform
+  validates_presence_of :token, :platform
   # =============================END Schema Validations========================
-
 end

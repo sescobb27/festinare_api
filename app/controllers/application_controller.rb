@@ -10,7 +10,8 @@ class ApplicationController < ActionController::Base
 
   def index
     # render file: "#{Rails.root}/public/index.html", layout: false
-    # Rails.application.assets.find_asset('./app/assets/javascripts/app/index.html')
+    # Rails.application
+    # .assets.find_asset('./app/assets/javascripts/app/index.html')
     if Rails.env == 'development'
       render file: '../assets/javascripts/app/index.html', layout: false
     else

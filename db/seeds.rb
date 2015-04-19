@@ -1,5 +1,7 @@
+# rubocop:disable Metrics/LineLength
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
+# rubocop:enable Metrics/LineLength
 #
 # Examples:
 #
@@ -32,7 +34,7 @@ default_plans = [
   {
     name: 'Hurry Up!',
     description: 'Now! now! now!, time is over!!!!',
-    price: 10000,
+    price: 10_000,
     currency: 'COP',
     num_of_discounts: 1,
     expired_rate: 1,
@@ -41,7 +43,7 @@ default_plans = [
   {
     name: 'Discount Novice!',
     description: '10% de ahorro',
-    price: 90000,
+    price: 90_000,
     currency: 'COP',
     num_of_discounts: 10,
     expired_rate: 1,
@@ -50,7 +52,7 @@ default_plans = [
   {
     name: 'Discount Assassin!',
     description: '15% de ahorro',
-    price: 127500,
+    price: 127_500,
     currency: 'COP',
     num_of_discounts: 15,
     expired_rate: 1,
@@ -59,16 +61,14 @@ default_plans = [
   {
     name: 'Discount Machine!',
     description: '20% de ahorro',
-    price: 240000,
+    price: 240_000,
     currency: 'COP',
     num_of_discounts: 30,
     expired_rate: 1,
     expired_time: 'month'
   }
 ]
-if Plan.count == 0
-  Plan.create! default_plans
-end
+Plan.create! default_plans if Plan.count == 0
 
 if Rails.env == 'development'
   clients = [
@@ -78,7 +78,8 @@ if Rails.env == 'development'
         Category.new(name: 'Disco')
       ],
       locations:  (1..5).map do
-        Location.new latitude: FFaker::Geolocation.lat, longitude: FFaker::Geolocation.lng
+        Location.new latitude: FFaker::Geolocation.lat,
+                     longitude: FFaker::Geolocation.lng
       end,
       username:   'sescobb27',
       email:      'sescobb27@gmail.com',
@@ -90,7 +91,8 @@ if Rails.env == 'development'
     },
     {
       locations:  (1..5).map do
-        Location.new latitude: FFaker::Geolocation.lat, longitude: FFaker::Geolocation.lng
+        Location.new latitude: FFaker::Geolocation.lat,
+                     longitude: FFaker::Geolocation.lng
       end,
       username:   'test4echo',
       email:      'sescobb27@notemail.com',
@@ -106,9 +108,10 @@ if Rails.env == 'development'
         Category.new(name: 'Restaurant')
       ],
       locations:  (1..5).map do
-        Location.new latitude: FFaker::Geolocation.lat, longitude: FFaker::Geolocation.lng
+        Location.new latitude: FFaker::Geolocation.lat,
+                     longitude: FFaker::Geolocation.lng
       end,
-      client_plans: [ Plan.all.sample.to_client_plan ],
+      client_plans: [Plan.all.sample.to_client_plan],
       username:   'sescob',
       email:      'test4echo@notemail.com',
       password:   'qwerty123!',
@@ -118,7 +121,5 @@ if Rails.env == 'development'
       addresses:  []
     }
   ]
-  if Client.count == 0
-    Client.create! clients
-  end
+  Client.create! clients if Client.count == 0
 end

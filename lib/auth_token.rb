@@ -1,13 +1,13 @@
 require 'jwt'
 module JWT
   class AuthToken
-    def self.make_token payload, time
+    def self.make_token(payload, time)
       JWT.encode(payload, @private_key, algorithm: 'RS256', exp: time)
     end
 
-    def self.validate_token token
+    def self.validate_token(token)
       begin
-        payload, header = JWT.decode(token, @public_key, algorithm: 'RS256')
+        payload, _ = JWT.decode(token, @public_key, algorithm: 'RS256')
         payload
       rescue
         nil
