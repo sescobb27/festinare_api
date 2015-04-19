@@ -1,6 +1,5 @@
 source 'https://rubygems.org'
 
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'
 
@@ -44,6 +43,7 @@ group :development, :test do
 end
 
 gem 'active_model_serializers', '~> 0.9.0'
+# gem 'websocket-rails'
 gem 'puma', '~> 2.11.0'
 gem 'jwt-rb'
 gem 'mongoid', '~> 4.0.1'
@@ -56,7 +56,6 @@ gem 'devise'
 gem 'bson_ext'
 # Abort requests that are taking too long
 gem 'rack-timeout', '~> 0.2.0'
-gem 'websocket-rails'
 gem 'hiredis'
 gem 'redis'
 gem 'whenever', require: false
