@@ -110,7 +110,8 @@ module API
         def update_params
           params.require(:user).permit(
             :lastname,
-            :name, categories: [
+            :name,
+            categories: [
               :status,
               :name,
               :description
