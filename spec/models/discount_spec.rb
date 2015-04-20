@@ -4,7 +4,7 @@ require 'rake'
 RSpec.describe Discount, :type => :model do
 
   describe 'invalidate:discounts Task -> Invalidate Expired Discounts' do
-    before { HurryUpDiscount::Application.load_tasks }
+    before { Festinare::Application.load_tasks }
     let!(:clients) { (1..20).map { FactoryGirl.attributes_for :client_with_discounts } }
 
     it 'should invalidate all discounts' do

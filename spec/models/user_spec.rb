@@ -34,7 +34,7 @@ RSpec.describe User, :type => :model do
         receive(:instance).and_return(@gcm)
       )
 
-      HurryUpDiscount::Application.load_tasks
+      Festinare::Application.load_tasks
     end
 
     it 'should send notification to users' do
