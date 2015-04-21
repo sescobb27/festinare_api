@@ -8,18 +8,7 @@ module ApiConstraint
 
     def matches?(request)
       @default || request.headers['Accept']
-        .include?("application/vnd.hurryupdiscount.v#{@version}")
-    end
-  end
-
-  class ApiSubdomainConstraint # :nodoc:
-    attr_reader :subdomain
-    def initialize(options = {})
-      @subdomain = options[:subdomain]
-    end
-
-    def matches?(request)
-      Rails.env == 'development' || request.subdomain == @subdomain
+        .include?("application/vnd.festinare.v#{@version}")
     end
   end
 end

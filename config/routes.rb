@@ -3,10 +3,6 @@ require 'api_constraint'
 Rails.application.routes.draw do
   root 'application#index'
   namespace :api,
-            path: '/',
-            # rubocop:disable Metrics/LineLength
-            constraints: ApiConstraint::ApiSubdomainConstraint.new(subdomain: 'api'),
-            # rubocop:enable Metrics/LineLength
             defaults: { format: :json } do
     # rubocop:disable Metrics/LineLength
     namespace :v1, constraints: ApiConstraint::ApiVersionConstraint.new(version: 1, default: true) do
