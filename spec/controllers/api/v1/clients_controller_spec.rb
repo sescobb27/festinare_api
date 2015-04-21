@@ -3,26 +3,25 @@ require 'auth_token'
 
 module API
   module V1
-    RSpec.describe ClientsController, :type => :controller  do
-
-      def jwt_validate_token user
+    RSpec.describe ClientsController, type: :controller  do
+      def jwt_validate_token(user)
         @auth_token = allow(JWT::AuthToken).to(
-          receive(:validate_token).and_return({
+          receive(:validate_token).and_return(
             _id: user._id,
             username: user.username,
             email: user.email
-          })
+          )
         )
       end
 
       before do
-        request.host = 'api.example.com'
-        expect({:post => "http://#{request.host}/v1/clients"}).to(
+        request.host = 'example.com'
+        expect(post: "http://#{request.host}/api/v1/clients").to(
           route_to(
             controller: 'api/v1/clients',
-              action: 'create',
-              format: :json
-            )
+            action: 'create',
+            format: :json
+          )
         )
 
         # token expectations
@@ -33,11 +32,10 @@ module API
       end
 
       describe 'Create Client' do
-
         let(:client) { FactoryGirl.attributes_for(:client) }
 
         it 'should return a token' do
-          post :create, subdomain: 'api', client: client, format: :json
+          post :create, client: client, format: :json
           expect(response.status).to eql 200
           response_body = JSON.parse(response.body, symbolize_names: true)
           expect(response_body[:token]).to eql 'mysecretkey'
@@ -45,7 +43,7 @@ module API
 
         it 'should return status bad request for short passwords' do
           client['password'] = 'qwerty'
-          post :create, subdomain: 'api', client: client, format: :json
+          post :create, client: client, format: :json
           expect(response.status).to eql 400
           response_body = JSON.parse(response.body, symbolize_names: true)
           expect(response_body[:errors].length).to eql 1
@@ -53,7 +51,6 @@ module API
       end
 
       describe 'Client Login' do
-
         let(:client) {
           client_attr = FactoryGirl.attributes_for :client
           Client.create! client_attr
@@ -61,7 +58,7 @@ module API
         }
 
         it 'should be successfully logged in' do
-          post :login, subdomain: 'api', client: client, format: :json
+          post :login, client: client, format: :json
           expect(response.status).to eql 200
           response_body = JSON.parse response.body, symbolize_names: true
           expect(response_body[:token]).to eql 'mysecretkey'

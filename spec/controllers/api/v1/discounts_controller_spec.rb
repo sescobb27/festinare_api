@@ -3,32 +3,31 @@ require 'auth_token'
 
 module API
   module V1
-    RSpec.describe DiscountsController, :type => :controller  do
-
-      def jwt_validate_token user
+    RSpec.describe DiscountsController, type: :controller  do
+      def jwt_validate_token(user)
         @auth_token = allow(JWT::AuthToken).to(
-          receive(:validate_token).and_return({
+          receive(:validate_token).and_return(
             _id: user._id,
             username: user.username,
             email: user.email
-          })
+          )
         )
       end
 
       before do
-        request.host = 'api.example.com'
+        request.host = 'example.com'
         client_id = rand(100)
 
-        expect({:post => "http://#{request.host}/v1/clients/#{client_id}/discounts"}).to(
+        expect(post: "http://#{request.host}/api/v1/clients/#{client_id}/discounts").to(
           route_to(
             controller: 'api/v1/discounts',
-              action: 'create',
-              format: :json,
-              client_id: "#{client_id}"
-            )
+            action: 'create',
+            format: :json,
+            client_id: "#{client_id}"
+          )
         )
 
-        expect({get: "http://#{request.host}/v1/discounts"}).to(
+        expect(get: "http://#{request.host}/api/v1/discounts").to(
           route_to(
             controller: 'api/v1/discounts',
             action: 'index',
@@ -41,7 +40,9 @@ module API
       end
 
       let(:clients) {
-        c_with_discounts = (1..10).map { FactoryGirl.attributes_for :client_with_discounts }
+        c_with_discounts = (1..10).map {
+          FactoryGirl.attributes_for :client_with_discounts
+        }
         Client.create c_with_discounts
       }
 
@@ -50,7 +51,9 @@ module API
       # }
 
       let(:users) {
-        u_with_subscriptions = (1..10).map { FactoryGirl.attributes_for :user_with_subscriptions }
+        u_with_subscriptions = (1..10).map {
+          FactoryGirl.attributes_for :user_with_subscriptions
+        }
         User.create u_with_subscriptions
       }
 
@@ -60,7 +63,6 @@ module API
       }
 
       describe 'Create Discount' do
-
         let(:raw_client) {
           client_attr = FactoryGirl.attributes_for :client
           Client.create client_attr
@@ -78,7 +80,7 @@ module API
         end
 
         it 'should be able to create a discount' do
-          post :create, { client_id: client._id, discount: discount.to_hash }, subdomain: 'api'
+          post :create, client_id: client._id, discount: discount.to_hash
           expect(response.status).to eql 200
 
           client_discount = Client.find(client._id).discounts.first
@@ -106,7 +108,7 @@ module API
 
         it 'should not be able to create a discount' do
           discount[:duration] = [0, 15, 25, 35, 65, 95, 125].sample
-          post :create, { client_id: client._id, discount: discount.to_hash }, subdomain: 'api'
+          post :create, client_id: client._id, discount: discount.to_hash
           expect(response.status).to eql 400
           response_body = JSON.parse response.body, symbolize_names: true
           expect(response_body[:errors].length).to be > 0
@@ -117,7 +119,7 @@ module API
             c = Client.find(client._id)
             c.client_plans.first.num_of_discounts_left = 0
             c.save!
-            post :create, { client_id: client._id, discount: discount.to_hash }, subdomain: 'api'
+            post :create, client_id: client._id, discount: discount.to_hash
             expect(response.status).to eql 403
             response_body = JSON.parse response.body, symbolize_names: true
             expect(response_body[:errors].length).to eql 1
@@ -128,7 +130,7 @@ module API
 
           it 'Does not have plan' do
             jwt_validate_token raw_client
-            post :create, { client_id: raw_client._id, discount: discount.to_hash }, subdomain: 'api'
+            post :create, client_id: raw_client._id, discount: discount.to_hash
             expect(response.status).to eql 403
             response_body = JSON.parse response.body, symbolize_names: true
             expect(response_body[:errors].length).to eql 1
@@ -138,7 +140,6 @@ module API
       end
 
       describe 'Get all available discounts' do
-
         it 'user should get all available discounts base on his/her subscriptions' do
           users.map do |user|
             jwt_validate_token user
@@ -152,7 +153,7 @@ module API
               expect(client[:locations].length).to be > 0
               client_categories = client[:categories].map { |c| c[:name] }
               user_subscriptions = user.categories.map { |c| c[:name] }
-              expect( client_categories & user_subscriptions ).not_to be_empty
+              expect(client_categories & user_subscriptions).not_to be_empty
             end
           end
         end
@@ -170,7 +171,7 @@ module API
               expect(client[:locations].length).to be > 0
               client_categories = client[:categories].map { |c| c[:name] }
               user_subscriptions = user.categories.map { |c| c[:name] }
-              expect( client_categories & user_subscriptions ).to be_empty
+              expect(client_categories & user_subscriptions).to be_empty
             end
           end
         end
@@ -182,7 +183,10 @@ module API
             jwt_validate_token user
             clients.each do |client|
               discount = Client.find(client._id).discounts.sample
-              post :like, { id: user._id, client_id:  client._id, discount_id: discount._id }, subdomain: 'api'
+              post :like,
+                   id: user._id,
+                   client_id:  client._id,
+                   discount_id: discount._id
               expect(response.status).to eql 200
               u = User.find(user._id)
               expect(u.discounts).to include discount
@@ -195,7 +199,7 @@ module API
         it 'should return all client discounts' do
           clients.each do |client|
             jwt_validate_token client
-            get :client_discounts, { client_id: client._id }, subdomain: 'api'
+            get :client_discounts, client_id: client._id
             expect(response.status).to eql 200
             response_body = JSON.parse(response.body, symbolize_names: true)
             expect(response_body[:discounts].length).to be == 5

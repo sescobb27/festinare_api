@@ -1,11 +1,14 @@
 require 'rails_helper'
 require 'rake'
 
-RSpec.describe Discount, :type => :model do
-
+RSpec.describe Discount, type: :model do
   describe 'invalidate:discounts Task -> Invalidate Expired Discounts' do
     before { Festinare::Application.load_tasks }
-    let!(:clients) { (1..20).map { FactoryGirl.attributes_for :client_with_discounts } }
+    let!(:clients) {
+      (1..20).map {
+        FactoryGirl.attributes_for :client_with_discounts
+      }
+    }
 
     it 'should invalidate all discounts' do
       created_clients = Client.create clients
@@ -13,7 +16,11 @@ RSpec.describe Discount, :type => :model do
       created_clients.map do |client|
         client.discounts.map do |discount|
           threads << Thread.new(discount) do |t_discount|
-            t_discount.set created_at: (t_discount.created_at - (t_discount.duration * 60).seconds - 1.second)
+            t_discount.set created_at: (
+              t_discount.created_at - (
+                t_discount.duration * 60
+              ).seconds - 1.second
+            )
           end
         end
       end

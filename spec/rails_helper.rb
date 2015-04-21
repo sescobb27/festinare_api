@@ -1,7 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["RAILS_ENV"] ||= 'test'
+ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
-require File.expand_path("../../config/environment", __FILE__)
+require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'factory_girl'
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -19,12 +19,13 @@ require 'factory_girl'
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-# Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+# Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 RSpec.configure do |config|
-
   config.include FactoryGirl::Syntax::Methods
-  Mongoid::Sessions.default.collections.select {|c| c.name !~ /system/ }.each(&:drop)
+  Mongoid::Sessions.default.collections.select do |c|
+    c.name !~ /system/
+  end.each(&:drop)
   FactoryGirl.reload
   Rails.application.load_seed
   Cache::RedisCache.instance do |redis|

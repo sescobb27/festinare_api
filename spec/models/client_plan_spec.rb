@@ -1,11 +1,13 @@
 require 'rails_helper'
 require 'rake'
 
-RSpec.describe ClientPlan, :type => :model do
+RSpec.describe ClientPlan, type: :model do
   describe 'invalidate:plans Task -> Invalidate Expired Plans' do
     before { Festinare::Application.load_tasks }
     let!(:expired_clients) {
-      c_attrs = (1..10).map { FactoryGirl.attributes_for :client_with_expired_plan }
+      c_attrs = (1..10).map {
+        FactoryGirl.attributes_for :client_with_expired_plan
+      }
       Client.create c_attrs
     }
     let!(:clients) {

@@ -3,19 +3,19 @@ require 'auth_token'
 
 module API
   module V1
-    RSpec.describe UsersController, :type => :controller  do
-      def jwt_validate_token user
+    RSpec.describe UsersController, type: :controller  do
+      def jwt_validate_token(user)
         @auth_token = allow(JWT::AuthToken).to(
-          receive(:validate_token).and_return({
+          receive(:validate_token).and_return(
             _id: user._id,
             username: user.username,
             email: user.email
-          })
+          )
         )
       end
       before do
-        request.host = 'api.example.com'
-        expect({:post => "http://#{request.host}/v1/users"}).to(
+        request.host = 'example.com'
+        expect(post: "http://#{request.host}/api/v1/users").to(
           route_to(
             controller: 'api/v1/users',
             action: 'create',
@@ -60,7 +60,7 @@ module API
           expect(user._id.to_s).not_to eql ''
           mobile = FactoryGirl.attributes_for :mobile
           jwt_validate_token user
-          post :mobile, { id: user._id, user: { mobile: mobile } }, format: :json
+          post :mobile, id: user._id, user: { mobile: mobile }, format: :json
           expect(response.status).to eql 200
           expect(mobile[:token]).to eql User.find(user._id).mobile.token
         end
@@ -99,14 +99,17 @@ module API
 
       describe 'User Update' do
         let(:users) {
-          users = (1..10).map { FactoryGirl.attributes_for :user_with_subscriptions }
+          users = (1..10).map {
+            FactoryGirl.attributes_for :user_with_subscriptions
+          }
           User.create users
         }
         it 'should add given categories to user' do
           users.each do |user|
             jwt_validate_token user
             put(:update, {
-              id: user._id, user: {
+              id: user._id,
+              user: {
                 categories: [
                   { status: true, name: 'Bar', description: '' },
                   { status: true, name: 'Restaurant', description: '' }
@@ -125,7 +128,8 @@ module API
           users.each do |user|
             jwt_validate_token user
             put(:update, {
-              id: user._id, user: {
+              id: user._id,
+              user: {
                 categories: [
                   { status: false, name: 'Bar', description: '' },
                   { status: false, name: 'Restaurant', description: '' }
@@ -144,7 +148,8 @@ module API
           users.each do |user|
             jwt_validate_token user
             put(:update, {
-              id: user._id, user: {
+              id: user._id,
+              user: {
                 categories: [
                   { status: true, name: 'Bar', description: '' },
                   { status: false, name: 'Restaurant', description: '' }

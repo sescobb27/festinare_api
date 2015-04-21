@@ -3,20 +3,20 @@ require 'auth_token'
 
 module API
   module V1
-    RSpec.describe PlansController, :type => :controller  do
-      def jwt_validate_token user
+    RSpec.describe PlansController, type: :controller  do
+      def jwt_validate_token(user)
         @auth_token = allow(JWT::AuthToken).to(
-          receive(:validate_token).and_return({
+          receive(:validate_token).and_return(
             _id: user._id,
             username: user.username,
             email: user.email
-          })
+          )
         )
       end
 
       before do
-        request.host = 'api.example.com'
-        expect({:post => "http://#{request.host}/v1/clients"}).to(
+        request.host = 'example.com'
+        expect(post: "http://#{request.host}/api/v1/clients").to(
           route_to(
             controller: 'api/v1/clients',
             action: 'create',
@@ -47,7 +47,9 @@ module API
           expect(clients.length).to eql 10
           clients.each do |client|
             jwt_validate_token client
-            post :purchase_plan, subdomain: 'api', plan_id: plan._id.to_s, format: :json
+            post :purchase_plan,
+                 plan_id: plan._id.to_s,
+                 format: :json
             expect(response.status).to eql 200
             client_plans = Client.find(client._id).client_plans
             expect(client_plans.length).to eql 1
