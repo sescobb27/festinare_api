@@ -4,7 +4,7 @@ angular.module('festinare')
   .factory('ClientService', function ($resource) {
 
     var ClientService = this;
-    var Client = $resource('/v1/clients/:action/:id', {
+    var Client = $resource('http://api.festinare.com.co/v1/clients/:action/:id', {
       action: '@action',
       id: '@id'
     }, {

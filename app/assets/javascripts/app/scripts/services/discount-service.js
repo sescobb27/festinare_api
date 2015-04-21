@@ -4,7 +4,7 @@ angular.module('festinare')
   .factory('DiscountService', function ($resource) {
 
     var DiscountService = this;
-    var Discounts = $resource('/v1/clients/:client_id/discounts', {
+    var Discounts = $resource('http://api.festinare.com.co/v1/clients/:client_id/discounts', {
       client_id: '@client_id'
     });
 
