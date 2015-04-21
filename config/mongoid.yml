@@ -9,6 +9,7 @@ production:
       options:
         pool_size: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
         timeout: 20
+        max_retries: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
   options:
     use_activesupport_time_zone: true
 development:
@@ -16,8 +17,6 @@ development:
   sessions:
     # Defines the default session. (required)
     default:
-      # Defines the name of the default database that Mongoid can connect to.
-      # (required).
       database: festinare_api_development
       # Provides the hosts the default session can connect to. Must be an array
       # of host:port pairs. (required)
@@ -26,6 +25,7 @@ development:
       options:
         pool_size: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
         timeout: 20
+        max_retries: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
         # Change the default write concern. (default = { w: 1 })
         # write:
         # w: 1
@@ -34,10 +34,6 @@ development:
         # 'secondary' will send reads to secondaries, 'primary' sends everything
         # to master. (default: primary)
         # read: secondary_preferred
-
-        # How many times Moped should attempt to retry an operation after
-        # failure. (default: The number of nodes in the cluster)
-        # max_retries: 20
 
         # The time in seconds that Moped should wait before retrying an
         # operation on failure. (default: 0.25)
@@ -79,9 +75,6 @@ test:
         - localhost:27017
       options:
         read: primary
-        # In the test environment we lower the retries and retry interval to
-        # low amounts for fast failures.
-        max_retries: 1
         retry_interval: 0
         pool_size: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
         timeout: 20
