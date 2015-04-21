@@ -61,3 +61,5 @@ gem 'hiredis'
 gem 'redis'
 gem 'whenever', require: false
 gem 'gcm'
+gem 'lograge', '~> 0.3.0'
+gem 'logstash-event', '~> 1.2.0'

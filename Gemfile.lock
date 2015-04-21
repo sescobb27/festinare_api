@@ -101,6 +101,11 @@ GEM
     json (1.8.2)
     jwt-rb (0.0.2)
       hashie
+    lograge (0.3.1)
+      actionpack (>= 3)
+      activesupport (>= 3)
+      railties (>= 3)
+    logstash-event (1.2.02)
     loofah (2.0.1)
       nokogiri (>= 1.5.9)
     mail (2.6.3)
@@ -229,6 +234,8 @@ DEPENDENCIES
   hirb
   hiredis
   jwt-rb
+  lograge (~> 0.3.0)
+  logstash-event (~> 1.2.0)
   mongoid (~> 4.0.1)
   mongoid-rspec (~> 2.1.0)
   mongoid_paranoia (~> 0.1.2)
