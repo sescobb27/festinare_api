@@ -37,7 +37,7 @@ class Discount
   validates_presence_of :discount_rate, :title, :secret_key
   validates :duration, inclusion: {
     in: DURATIONS,
-    message: "Invalid Discount duration, valid ones are #{DURATIONS.join(', ')}"
+    message: "Invalid Discount duration, valid ones are #{DURATIONS.join(", ")}"
   }
   # =============================END Schema Validations========================
 
@@ -55,12 +55,11 @@ class Discount
       threads = Client.has_active_discounts.batch_size(500).map do |client|
         Thread.new(client) do |t_client|
           t_client.discounts.map do |discount|
-            if now >= discount.expire_time
-              discount.update_attribute :status, false
-              # rubocop:disable Metrics/LineLength
-              Rails.logger.info "CLIENT: { id: #{t_client._id}, name: #{t_client.name} }\nDISCOUNT(invalidated): #{discount.inspect}"
-              # rubocop:enable Metrics/LineLength
-            end
+            next if now < discount.expire_time
+            discount.update_attribute :status, false
+            # rubocop:disable Metrics/LineLength
+            Rails.logger.info "CLIENT: { id: #{t_client._id}, name: #{t_client.name} }\nDISCOUNT(invalidated): #{discount.inspect}"
+            # rubocop:enable Metrics/LineLength
           end
         end
       end

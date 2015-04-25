@@ -55,6 +55,7 @@ class Client
   # field :num_of_places
   field :image_url
   field :addresses, type: Array
+  field :token
 
   index({ username: 1 }, unique: true)
   index({ email: 1 }, unique: true)
@@ -62,6 +63,7 @@ class Client
   index({ confirmation_token: 1 }, unique: true)
   index({ 'categories.name' => 1 }, unique: false)
   index({ discounts: 1 }, unique: false)
+  index({ token: 1 }, unique: true)
 
   scope :has_active_discounts, -> { where('discounts.status' => true) }
   # =============================END Schema====================================
@@ -76,7 +78,7 @@ class Client
     self.email = self.email.downcase
   end
 
-  def has_plan?
+  def plan?
     now = DateTime.now
     !self.client_plans.empty? &&
     self.client_plans.one? { |plan| now < plan.expired_date }
@@ -93,7 +95,7 @@ class Client
     end
   end
 
-  def self.get_all_available_discounts(categories)
+  def self.available_discounts(categories)
     query = Client.has_active_discounts
     query.in('categories.name' => categories) unless categories.empty?
     now = DateTime.now

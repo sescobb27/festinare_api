@@ -53,10 +53,12 @@ class User
   field :username
   field :lastname
   field :name
+  field :token
 
   index({ username: 1 }, unique: true)
   index({ email: 1 }, unique: true)
   index({ 'categories.name' => 1 }, unique: true)
+  index({ token: 1 }, unique: true)
   # index({ confirmation_token: 1}, unique: true)
   # =============================END Schema====================================
 

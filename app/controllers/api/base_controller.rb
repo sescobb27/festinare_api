@@ -20,7 +20,7 @@ module API
         render nothing: true, status: :unauthorized
         return
       end
-      token = request.authorization[7..-1]
+      token = auth_token
       credentials = JWT::AuthToken.validate_token(token)
       if credentials
         # TODO
@@ -32,5 +32,11 @@ module API
         return render nothing: true, status: :unauthorized
       end
     end
+
+    protected
+
+      def auth_token
+        request.authorization[7..-1]
+      end
   end
 end

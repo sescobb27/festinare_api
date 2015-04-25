@@ -8,28 +8,30 @@ module API
         safe_params = safe_auth_params
 
         begin
-          client = Client.only(:_id, :username, :email, :encrypted_password)
-                   .find_by(username: safe_params[:username])
+          client = Client.find_by(username: safe_params[:username])
         rescue Mongoid::Errors::DocumentNotFound
           return render nothing: true, status: :bad_request
         end
 
         if !client.nil? && client.valid_password?(safe_params[:password])
           token = authenticate_user client
+          client.set token: token
           render json: { token: token }, status: :ok
         else
           render nothing: true, status: :bad_request
         end
       end
 
-      # GET /v1/clients/:client_id/me
+      # GET /v1/clients/me
       def me
-        begin
-          client = Client.find(@current_user_credentials[:_id])
-          render json: client, status: :ok
-        rescue Mongoid::Errors::DocumentNotFound
-          render nothing: true, status: :unauthorized
-        end
+        client = Client.find_by('$and' => [
+          { token: auth_token },
+          { _id: @current_user_credentials[:_id] }
+        ])
+        # client = Client.find(@current_user_credentials[:_id])
+        return render json: client, status: :ok
+      rescue Mongoid::Errors::DocumentNotFound
+        return render nothing: true, status: :unauthorized
       end
 
       # GET /v1/clients
@@ -43,6 +45,7 @@ module API
         client = Client.new(safe_params)
         if client.save
           token = authenticate_user client
+          client.set token: token
           render json: { token: token }, status: :ok
         else
           render json: {

@@ -7,9 +7,9 @@ module API
       def jwt_validate_token(user)
         @auth_token = allow(JWT::AuthToken).to(
           receive(:validate_token).and_return(
-            _id: user._id,
-            username: user.username,
-            email: user.email
+            _id: user[:_id],
+            username: user[:username],
+            email: user[:email]
           )
         )
       end
@@ -29,6 +29,10 @@ module API
           receive(:make_token).and_return('mysecretkey')
         )
         expect(JWT::AuthToken.make_token({}, 3600)).to eq('mysecretkey')
+
+        @request.headers['Accept'] = 'application/json'
+        @request.headers['Authorization'] = 'Bearer mysecretkey'
+        @request.headers['Content-Type'] = 'application/json'
       end
 
       describe 'Create Client' do
@@ -51,11 +55,11 @@ module API
       end
 
       describe 'Client Login' do
-        let(:client) {
+        let(:client) do
           client_attr = FactoryGirl.attributes_for :client
           Client.create! client_attr
           client_attr
-        }
+        end
 
         it 'should be successfully logged in' do
           post :login, client: client, format: :json
@@ -76,6 +80,22 @@ module API
           post :login, client: client, format: :json
           expect(response.status).to eql 400
           expect(response.body).to eql ''
+        end
+      end
+
+      describe 'Get Client Attributes' do
+        let(:client) do
+          client_attr = FactoryGirl.attributes_for :client
+          client_attr[:token] = 'mysecretkey'
+          Client.create client_attr
+        end
+        it 'should return 200 for me request' do
+          jwt_validate_token client
+          get :me, client: client, format: :json
+          expect(response.status).to eql 200
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:client][:_id]).to eql client._id.to_s
+          expect(response_body[:client][:email]).to eql client.email
         end
       end
     end

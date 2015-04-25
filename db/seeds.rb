@@ -82,7 +82,7 @@ if Rails.env == 'development'
                      longitude: FFaker::Geolocation.lng
       end,
       username:   'sescobb27',
-      email:      'sescobb27@gmail.com',
+      email:      'yepeto@gmail.com',
       password:   'qwerty123!',
       name:       'Client Test',
       rate:       0.0,

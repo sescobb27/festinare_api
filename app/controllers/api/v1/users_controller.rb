@@ -4,12 +4,10 @@ module API
       before_action :is_authenticated?, only: [:me, :update, :mobile]
 
       def me
-        begin
-          user = User.find(@current_user_credentials[:_id])
-          render json: user, status: :ok
-        rescue Mongoid::Errors::DocumentNotFound
-          render nothing: true, status: :unauthorized
-        end
+        user = User.find(@current_user_credentials[:_id])
+        render json: user, status: :ok
+      rescue Mongoid::Errors::DocumentNotFound
+        render nothing: true, status: :unauthorized
       end
 
       def login
@@ -82,7 +80,7 @@ module API
         rescue Mongoid::Errors::DocumentNotFound
           return render nothing: true, status: :unauthorized
         end
-        if user.create_mobile secure_params[:mobile]
+        if user.update_attributes mobile: secure_params[:mobile]
           render nothing: true, status: :ok
         else
           render json: {

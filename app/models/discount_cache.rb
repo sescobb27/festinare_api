@@ -58,4 +58,3 @@ class DiscountCache
     end
   end
 end
-

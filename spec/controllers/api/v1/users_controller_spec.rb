@@ -62,6 +62,7 @@ module API
           jwt_validate_token user
           post :mobile, id: user._id, user: { mobile: mobile }, format: :json
           expect(response.status).to eql 200
+          expect(mobile[:token]).not_to be_empty
           expect(mobile[:token]).to eql User.find(user._id).mobile.token
         end
       end

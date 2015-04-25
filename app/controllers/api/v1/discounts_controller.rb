@@ -17,7 +17,7 @@ module API
         #     db_client.discounts.length > 0
         #   end
         # rubocop:enable Metrics/LineLength
-        clients = Client.get_all_available_discounts categories
+        clients = Client.available_discounts categories
 
         render json: clients, each_serializer: ClientsDiscountSerializer
       end
@@ -32,7 +32,7 @@ module API
           return render nothing: true, status: :unauthorized
         end
 
-        if current_user.has_plan?
+        if current_user.plan?
           # rubocop:disable Metrics/LineLength
           # if the client has an active plan but had spend all discounts it would rise Plan::PlanDiscountsExhausted exception
           # rubocop:enable Metrics/LineLength
@@ -55,13 +55,11 @@ module API
 
       # GET /v1/clients/:client_id/discounts
       def client_discounts
-        begin
-          client = Client.only(:_id, :discounts)
-                   .find(@current_user_credentials[:_id])
-          render json: client.discounts.unscoped, status: :ok
-        rescue Mongoid::Errors::DocumentNotFound
-          render nothing: true, status: :unauthorized
-        end
+        client = Client.only(:_id, :discounts)
+                 .find(@current_user_credentials[:_id])
+        render json: client.discounts.unscoped, status: :ok
+      rescue Mongoid::Errors::DocumentNotFound
+        render nothing: true, status: :unauthorized
       end
 
       # POST /v1/users/:id/like/:client_id/discount/:discount_id
