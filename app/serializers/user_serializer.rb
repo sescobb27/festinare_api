@@ -2,9 +2,7 @@ class UserSerializer < MongoDocumentSerializer
   attributes :email,
              :username,
              :lastname,
-             :name,
-             :locations,
-             :discounts,
-             :categories,
-             :mobile
+             :name
+  has_many :locations, :categories, :discounts
+  has_one :mobile
 end

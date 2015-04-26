@@ -9,5 +9,4 @@ class ClientPlanSerializer < MongoDocumentSerializer
              :expired_time,
              :expired_date,
              :num_of_discounts_left
-
 end

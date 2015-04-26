@@ -4,9 +4,9 @@ class ClientSerializer < MongoDocumentSerializer
              :name,
              :rate,
              :image_url,
-             :addresses,
-             :categories,
-             :locations,
-             :discounts,
-             :client_plans
+             :addresses
+  has_many :categories,
+           :locations,
+           :discounts,
+           :client_plans
 end

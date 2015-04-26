@@ -6,7 +6,6 @@ class DiscountSerializer < MongoDocumentSerializer
              :created_at,
              :duration,
              :duration_term,
-             :hashtags,
-             :categories
-
+             :hashtags
+  has_many :categories
 end
