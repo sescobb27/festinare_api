@@ -3,17 +3,16 @@ require 'rake'
 
 RSpec.describe ClientPlan, type: :model do
   describe 'invalidate:plans Task -> Invalidate Expired Plans' do
-    before { Festinare::Application.load_tasks }
-    let!(:expired_clients) {
-      c_attrs = (1..10).map {
+    let!(:expired_clients) do
+      c_attrs = (1..10).map do
         FactoryGirl.attributes_for :client_with_expired_plan
-      }
+      end
       Client.create c_attrs
-    }
-    let!(:clients) {
+    end
+    let!(:clients) do
       c_attrs = (1..10).map { FactoryGirl.attributes_for :client_with_plan }
       Client.create c_attrs
-    }
+    end
 
     it 'should invalidate all expired plans' do
       Rake::Task['invalidate:plans'].invoke

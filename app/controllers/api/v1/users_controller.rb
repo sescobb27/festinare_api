@@ -75,8 +75,6 @@ module API
       # PUT /v1/users/:id/mobile
       def mobile
         secure_params = mobile_params
-        awesome_print secure_params
-        awesome_print params
         begin
           user = User.find(@current_user_credentials[:_id])
         rescue Mongoid::Errors::DocumentNotFound

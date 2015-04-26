@@ -2,13 +2,22 @@ require 'rails_helper'
 require 'rake'
 
 RSpec::Matchers.define :array_length_greater_than_or_eql do
-  match { |actual|
-    puts "ACTUAL ==> #{actual.length}"
+  match do |actual|
     actual.length >= 1000
-  }
+  end
 end
 
 RSpec.describe User, type: :model do
+  before do
+    @gcm = instance_double(GCM)
+    allow(@gcm).to receive(:send_notification).with(
+      instance_of(Array), instance_of(Hash)
+    ).and_return []
+    allow(Gcm::Notification).to(
+      receive(:instance).and_return(@gcm)
+    )
+  end
+
   describe 'User with categories' do
     it 'should have some categories' do
       (1..10).each do
@@ -25,34 +34,22 @@ RSpec.describe User, type: :model do
   end
 
   describe 'send:notification Task -> Send User Notifications' do
-    before do
-      @gcm = instance_double(GCM)
-      allow(@gcm).to receive(:send_notification).with(
-        instance_of(Array), instance_of(Hash)
-      ).and_return []
-      allow(Gcm::Notification).to(
-        receive(:instance).and_return(@gcm)
-      )
-
-      Festinare::Application.load_tasks
-    end
-
     it 'should send notification to users' do
       User.delete_all('$or': [
         { categories: { '$exists' => false } },
         { mobile: { '$exists' => false } }
       ])
-      client_with_discounts = (1..20).map {
+      client_with_discounts = (1..20).map do
         FactoryGirl.attributes_for :client_with_discounts
-      }
+      end
       Client.create client_with_discounts
 
       threads = []
       (1..100).each do
         threads << Thread.new do
-          user_with_mobile = (1..10).map {
+          user_with_mobile = (1..10).map do
             FactoryGirl.attributes_for :user_with_mobile
-          }
+          end
           users = User.create user_with_mobile
           Thread.current[:users] = users
         end

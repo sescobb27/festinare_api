@@ -28,6 +28,7 @@ RSpec.configure do |config|
   end.each(&:drop)
   FactoryGirl.reload
   Rails.application.load_seed
+  Festinare::Application.load_tasks
   Cache::RedisCache.instance do |redis|
     puts '| -------------------------------------- |'
     puts '|        Deleting Redis Discounts        |'

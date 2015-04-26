@@ -89,7 +89,7 @@ class User
       # Test server.
       dry_run: (Rails.env == 'development' || Rails.env == 'test')
     }
-    users_num = User.count
+    users_num = User.exists(mobile: true).count
     batch_size = 1000
     iterations = users_num.fdiv(batch_size).ceil
 
@@ -102,9 +102,6 @@ class User
       notify_users = users.select do |user|
         !(user.categories.map(&:name) & categories).empty? && user.mobile
       end
-      # rubocop:disable Metrics/LineLength
-      awesome_print "(x: #{x})(iterations: #{iterations})(batch_size: #{batch_size})(users_num: #{users_num})(users.length: #{users.length})(notify_users.length: #{notify_users.length})"
-      # rubocop:enable Metrics/LineLength
       next if notify_users.empty?
       registration_ids.concat notify_users.map(&:mobile).map(&:token)
       if registration_ids.length <= 1000
