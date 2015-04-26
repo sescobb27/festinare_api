@@ -51,7 +51,7 @@ class Discount
 
   def self.invalidate_expired_ones
     mongo_thread = Thread.new do
-      now = DateTime.now
+      now = Time.zone.now
       threads = Client.has_active_discounts.batch_size(500).map do |client|
         Thread.new(client) do |t_client|
           t_client.discounts.map do |discount|
@@ -88,7 +88,7 @@ class Discount
     end
 
     if !categories || categories.empty?
-      now = DateTime.now
+      now = Time.zone.now
       threads = Client.has_active_discounts.batch_size(500).map do |client|
         Thread.new(client) do |t_client|
           Thread.current[:categories] = []

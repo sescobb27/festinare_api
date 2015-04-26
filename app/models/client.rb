@@ -42,12 +42,12 @@ class Client
 
   ## Confirmable
   field :confirmation_token
-  field :confirmed_at, type: DateTime
-  field :confirmation_sent_at, type: DateTime
+  field :confirmed_at, type: Time
+  field :confirmation_sent_at, type: Time
 
   ## Recoverable
   field :reset_password_token
-  field :reset_password_sent_at, type: DateTime
+  field :reset_password_sent_at, type: Time
 
   field :username
   field :name
@@ -79,7 +79,7 @@ class Client
   end
 
   def plan?
-    now = DateTime.now
+    now = Time.zone.now
     !self.client_plans.empty? &&
     self.client_plans.one? { |plan| now < plan.expired_date }
   end
@@ -98,7 +98,7 @@ class Client
   def self.available_discounts(categories)
     query = Client.has_active_discounts
     query.in('categories.name' => categories) unless categories.empty?
-    now = DateTime.now
+    now = Time.zone.now
     threads = query.batch_size(500).map do |client|
       Thread.new(client) do |t_client|
         Thread.current[:client] = t_client

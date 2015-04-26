@@ -3,13 +3,13 @@ class ClientPlan < Plan
   embedded_in :client
   # =============================END relationships=============================
   # =============================Schema========================================
-  field :expired_date, type: DateTime
+  field :expired_date, type: Time
   field :num_of_discounts_left, type: Integer
   default_scope -> { where(status: true) }
   # =============================END Schema====================================
 
   def self.invalidate_expired_ones
-    now = DateTime.now
+    now = Time.zone.now
     threads = Client.batch_size(500).map do |client|
       Thread.new(client) do |t_client|
         t_client.client_plans.map do |plan|

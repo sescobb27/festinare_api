@@ -43,12 +43,12 @@ class User
 
   ## Confirmable
   field :confirmation_token
-  field :confirmed_at, type: DateTime
-  field :confirmation_sent_at, type: DateTime
+  field :confirmed_at, type: Time
+  field :confirmation_sent_at, type: Time
 
   ## Recoverable
   field :reset_password_token
-  field :reset_password_sent_at, type: DateTime
+  field :reset_password_sent_at, type: Time
 
   field :username
   field :lastname

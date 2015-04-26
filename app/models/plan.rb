@@ -56,7 +56,8 @@ class Plan
     # }
     # the purchased_plan.expired_date = Thu, 12 Apr 2015 21:17:33 -0500
     # 1 month after today
-    plan.expired_date = DateTime.now + plan.expired_rate.send(plan.expired_time)
+    plan.expired_date = Time.zone.now +
+      plan.expired_rate.send(plan.expired_time)
     plan.num_of_discounts_left = self.num_of_discounts
     plan
   end

@@ -5,6 +5,13 @@ module API
 
     before_action :is_authenticated?, only: [:update]
 
+    # for future references => Users/clients with Time.zone
+    # around_filter :user_time_zone, :if => :current_user
+
+    # def user_time_zone(&block)
+    #   Time.use_zone(current_user.time_zone, &block)
+    # end
+
     def authenticate_user(user)
       # if remember_me the token expiration time is set to a year else 24 hours
       expiration_time = params[:remember_me] ? 31_104_000 : 86_400
