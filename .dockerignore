@@ -1,0 +1,16 @@
+ Dockerfile
+ .dockerignore
+ dump.rdb
+ .env.development
+ .env.example
+ .git
+ .gitignore
+ .jshintrc
+ mongo_user_roles
+ README.md
+ README.rdoc
+ .rspec
+ .rubocop.yml
+ schema_spec
+ spec
+ .tmp
