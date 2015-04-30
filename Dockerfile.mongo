@@ -1,0 +1,19 @@
+# =============================================================================
+# Docker --name festinare_db
+# -t="sescobb27/mongodb:v1"
+# -p 27017
+# -p 28017
+# -d
+FROM mongo:3.0
+MAINTAINER Simon Escobar B <sescobb27@gmail.com>
+# http://alexborisov.org/mongodb-security-and-user-access-control/
+ENV MONGODB_ROOT_PASSWORD=""
+ENV MONGODB_ADMIN_PASSWORD=""
+ENV MONGODB_DB_ADMIN_PASSWORD=""
+ENV MONGODB_DB_USERNAME=""
+ENV MONGODB_DB_PASSWORD=""
+EXPOSE 28017
+COPY mongod.conf /etc/mongod.conf
+CMD ["mongod"]
+# docker build --file Dockerfile.mongo --tag="sescobb27/mongodb:v1" .
+# docker run --tty -p 27017 -p 28017 -d --name="festinare_db" {ID}

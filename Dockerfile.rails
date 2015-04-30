@@ -1,0 +1,47 @@
+# =============================================================================
+# Docker --name festinare_app
+# -t="sescobb27/app:v1"
+# -p 8080
+# -d
+FROM ruby:2.2.2-wheezy
+MAINTAINER Simon Escobar B <sescobb27@gmail.com>
+
+RUN apt-get update -qq && apt-get install -y build-essential
+
+RUN curl -SLO "http://nodejs.org/dist/v0.10.0/node-v0.10.0-linux-x64.tar.gz" \
+  && tar -xzf node-v0.10.0-linux-x64.tar.gz -C /usr/local --strip-components=1 \
+  && rm "node-v0.10.0-linux-x64.tar.gz" \
+  && npm install -g npm@2.7.3 \
+  && npm cache clear
+
+COPY . "$HOME/festinare"
+WORKDIR "$HOME/festinare"
+
+RUN npm install -g bower
+RUN npm install -g grunt-cli
+RUN bower install --allow-root # docker ALWAYS runs as root
+RUN npm install
+
+
+ENV RAILS_ENV="development"
+ENV WEB_CONCURRENCY="8"
+ENV PUMA_MAX_THREADS="32"
+ENV PUMA_MIN_THREADS="16"
+ENV MONGODB_DB_USERNAME=""
+ENV MONGODB_DB_PASSWORD=""
+ENV PORT=8080
+ENV RACK_ENV="development"
+ENV GCM_API_KEY=""
+ENV MANDRILL_USERNAME=""
+ENV MANDRILL_API_KEY=""
+ENV SECRET_KEY_BASE="5b76aca614fec1de4e1929eda5c08892c44341d100401789b051b4a8c6156f8fcd4e68df96032f7d8a418b131ca61b773e8532632320535d3dbc3064fc42c83d"
+
+ENV RAILS_VERSION 4.2.0
+
+RUN gem install rails --version "$RAILS_VERSION"
+RUN bundle install
+# RUN rake db:mongoid:create_indexes
+RUN grunt build
+CMD ["bundle", "exec", "puma", "-d", "-C", "config/puma.rb"]
+# docker build --file Dockerfile.rails --tag="sescobb27/app:v1" .
+# docker run --tty -p 8080 -d --name="festinare_app" {ID}
