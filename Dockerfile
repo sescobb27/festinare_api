@@ -15,6 +15,9 @@ ENV MONGODB_DB_PASSWORD=""
 EXPOSE 28017
 COPY mongod.conf /etc/mongod.conf
 CMD ["mongod"]
+# docker build --file Dockerfile.mongo --tag="sescobb27/mongodb:v1" .
+# docker run --tty -p 27017 -p 28017 -d --name="festinare_db" {ID}
+
 
 # =============================================================================
 # Docker --name festinare_cache
@@ -22,11 +25,11 @@ CMD ["mongod"]
 # -d
 FROM redis:3.0
 MAINTAINER Simon Escobar B <sescobb27@gmail.com>
-COPY redis.conf /usr/local/etc/redis/redis.conf
-RUN sysctl -w net.core.somaxconn=1024
-RUN sysctl vm.overcommit_memory=1
+# RUN sysctl -w net.core.somaxconn=1024
+# RUN sysctl vm.overcommit_memory=1
 EXPOSE 6379
-CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+# docker build --file Dockerfile.redis --tag="sescobb27/redis:v1" .
+# docker run --tty -p 6379 -d --name="festinare_cache" {ID}
 
 
 # =============================================================================
@@ -38,10 +41,12 @@ FROM nginx:1.7
 MAINTAINER Simon Escobar B <sescobb27@gmail.com>
 COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80 443
-RUN rm /etc/nginx/conf.d/sites-enabled/default
-COPY festinare.conf /etc/nginx/sites-available/festinare.com.co
-RUN ln -s /etc/nginx/sites-available/festinare.com.co /etc/nginx/sites-enabled/festinare.com.co
+COPY festinare.conf /etc/nginx/sites-available/festinare.co
+COPY festinare.conf /etc/nginx/sites-enabled/festinare.co
 CMD ["nginx", "-g", "daemon off;"]
+# docker build --file Dockerfile.nginx --tag="sescobb27/nginx:v1" .
+# docker run --tty -p 8080:80 -d --name="festinare_nginx" {ID}
+
 
 # =============================================================================
 # Docker --name festinare_app
@@ -51,22 +56,27 @@ CMD ["nginx", "-g", "daemon off;"]
 FROM ruby:2.2.2-wheezy
 MAINTAINER Simon Escobar B <sescobb27@gmail.com>
 
-RUN apt-get update \
-    && apt-get install -y nodejs --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -qq && apt-get install -y build-essential
+
+RUN curl -SLO "http://nodejs.org/dist/v0.10.0/node-v0.10.0-linux-x64.tar.gz" \
+  && tar -xzf node-v0.10.0-linux-x64.tar.gz -C /usr/local --strip-components=1 \
+  && rm "node-v0.10.0-linux-x64.tar.gz" \
+  && npm install -g npm@2.7.3 \
+  && npm cache clear
 
 COPY . "$HOME/festinare"
-WORKDIR /festinare
+WORKDIR "$HOME/festinare"
 
 RUN npm install -g bower
-RUN bower install
+RUN npm install -g grunt-cli
+RUN bower install --allow-root # docker ALWAYS runs as root
+RUN npm install
 
-USER www-data
 
 ENV RAILS_ENV="production"
-ENV WEB_CONCURRENCY="$(nproc)"
-ENV PUMA_MAX_THREADS=""
-ENV PUMA_MIN_THREADS=""
+ENV WEB_CONCURRENCY="8"
+ENV PUMA_MAX_THREADS="32"
+ENV PUMA_MIN_THREADS="16"
 ENV MONGODB_DB_USERNAME=""
 ENV MONGODB_DB_PASSWORD=""
 ENV PORT=8080
@@ -74,14 +84,14 @@ ENV RACK_ENV="production"
 ENV GCM_API_KEY=""
 ENV MANDRILL_USERNAME=""
 ENV MANDRILL_API_KEY=""
-ENV SECRET_KEY_BASE=""
+ENV SECRET_KEY_BASE="5b76aca614fec1de4e1929eda5c08892c44341d100401789b051b4a8c6156f8fcd4e68df96032f7d8a418b131ca61b773e8532632320535d3dbc3064fc42c83d"
 
-ENV RAILS_VERSION 4.2.1
+ENV RAILS_VERSION 4.2.0
 
 RUN gem install rails --version "$RAILS_VERSION"
 RUN bundle install
-RUN rake db:mongoid:create_indexes
+# RUN rake db:mongoid:create_indexes
+RUN grunt build
 CMD ["bundle", "exec", "puma", "-d", "-C", "config/puma.rb"]
-
-# docker build
-# docker run [OPTIONS] [IMAGE]
+# docker build --file Dockerfile.rails --tag="sescobb27/app:v1" .
+# docker run --tty -p 8080 -d --name="festinare_app" {ID}
