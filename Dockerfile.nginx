@@ -5,10 +5,11 @@
 # -d
 FROM nginx:1.7
 MAINTAINER Simon Escobar B <sescobb27@gmail.com>
-COPY nginx.conf /etc/nginx/nginx.conf
-EXPOSE 80 443
+ADD nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
+EXPOSE 443
 COPY festinare.conf /etc/nginx/sites-available/festinare.co
 COPY festinare.conf /etc/nginx/sites-enabled/festinare.co
 CMD ["nginx", "-g", "daemon off;"]
 # docker build --file Dockerfile.nginx --tag="sescobb27/nginx:v1" .
-# docker run --tty -p 8080:80 -d --name="festinare_nginx" {ID}
+# docker run --tty -p 80:80 -p 443:443 -d --name="festinare_nginx" --link festinare_app:festinare_app sescobb27/nginx:v1

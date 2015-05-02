@@ -16,4 +16,4 @@ EXPOSE 28017
 COPY mongod.conf /etc/mongod.conf
 CMD ["mongod"]
 # docker build --file Dockerfile.mongo --tag="sescobb27/mongodb:v1" .
-# docker run --tty -p 27017 -p 28017 -d --name="festinare_db" {ID}
+# docker run --tty -p 127.0.0.1:27017:27017 -p 127.0.0.1:28017:28017 -d --name="festinare_db" sescobb27/mongodb:v1

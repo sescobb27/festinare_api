@@ -8,4 +8,4 @@ MAINTAINER Simon Escobar B <sescobb27@gmail.com>
 # RUN sysctl vm.overcommit_memory=1
 EXPOSE 6379
 # docker build --file Dockerfile.redis --tag="sescobb27/redis:v1" .
-# docker run --tty -p 6379 -d --name="festinare_cache" {ID}
+# docker run --tty -p 127.0.0.1:6379:6379 -d --name="festinare_cache" sescobb27/redis:v1
