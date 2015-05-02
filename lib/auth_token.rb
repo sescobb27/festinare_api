@@ -6,15 +6,14 @@ module JWT
     end
 
     def self.validate_token(token)
-      begin
-        payload, _ = JWT.decode(token, @public_key, algorithm: 'RS256')
-        payload
-      rescue
-        nil
-      end
+      payload, _ = JWT.decode(token, @public_key, algorithm: 'RS256')
+      payload
+    rescue
+      nil
     end
 
     private
+
       @private_key = Rails.application.config.PRIVATE_KEY
       @public_key = Rails.application.config.PUBLIC_KEY
   end
