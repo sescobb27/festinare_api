@@ -21,7 +21,7 @@ development:
       # Provides the hosts the default session can connect to. Must be an array
       # of host:port pairs. (required)
       hosts:
-        - localhost:27017
+        - <%= ENV['MONGODB_DB_HOST'] || 'localhost' %>:<%= ENV['MONGODB_DB_PORT'] || 27017 %>
       options:
         pool_size: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
         timeout: 20

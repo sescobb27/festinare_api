@@ -63,7 +63,7 @@ class Client
   index({ confirmation_token: 1 }, unique: true)
   index({ 'categories.name' => 1 }, unique: false)
   index({ discounts: 1 }, unique: false)
-  index({ token: 1 }, unique: true)
+  index({ token: 1 }, unique: true, sparse: true)
 
   scope :has_active_discounts, -> { where('discounts.status' => true) }
   # =============================END Schema====================================
