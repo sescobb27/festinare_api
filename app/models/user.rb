@@ -35,8 +35,8 @@ class User
          :registerable,
          :validatable,
          :recoverable
-         # :confirmable
-
+         # :confirmable https://github.com/plataformatec/devise/issues/3505
+         # https://github.com/puma/puma/issues/647
   ## Database authenticatable
   field :email
   field :encrypted_password
@@ -57,9 +57,9 @@ class User
 
   index({ username: 1 }, unique: true)
   index({ email: 1 }, unique: true)
-  index({ 'categories.name' => 1 }, unique: true)
-  index({ token: 1 }, unique: true)
-  # index({ confirmation_token: 1}, unique: true)
+  index({ 'categories.name' => 1 }, unique: true, sparse: true)
+  index({ token: 1 }, unique: true, sparse: true)
+  # index({ confirmation_token: 1 }, unique: true)
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
