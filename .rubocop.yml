@@ -737,10 +737,6 @@ Metrics/ClassLength:
   CountComments: false  # count full line comments?
   Max: 100
 
-# Avoid complex methods.
-Metrics/CyclomaticComplexity:
-  Max: 6
-
 Metrics/LineLength:
   Max: 80
   # To make it possible to copy or click on URIs in the code, we allow lines
@@ -749,10 +745,6 @@ Metrics/LineLength:
   URISchemes:
     - http
     - https
-
-Metrics/MethodLength:
-  CountComments: false  # count full line comments?
-  Max: 10
 
 Metrics/ParameterLists:
   Max: 5
