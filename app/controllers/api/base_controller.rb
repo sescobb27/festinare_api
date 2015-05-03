@@ -13,13 +13,12 @@ module API
     # end
 
     def authenticate_user(user)
-      # if remember_me the token expiration time is set to a year else 24 hours
-      expiration_time = params[:remember_me] ? 31_104_000 : 86_400
+      # expiration time is set to a year
       JWT::AuthToken.make_token({
                                   _id: user.id.to_s,
                                   username: user.username,
                                   email: user.email
-                                }, expiration_time)
+                                }, 31_104_000)
     end
 
     def is_authenticated?

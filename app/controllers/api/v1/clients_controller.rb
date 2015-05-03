@@ -1,7 +1,8 @@
 module API
   module V1
     class ClientsController < API::BaseController
-      before_action :is_authenticated?, only: [:me, :discounts, :update]
+      before_action :is_authenticated?,
+                    only: [:me, :discounts, :update, :logout]
 
       # POST /v1/clients/login
       def login
@@ -15,18 +16,28 @@ module API
 
         if !client.nil? && client.valid_password?(safe_params[:password])
           token = authenticate_user client
-          client.set token: token
+          client.push token: token
           render json: { token: token }, status: :ok
         else
           render nothing: true, status: :bad_request
         end
       end
 
+      def logout
+        token = auth_token
+        begin
+          Client.find(@current_user_credentials[:_id]).pull token: token
+        rescue Mongoid::Errors::DocumentNotFound
+          return render nothing: true, status: :unauthorized
+        end
+        render nothing: true, status: :ok
+      end
+
       # GET /v1/clients/me
       def me
         client = Client.find_by('$and' => [
-          { token: auth_token },
-          { _id: @current_user_credentials[:_id] }
+          { _id: @current_user_credentials[:_id] },
+          { token: { '$elemMatch' => { '$eq' => auth_token } } }
         ])
         # client = Client.find(@current_user_credentials[:_id])
         return render json: client, status: :ok
@@ -43,9 +54,10 @@ module API
       def create
         safe_params = safe_auth_params
         client = Client.new(safe_params)
+        client.token = []
+        token = authenticate_user client
+        client.token.push token
         if client.save
-          token = authenticate_user client
-          client.set token: token
           render json: { token: token }, status: :ok
         else
           render json: {

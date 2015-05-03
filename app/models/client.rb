@@ -55,13 +55,13 @@ class Client
   # field :num_of_places
   field :image_url
   field :addresses, type: Array
-  field :token
+  field :token, type: Array
 
   index({ username: 1 }, unique: true)
   index({ email: 1 }, unique: true)
   index({ name: 1 }, unique: true)
   index({ confirmation_token: 1 }, unique: true)
-  index({ 'categories.name' => 1 }, unique: false)
+  index({ 'categories.name' => 1 }, unique: true, sparse: true)
   index({ discounts: 1 }, unique: false)
   index({ token: 1 }, unique: true, sparse: true)
 

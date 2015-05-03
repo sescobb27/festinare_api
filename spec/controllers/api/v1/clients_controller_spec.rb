@@ -66,6 +66,8 @@ module API
           expect(response.status).to eql 200
           response_body = JSON.parse response.body, symbolize_names: true
           expect(response_body[:token]).to eql 'mysecretkey'
+          cli = Client.find_by username: client[:username]
+          expect(cli.token).to include client[:token][0]
         end
 
         it 'should return status unauthorized if password not match' do
@@ -83,19 +85,51 @@ module API
         end
       end
 
+      describe 'Client Logout' do
+        let(:client) do
+          client_attr = FactoryGirl.attributes_for :client
+          client_attr[:token] = ['mysecretkey']
+          Client.create client_attr
+        end
+
+        it 'client should be logged out and token should be removed' do
+          jwt_validate_token client
+          post :logout, format: :json
+          expect(response.status).to eql 200
+          cli = Client.find client._id
+          expect(cli.token).not_to include 'mysecretkey'
+        end
+
+        it 'client response code should be unauthorized' do
+          jwt_validate_token client
+          post :logout, format: :json
+          expect(response.status).to eql 200
+          get :me, client: client, format: :json
+          expect(response.status).to eql 401
+          cli = Client.find client._id
+          expect(cli.token).not_to include 'mysecretkey'
+        end
+      end
+
       describe 'Get Client Attributes' do
         let(:client) do
           client_attr = FactoryGirl.attributes_for :client
-          client_attr[:token] = 'mysecretkey'
+          client_attr[:token] = ['mysecretkey']
           Client.create client_attr
         end
-        it 'should return 200 for me request' do
+        it 'should return client attribute' do
           jwt_validate_token client
           get :me, client: client, format: :json
           expect(response.status).to eql 200
           response_body = JSON.parse(response.body, symbolize_names: true)
           expect(response_body[:client][:_id]).to eql client._id.to_s
           expect(response_body[:client][:email]).to eql client.email
+        end
+        it 'client response code should be unauthorized' do
+          client.pull token: 'mysecretkey'
+          jwt_validate_token client
+          get :me, client: client, format: :json
+          expect(response.status).to eql 401
         end
       end
     end

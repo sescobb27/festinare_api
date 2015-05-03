@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       resources :users, except: [:new, :edit, :index] do
         collection do
           post 'login'
+          post 'logout'
           post 'me'
         end
         member do
@@ -25,6 +26,7 @@ Rails.application.routes.draw do
       resources :clients, except: [:new, :edit, :show] do
         collection do
           post 'login'
+          post 'logout'
           get 'me'
         end
         get 'discounts', controller: 'discounts', action: :client_discounts
