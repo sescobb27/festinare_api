@@ -38,7 +38,7 @@ angular.module('festinare')
     };
 
     AuthService.logout = function() {
-      client = null;
+      return ClientService.logout();
     };
 
     // TODO

@@ -4,19 +4,16 @@ angular.module('festinare')
   .service('SessionService', function ($cookies, $rootScope) {
 
     var SessionService = this;
-    $rootScope.$on('logout', function () {
-      SessionService.removeCurrentSession();
-    });
 
-    this.addSession = function(data) {
+    SessionService.addSession = function(data) {
       $cookies.token = data.token;
     };
 
-    this.removeCurrentSession = function() {
+    SessionService.removeCurrentSession = function() {
       delete $cookies.token;
     };
 
-    this.getCurrentSession = function() {
+    SessionService.getCurrentSession = function() {
       return $cookies.token;
     };
   });

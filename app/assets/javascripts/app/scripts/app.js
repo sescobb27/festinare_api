@@ -68,8 +68,9 @@ angular
       request: function (config) {
         config.headers = config.headers || {};
         // console.log('REQUEST: ', config);
-        if (SessionService.getCurrentSession()) {
-          config.headers.Authorization = 'Bearer ' + SessionService.getCurrentSession();
+        var session = SessionService.getCurrentSession();
+        if (session) {
+          config.headers.Authorization = 'Bearer ' + session;
         }
         return config;
       },
@@ -88,7 +89,7 @@ angular
       }
     };
   })
-  .run(function ($rootScope, $state, AuthService) {
+  .run(function ($rootScope, $state, AuthService, SessionService) {
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', function (event, next) {
       if (next.auth) {
@@ -106,4 +107,9 @@ angular
       $state.previous = fromState;
     });
 
+    $rootScope.$on('logout', function () {
+      AuthService.logout().then(function () {
+        SessionService.removeCurrentSession();
+      });
+    });
   });

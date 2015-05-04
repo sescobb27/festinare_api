@@ -28,6 +28,10 @@ angular.module('festinare')
       return Client.update({ id: id }, {client: data}).$promise;
     };
 
+    ClientService.logout = function () {
+      return Client.save({action: 'logout'}).$promise;
+    };
+
     return ClientService;
 
   });
