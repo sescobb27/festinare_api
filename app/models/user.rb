@@ -37,6 +37,7 @@ class User
          :recoverable
          # :confirmable https://github.com/plataformatec/devise/issues/3505
          # https://github.com/puma/puma/issues/647
+         # https://bugs.ruby-lang.org/issues/10871
   ## Database authenticatable
   field :email
   field :encrypted_password

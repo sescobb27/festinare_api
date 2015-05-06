@@ -1,6 +1,8 @@
 require 'jwt'
 module JWT
   class AuthToken
+    @private_key = Rails.application.config.PRIVATE_KEY
+    @public_key = Rails.application.config.PUBLIC_KEY
     def self.make_token(payload, time)
       JWT.encode(payload, @private_key, algorithm: 'RS256', exp: time)
     end
@@ -11,10 +13,5 @@ module JWT
     rescue
       nil
     end
-
-    private
-
-      @private_key = Rails.application.config.PRIVATE_KEY
-      @public_key = Rails.application.config.PUBLIC_KEY
   end
 end

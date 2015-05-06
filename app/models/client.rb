@@ -16,7 +16,6 @@ class Client
   include Mongoid::Paranoia
   include Mongoid::Timestamps::Created
   # =============================relationships=================================
-  # embeds_many :types,     as: :typeable
   embeds_many :categories, as: :categorizable
   embeds_many :locations, as: :localizable
   embeds_many :discounts, as: :discountable
@@ -80,8 +79,7 @@ class Client
 
   def plan?
     now = Time.zone.now
-    !self.client_plans.empty? &&
-    self.client_plans.one? { |plan| now < plan.expired_date }
+    !self.client_plans.empty? && self.client_plans.one? { |plan| now < plan.expired_date }
   end
 
   def decrement_num_of_discounts_left!
