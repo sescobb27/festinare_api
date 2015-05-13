@@ -49,14 +49,11 @@ module API
         if secure_params[:categories]
           user_categories = user.categories.map(&:name)
           secure_params[:categories].map do |category|
-            # category would have field for adding or removing an element
-            should_add = category.delete :status
-            if should_add
-              unless user_categories.include? category[:name]
-                user.categories.push Category.new(category)
-              end
-            else
+            # kind of updelete if exist delete, else add
+            if user_categories.include? category[:name]
               user.pull(categories: { name: category[:name] })
+            else
+              user.categories.push Category.new(category)
             end
           end
         end
@@ -110,7 +107,6 @@ module API
             :lastname,
             :name,
             categories: [
-              :status,
               :name,
               :description
             ]

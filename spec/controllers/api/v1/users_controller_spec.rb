@@ -100,23 +100,24 @@ module API
 
       describe 'User Update' do
         let(:users) {
-          users = (1..10).map {
-            FactoryGirl.attributes_for :user_with_subscriptions
-          }
+          users = (1..10).map do
+            FactoryGirl.attributes_for :user
+          end
           User.create users
         }
+
         it 'should add given categories to user' do
           users.each do |user|
             jwt_validate_token user
             put(:update, {
-              id: user._id,
-              user: {
-                categories: [
-                  { status: true, name: 'Bar', description: '' },
-                  { status: true, name: 'Restaurant', description: '' }
-                ]
-              }
-            }, format: :json)
+                  id: user._id,
+                  user: {
+                    categories: [
+                      { name: 'Bar', description: '' },
+                      { name: 'Restaurant', description: '' }
+                    ]
+                  }
+                }, format: :json)
             expect(response.status).to eql 200
             u = User.find user._id
             user_categories = u.categories.map(&:name)
@@ -127,16 +128,20 @@ module API
 
         it 'should delete given categories from user' do
           users.each do |user|
+            user.categories.push(
+              Category.new(name: 'Bar'),
+              Category.new(name: 'Restaurant')
+            )
             jwt_validate_token user
             put(:update, {
-              id: user._id,
-              user: {
-                categories: [
-                  { status: false, name: 'Bar', description: '' },
-                  { status: false, name: 'Restaurant', description: '' }
-                ]
-              }
-            }, format: :json)
+                  id: user._id,
+                  user: {
+                    categories: [
+                      { name: 'Bar', description: '' },
+                      { name: 'Restaurant', description: '' }
+                    ]
+                  }
+                }, format: :json)
             expect(response.status).to eql 200
             u = User.find user._id
             user_categories = u.categories.map(&:name)
@@ -147,13 +152,16 @@ module API
 
         it 'should delete/add given categories from/to user' do
           users.each do |user|
+            user.categories.push(
+              Category.new(name: 'Restaurant')
+            )
             jwt_validate_token user
             put(:update, {
               id: user._id,
               user: {
                 categories: [
-                  { status: true, name: 'Bar', description: '' },
-                  { status: false, name: 'Restaurant', description: '' }
+                  { name: 'Bar', description: '' },
+                  { name: 'Restaurant', description: '' }
                 ]
               }
             }, format: :json)
