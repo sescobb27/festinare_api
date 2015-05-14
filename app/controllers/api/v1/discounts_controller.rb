@@ -64,15 +64,19 @@ module API
 
       # POST /v1/users/:id/like/:client_id/discount/:discount_id
       def like
+        begin
+          current_user = User.find(@current_user_credentials[:_id])
+        rescue Mongoid::Errors::DocumentNotFound
+          return render nothing: true, status: :unauthorized
+        end
         like_discount = Client.only(:_id, :discounts)
                         .find(params[:client_id])
                         .discounts
                         .select do |discount|
                           discount.id.to_s == params[:discount_id]
                         end.shift
-        current_user = User.find(@current_user_credentials[:_id])
-        current_user.discounts << like_discount
-        current_user.save
+        current_user.discounts.push like_discount
+        current_user.push client_ids: params[:client_id]
         render nothing: true, status: :ok
       end
 

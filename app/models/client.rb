@@ -50,11 +50,13 @@ class Client
 
   field :username
   field :name
-  field :rate, type: Float, default: 0.0
+  field :rates, type: Array
+  field :avg_rate, type: Float, default: 0.0
   # field :num_of_places
   field :image_url
   field :addresses, type: Array
   field :token, type: Array
+  field :feedback, type: Array
 
   index({ username: 1 }, unique: true)
   index({ email: 1 }, unique: true)

@@ -14,7 +14,7 @@ FactoryGirl.define do
     email { "#{SecureRandom.base64(4)}#{FFaker::Internet.email}".downcase }
     password 'qwertyqwerty'
     name { "#{FFaker::Company.name}#{SecureRandom.base64(4)}" }
-    rate 0.0
+    rates []
     image_url { FFaker::Internet.http_url }
     addresses { (1..5).map { FFaker::Address.street_address } }
     token { [SecureRandom.base64] }

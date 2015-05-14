@@ -8,6 +8,7 @@ FactoryGirl.define do
     lastname  { FFaker::Name.last_name }
     email     { "#{SecureRandom.base64(4)}#{FFaker::Internet.email}".downcase }
     password  'qwertyqwerty'
+    client_ids []
 
     factory :user_with_subscriptions do
       categories {

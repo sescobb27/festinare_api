@@ -1,6 +1,6 @@
 class ClientsDiscountSerializer < MongoDocumentSerializer
   attributes :name,
-             :rate
+             :rates
   has_many :discounts,
            :addresses,
            :categories,

@@ -20,6 +20,7 @@ Rails.application.routes.draw do
           post '/like/:client_id/discount/:discount_id',
                controller: 'discounts',
                action: :like
+          post '/review/:client_id', action: 'review'
           put 'mobile'
         end
       end

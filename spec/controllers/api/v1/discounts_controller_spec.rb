@@ -184,12 +184,13 @@ module API
             clients.each do |client|
               discount = Client.find(client._id).discounts.sample
               post :like,
-                   id: user._id,
-                   client_id:  client._id,
-                   discount_id: discount._id
+                   id: user._id.to_s,
+                   client_id:  client._id.to_s,
+                   discount_id: discount._id.to_s
               expect(response.status).to eql 200
               u = User.find(user._id)
               expect(u.discounts).to include discount
+              expect(u.client_ids).to include client._id.to_s
             end
           end
         end
