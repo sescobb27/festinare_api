@@ -68,7 +68,9 @@ default_plans = [
     expired_time: 'month'
   }
 ]
+puts 'Creating plans'
 Plan.create! default_plans if Plan.count == 0
+puts 'End creating plans'
 
 if Rails.env == 'development'
   clients = [
@@ -85,7 +87,6 @@ if Rails.env == 'development'
       email:      'yepeto@gmail.com',
       password:   'qwerty123!',
       name:       'Client Test',
-      rate:       0.0,
       image_url:  'http://placehold.it/200x200',
       addresses:  []
     },
@@ -98,7 +99,6 @@ if Rails.env == 'development'
       email:      'sescobb27@notemail.com',
       password:   'qwerty123!',
       name:       'test4echo Test',
-      rate:       0.0,
       image_url:  '',
       addresses:  []
     },
@@ -116,10 +116,18 @@ if Rails.env == 'development'
       email:      'test4echo@notemail.com',
       password:   'qwerty123!',
       name:       'Client Test Plan',
-      rate:       0.0,
       image_url:  '',
       addresses:  []
     }
   ]
+  puts 'Creating fixed clients'
   Client.create! clients if Client.count == 0
+  puts 'End creating fixed clients'
+
+  puts 'Creating 100 random clients with discounts'
+  client_with_discounts = (1..100).map do
+    FactoryGirl.attributes_for :client_with_discounts
+  end
+  Client.create client_with_discounts
+  puts 'Finished creating 100 random clients with discounts'
 end
