@@ -44,7 +44,7 @@
               <div class="discount-thumb-date">{{ discount.duration + ' min' }}</div>
             </div>
           </div>
-              <div class="discount-thumb-date">until: {{ discount.until_date | date:'dd/MMM hh:ma' }}</div>
+              <div class="discount-thumb-date">Expire On: {{ discount.until_date | date:'dd/MMM hh:ma' }}</div>
         </div>
 
         <div class="discount-card demo-instruction-add-discount" ng-if="client.discounts.length <= 2">
