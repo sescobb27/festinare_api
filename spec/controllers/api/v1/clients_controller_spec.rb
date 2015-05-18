@@ -132,6 +132,59 @@ module API
           expect(response.status).to eql 401
         end
       end
+
+      describe 'Client Update' do
+        let(:client) do
+          FactoryGirl.create :client
+        end
+
+        it 'should be able to update password' do
+          jwt_validate_token client
+          put :update_password, client: {
+            current_password: client.password,
+            password: 'passwordpassword',
+            password_confirmation: 'passwordpassword'
+          }, id: client._id.to_s, format: :json
+          expect(response.status).to eql 200
+          client.reload
+          expect(client.valid_password? 'passwordpassword').to be true
+          expect(client.valid_password? 'qwertyqwerty').to be false
+        end
+
+        it 'should not be able to update password (password != password_confirmation)' do
+          jwt_validate_token client
+          put :update_password, client: {
+            current_password: client.password,
+            password: 'anotherpassword',
+            password_confirmation: 'passwordpassword'
+          }, id: client._id.to_s, format: :json
+          expect(response.status).to eql 403
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:errors]).to include 'Password confirmation doesn\'t match Password'
+          client.reload
+          expect(client.valid_password? 'anotherpassword').to be false
+          expect(client.valid_password? 'qwertyqwerty').to be true
+        end
+
+        it 'should not be able to update password (invalid current_password)' do
+          jwt_validate_token client
+          put :update_password, client: {
+            current_password: 'invalid_current_password',
+            password: 'passwordpassword',
+            password_confirmation: 'passwordpassword'
+          }, id: client._id.to_s, format: :json
+          expect(response.status).to eql 401
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:errors]).to include 'Password confirmation doesn\'t match Password'
+          client.reload
+          expect(client.valid_password? 'passwordpassword').to be false
+          expect(client.valid_password? 'qwertyqwerty').to be true
+        end
+
+        it 'should be able to update attributes' do
+          # jwt_validate_token client
+        end
+      end
     end
   end
 end

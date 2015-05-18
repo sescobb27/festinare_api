@@ -32,7 +32,7 @@ FactoryGirl.define do
       client_plans do
         plan = Plan.all.sample
         plan = plan.to_client_plan
-        plan.expired_date = DateTime.now - 1.minute
+        plan.expired_date = Time.zone.now - 1.minute
         [plan]
       end
     end
