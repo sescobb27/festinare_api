@@ -41,6 +41,7 @@ group :development, :test do
   gem 'hirb'
   gem 'fancy_irb', '~> 1.0.0'
   gem 'awesome_print'
+  gem 'simplecov', require: false
 end
 
 gem 'active_model_serializers', '~> 0.9.0'
