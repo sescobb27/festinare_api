@@ -76,8 +76,8 @@ class User
   before_validation :downcase_credentials
 
   def downcase_credentials
-    self.username = self.username.downcase
-    self.email = self.email.downcase
+    self[:username] = self[:username].downcase
+    self[:email] = self[:email].downcase
   end
 
   def self.send_notifications
@@ -96,7 +96,7 @@ class User
     batch_size = 1000
     iterations = users_num.fdiv(batch_size).ceil
 
-    categories = Discount.get_categories_from_discounts
+    categories = Discount.discount_categories
 
     iterations.times do |x|
       users = User.only(:_id, :categories, :mobile)

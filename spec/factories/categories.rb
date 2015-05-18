@@ -5,5 +5,4 @@ FactoryGirl.define do
     name        { Category::CATEGORIES.sample }
     description FFaker::Lorem.sentences
   end
-
 end

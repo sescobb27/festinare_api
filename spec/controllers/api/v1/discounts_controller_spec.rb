@@ -39,39 +39,39 @@ module API
         @request.headers['Content-Type'] = 'application/json'
       end
 
-      let(:clients) {
+      let(:clients) do
         c_with_discounts = (1..10).map {
           FactoryGirl.attributes_for :client_with_discounts
         }
         Client.create c_with_discounts
-      }
+      end
 
       # let(:clients) {
       #   (1..10).map { FactoryGirl.create :client_with_discounts }
       # }
 
-      let(:users) {
+      let(:users) do
         u_with_subscriptions = (1..10).map {
           FactoryGirl.attributes_for :user_with_subscriptions
         }
         User.create u_with_subscriptions
-      }
+      end
 
-      let(:raw_users) {
+      let(:raw_users) do
         user_s = (1..10).map { FactoryGirl.attributes_for :user }
         User.create user_s
-      }
+      end
 
       describe 'Create Discount' do
-        let(:raw_client) {
+        let(:raw_client) do
           client_attr = FactoryGirl.attributes_for :client
           Client.create client_attr
-        }
+        end
 
-        let(:client) {
+        let(:client) do
           client_attr = FactoryGirl.attributes_for :client_with_plan
           Client.create client_attr
-        }
+        end
 
         let(:discount) { FactoryGirl.attributes_for(:discount) }
 

@@ -99,12 +99,12 @@ module API
       end
 
       describe 'User Update' do
-        let(:users) {
+        let(:users) do
           users = (1..10).map do
             FactoryGirl.attributes_for :user
           end
           User.create users
-        }
+        end
 
         it 'should add given categories to user' do
           users.each do |user|
@@ -157,14 +157,14 @@ module API
             )
             jwt_validate_token user
             put(:update, {
-              id: user._id,
-              user: {
-                categories: [
-                  { name: 'Bar', description: '' },
-                  { name: 'Restaurant', description: '' }
-                ]
-              }
-            }, format: :json)
+                  id: user._id,
+                  user: {
+                    categories: [
+                      { name: 'Bar', description: '' },
+                      { name: 'Restaurant', description: '' }
+                    ]
+                  }
+                }, format: :json)
             expect(response.status).to eql 200
             u = User.find user._id
             user_categories = u.categories.map(&:name)
@@ -185,10 +185,10 @@ module API
             user = FactoryGirl.create :user_with_subscriptions
             jwt_validate_token user
             post :review,
-              user: { rate: rates[step], feedback: "feedback#{step}" },
-              id: user._id.to_s,
-              client_id: client._id.to_s,
-              format: :json
+                 user: { rate: rates[step], feedback: "feedback#{step}" },
+                 id: user._id.to_s,
+                 client_id: client._id.to_s,
+                 format: :json
             expect(response.status).to eql 403
           end
         end
@@ -200,10 +200,10 @@ module API
             jwt_validate_token user
             user.push client_ids: client._id.to_s
             post :review,
-              user: { rate: rates[step], feedback: "feedback#{step}" },
-              id: user._id.to_s,
-              client_id: client._id.to_s,
-              format: :json
+                 user: { rate: rates[step], feedback: "feedback#{step}" },
+                 id: user._id.to_s,
+                 client_id: client._id.to_s,
+                 format: :json
             expect(response.status).to eql 200
             c_client.reload
             expect(c_client.rates.length).to eql(step + 1)

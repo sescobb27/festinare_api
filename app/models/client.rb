@@ -75,13 +75,15 @@ class Client
   before_validation :downcase_credentials
 
   def downcase_credentials
-    self.username = self.username.downcase
-    self.email = self.email.downcase
+    self[:username] = self[:username].downcase
+    self[:email] = self[:email].downcase
   end
 
   def plan?
     now = Time.zone.now
-    !self.client_plans.empty? && self.client_plans.one? { |plan| now < plan.expired_date }
+    !self.client_plans.empty? && self.client_plans.one? do |plan|
+      now < plan.expired_date
+    end
   end
 
   def decrement_num_of_discounts_left!

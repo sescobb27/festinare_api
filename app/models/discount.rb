@@ -18,6 +18,7 @@ class Discount
   index({ status: 1 }, unique: false)
   index({ hashtags: 1 }, unique: false)
   default_scope -> { where(status: true) }
+
   DURATION_TERM = 'minutes'.freeze
   DURATIONS = [
     10,  # 10 minutes
@@ -42,11 +43,11 @@ class Discount
   # =============================END Schema Validations========================
 
   def expired?
-    !self.status
+    !self[:status]
   end
 
   def expire_time
-    self.created_at + (self.duration * 60).seconds
+    self[:created_at] + (self[:duration] * 60).seconds
   end
 
   def self.invalidate_expired_ones
@@ -58,7 +59,9 @@ class Discount
             next if now < discount.expire_time
             discount.update_attribute :status, false
             # rubocop:disable Metrics/LineLength
-            Rails.logger.info "CLIENT: { id: #{t_client._id}, name: #{t_client.name} }\nDISCOUNT(invalidated): #{discount.inspect}"
+            Rails.logger.info <<-EOF
+{ "action": "invalidate_discount", "id": "#{t_client._id}", "name": "#{t_client.name}", "discount": "#{discount.attributes}" }
+EOF
             # rubocop:enable Metrics/LineLength
           end
         end
@@ -68,14 +71,18 @@ class Discount
 
     cache_thread = Thread.new do
       invalidated = DiscountCache.invalidate
-      Rails.logger.info "DISCOUNTS_CACHE(invalidated): #{invalidated}"
+      invalidated.each do |discount|
+        Rails.logger.info <<-EOF
+{ "action": "invalidate_discount_cache", "discount": "#{discount}" }
+EOF
+      end
     end
 
     mongo_thread.join
     cache_thread.join
   end
 
-  def self.get_categories_from_discounts
+  def self.discount_categories
     categories = nil
     Cache::RedisCache.instance do |redis|
       len = redis.llen('discounts')

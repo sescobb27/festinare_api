@@ -12,5 +12,4 @@ FactoryGirl.define do
     created_at        Time.now
     hashtags          { (1..5).map { "##{FFaker::Lorem.word}" }}
   end
-
 end

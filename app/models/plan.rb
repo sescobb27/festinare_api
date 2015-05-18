@@ -58,7 +58,7 @@ class Plan
     # 1 month after today
     plan.expired_date = Time.zone.now +
       plan.expired_rate.send(plan.expired_time)
-    plan.num_of_discounts_left = self.num_of_discounts
+    plan.num_of_discounts_left = self[:num_of_discounts]
     plan
   end
 
