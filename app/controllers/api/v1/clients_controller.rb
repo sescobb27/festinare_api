@@ -105,9 +105,7 @@ module API
         end
 
         unless client.valid_password? safe_params[:current_password]
-          return render json: {
-            errors: ['']
-          }, status: :unauthorized
+          return render nothing: true, status: :unauthorized
         end
 
         client.password = safe_params[:password]

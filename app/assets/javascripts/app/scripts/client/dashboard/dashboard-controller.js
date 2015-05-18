@@ -3,14 +3,18 @@
 angular.module('festinare')
   .controller('ClientDashboardCtrl', function ($scope, $rootScope, AuthService, DiscountService, $mdDialog) {
 
+    var formatDiscountUntilDate = function (discount) {
+      var tmp = new Date(discount.created_at);
+      return new Date(tmp.getTime() + (discount.duration * 60000));
+    };
+
     $scope.isLoading = true;
     AuthService.getCurrentUser().then(function (client) {
       $scope.client = client;
       DiscountService.getDiscounts(client._id).then(function (res) {
         $scope.client.discounts = res.discounts;
         angular.forEach($scope.client.discounts, function (discount) {
-          var tmp = new Date(discount.created_at);
-          discount.until_date = new Date(tmp.getTime() + (discount.duration * 60000));
+          discount.until_date = formatDiscountUntilDate(discount);
         });
         if ( client.client_plans && client.client_plans.length > 0) {
           $scope.current_plan = client.client_plans[0];
@@ -31,8 +35,9 @@ angular.module('festinare')
         templateUrl: 'assets/javascripts/app/scripts/client/dashboard/discount/new-discount-modal.html',
         controller: 'DiscountCtrl',
         targetEvent: $event
-      }).then(function(disount) {
-        $scope.client.discounts.push(disount);
+      }).then(function(discount) {
+        discount.until_date = formatDiscountUntilDate(discount);
+        $scope.client.discounts.push(discount);
         $scope.current_plan.num_of_discounts_left--;
       });
     };

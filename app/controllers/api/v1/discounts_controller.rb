@@ -40,7 +40,7 @@ module API
           discount = current_user.discounts.create discount_attr
           if discount.errors.empty?
             DiscountCache.cache discount, current_user.categories
-            render nothing: true, status: :ok
+            render json: discount, status: :ok
           else
             render json: {
               errors: discount.errors.full_messages
