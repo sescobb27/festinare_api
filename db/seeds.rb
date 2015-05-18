@@ -33,7 +33,7 @@ require 'factory_girl_rails'
 default_plans = [
   {
     name: 'Hurry Up!',
-    description: 'Now! now! now!, time is over!!!!',
+    description: 'Now! now! now!, time is over!!!! - (not available yet)',
     price: 10_000,
     currency: 'COP',
     num_of_discounts: 1,
@@ -42,7 +42,7 @@ default_plans = [
   },
   {
     name: 'Discount Novice!',
-    description: '10% de ahorro',
+    description: '10% de ahorro - (not available yet)',
     price: 90_000,
     currency: 'COP',
     num_of_discounts: 10,
@@ -51,7 +51,7 @@ default_plans = [
   },
   {
     name: 'Discount Assassin!',
-    description: '15% de ahorro',
+    description: '15% de ahorro - (not available yet)',
     price: 127_500,
     currency: 'COP',
     num_of_discounts: 15,
@@ -60,7 +60,7 @@ default_plans = [
   },
   {
     name: 'Discount Machine!',
-    description: '20% de ahorro',
+    description: '20% de ahorro - (not available yet)',
     price: 240_000,
     currency: 'COP',
     num_of_discounts: 30,
@@ -72,7 +72,21 @@ puts 'Creating plans'
 Plan.create! default_plans if Plan.count == 0
 puts 'End creating plans'
 
-if Rails.env == 'development'
+if Rails.env.production?
+  unless Plan.where(name: 'Beta Discount').exists?
+    puts 'Creating Beta Plan'
+    Plan.create! name: 'Beta Discount',
+                 description: 'Beta Test Discount',
+                 price: 0,
+                 currency: 'COP',
+                 num_of_discounts: 1_000,
+                 expired_rate: 2,
+                 expired_time: 'months'
+    puts 'End creating Beta Plan'
+  end
+end
+
+if Rails.env.development?
   clients = [
     {
       categories: [
