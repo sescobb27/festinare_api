@@ -16,7 +16,9 @@ class ClientPlan < Plan
           next if now < plan.expired_date
           plan.update_attribute :status, false
           # rubocop:disable Metrics/LineLength
-          Rails.logger.info "CLIENT: { id: #{t_client._id}, name: #{t_client.name} }\nPLAN(invalidated): #{plan.inspect}"
+          Rails.logger.info <<-EOF
+{ "action": "invalidate_plan", "id": "#{t_client._id}", "name": "#{t_client.name}", "plan": "#{plan.attributes}" }
+EOF
           # rubocop:enable Metrics/LineLength
         end
       end

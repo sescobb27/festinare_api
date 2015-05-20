@@ -90,34 +90,35 @@ class User
     options = {
       collapse_key: 'new_discounts',
       # Test server.
-      dry_run: (Rails.env == 'development' || Rails.env == 'test')
+      dry_run: (Rails.env.development? || Rails.env.test?)
     }
     users_num = User.exists(mobile: true).count
     batch_size = 1000
     iterations = users_num.fdiv(batch_size).ceil
 
     categories = Discount.discount_categories
+    response = nil
 
     iterations.times do |x|
       users = User.only(:_id, :categories, :mobile)
+              .in('categories.name' => categories)
               .limit(batch_size)
               .offset(batch_size * x)
-      notify_users = users.select do |user|
-        !(user.categories.map(&:name) & categories).empty? && user.mobile
-      end
+      notify_users = users.select(&:mobile)
       next if notify_users.empty?
       registration_ids.concat notify_users.map(&:mobile).map(&:token)
       if registration_ids.length <= 1000
         response = gcm.send_notification(registration_ids, options)
         registration_ids.clear
-        awesome_print 'GCM RESPONSE:'
-        awesome_print response
-      elsif registration_ids.length > 1000
+      else
         response = gcm.send_notification(registration_ids[0...1000], options)
-        awesome_print 'GCM RESPONSE:'
-        awesome_print response
         registration_ids = registration_ids[1000..-1]
       end
+      # rubocop:disable Metrics/LineLength
+      Rails.logger.info <<-EOF
+{ "action": "send_notification", "categories": "#{categories}", "gcm_response": "#{response}" }
+EOF
+      # rubocop:enable Metrics/LineLength
     end
   end
 end
