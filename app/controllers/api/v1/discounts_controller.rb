@@ -47,9 +47,14 @@ module API
             }, status: :bad_request
           end
         else
+          # rubocop:disable Metrics/LineLength
           render json: {
-            errors: ['You need a plan to create a discount']
+            errors: [
+              'You need a plan to create a discount',
+              'You have exhausted your plan discounts, you need to purchase a new plan'
+            ]
           }, status: :forbidden
+          # rubocop:enable Metrics/LineLength
         end
       end
 

@@ -87,13 +87,10 @@ class Client
   end
 
   def decrement_num_of_discounts_left!
-    current_plan = self.client_plans.first
-    if current_plan.num_of_discounts_left > 0
-      current_plan.inc(num_of_discounts_left: -1)
-    else
-      current_plan.status = false
-      self.save
+    if self.client_plans.empty?
       raise Plan::PlanDiscountsExhausted
+    else
+      self.client_plans.first.inc num_of_discounts_left: -1
     end
   end
 

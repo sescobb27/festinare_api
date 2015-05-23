@@ -5,7 +5,9 @@ class ClientPlan < Plan
   # =============================Schema========================================
   field :expired_date, type: Time
   field :num_of_discounts_left, type: Integer
-  default_scope -> { where(status: true) }
+  default_scope -> do
+    where(num_of_discounts_left: { '$gt' => 0 }).asc(:price)
+  end
   # =============================END Schema====================================
 
   def self.invalidate_expired_ones

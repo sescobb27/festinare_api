@@ -160,7 +160,9 @@ module API
           }, id: client._id.to_s, format: :json
           expect(response.status).to eql 403
           response_body = JSON.parse(response.body, symbolize_names: true)
-          expect(response_body[:errors]).to include 'Password confirmation doesn\'t match Password'
+          expect(response_body[:errors]).to(
+            include 'Password confirmation doesn\'t match Password'
+          )
           client.reload
           expect(client.valid_password? 'anotherpassword').to be false
           expect(client.valid_password? 'qwertyqwerty').to be true

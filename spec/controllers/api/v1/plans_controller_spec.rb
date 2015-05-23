@@ -38,10 +38,10 @@ module API
           @request.headers['Content-Type'] = 'application/json'
         end
         let(:plan) { Plan.all.to_a.sample }
-        let(:clients) {
+        let(:clients) do
           clients = (1..10).map { FactoryGirl.attributes_for :client }
           Client.create clients
-        }
+        end
 
         it 'should have a plan' do
           expect(clients.length).to eql 10
@@ -53,7 +53,7 @@ module API
             expect(response.status).to eql 200
             client_plans = Client.find(client._id).client_plans
             expect(client_plans.length).to eql 1
-            expect(client_plans[0].expired_date).to be > DateTime.now
+            expect(client_plans[0].expired_date).to be > Time.zone.now
           end
         end
       end

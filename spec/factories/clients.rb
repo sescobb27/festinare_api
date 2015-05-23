@@ -7,7 +7,7 @@ FactoryGirl.define do
       tmp = Category::CATEGORIES.sample(2)
       [Category.new(name: tmp[0]), Category.new(name: tmp[1])]
     end
-    locations           { (1..5).map { FactoryGirl.build(:location) } }
+    locations { (1..5).map { FactoryGirl.build(:location) } }
     username do
       "#{SecureRandom.base64(4)}#{FFaker::Internet.user_name}".downcase
     end

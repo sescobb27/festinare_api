@@ -40,9 +40,9 @@ module API
       end
 
       let(:clients) do
-        c_with_discounts = (1..10).map {
+        c_with_discounts = (1..10).map do
           FactoryGirl.attributes_for :client_with_discounts
-        }
+        end
         Client.create c_with_discounts
       end
 
@@ -51,9 +51,9 @@ module API
       # }
 
       let(:users) do
-        u_with_subscriptions = (1..10).map {
+        u_with_subscriptions = (1..10).map do
           FactoryGirl.attributes_for :user_with_subscriptions
-        }
+        end
         User.create u_with_subscriptions
       end
 
@@ -92,7 +92,7 @@ module API
           expect(client_discount.duration).to eql discount[:duration]
           expect(client_discount.hashtags).to eql discount[:hashtags]
 
-          c = Client.find(client._id)
+          c = Client.unscoped.find(client._id)
           plan = c.client_plans.first
           expect(plan.num_of_discounts_left).to eql plan.num_of_discounts - 1
 
@@ -101,8 +101,12 @@ module API
             expect(len).to be > 0
             obj = redis.lrange('discounts', len - 1, len - 1)[0]
             cache_discount = JSON.parse(obj)
-            expect(cache_discount['discount']['title']).to eql client_discount.title
-            expect(cache_discount['discount']['_id']['$oid']).to eql client_discount._id.to_s
+            expect(cache_discount['discount']['title']).to(
+              eql client_discount.title
+            )
+            expect(cache_discount['discount']['_id']['$oid']).to(
+              eql client_discount._id.to_s
+            )
           end
         end
 
@@ -114,6 +118,20 @@ module API
           expect(response_body[:errors].length).to be > 0
         end
 
+        it 'should create discount it has at least one valid plan' do
+          plans = Plan.all.sample(2).map(&:to_client_plan)
+          plans.first.num_of_discounts_left = 0
+          client.client_plans = plans
+          client.save
+          post :create, client_id: client._id, discount: discount.to_hash
+          expect(response.status).to eql 200
+
+          client.reload
+          expect(client.client_plans.first.num_of_discounts_left).to(
+            eql plans[1].num_of_discounts_left - 1
+          )
+        end
+
         describe 'Forbidden attempt to create discount' do
           it 'Plan Discounts Exhausted' do
             c = Client.find(client._id)
@@ -122,8 +140,15 @@ module API
             post :create, client_id: client._id, discount: discount.to_hash
             expect(response.status).to eql 403
             response_body = JSON.parse response.body, symbolize_names: true
-            expect(response_body[:errors].length).to eql 1
-            expect(response_body[:errors][0]).to eql 'You have exhausted your plan discounts, you need to purchase a new plan'
+            expect(response_body[:errors].length).to eql 2
+            expect(response_body[:errors][0]).to(
+              eql 'You need a plan to create a discount'
+            )
+            # rubocop:disable Metrics/LineLength
+            expect(response_body[:errors][1]).to(
+              eql 'You have exhausted your plan discounts, you need to purchase a new plan'
+            )
+            # rubocop:enable Metrics/LineLength
             c.reload
             expect(c.client_plans).to be_empty
           end
@@ -133,14 +158,21 @@ module API
             post :create, client_id: raw_client._id, discount: discount.to_hash
             expect(response.status).to eql 403
             response_body = JSON.parse response.body, symbolize_names: true
-            expect(response_body[:errors].length).to eql 1
-            expect(response_body[:errors][0]).to eql 'You need a plan to create a discount'
+            expect(response_body[:errors].length).to eql 2
+            expect(response_body[:errors][0]).to(
+              eql 'You need a plan to create a discount'
+            )
+            # rubocop:disable Metrics/LineLength
+            expect(response_body[:errors][1]).to(
+              eql 'You have exhausted your plan discounts, you need to purchase a new plan'
+            )
+            # rubocop:enable Metrics/LineLength
           end
         end
       end
 
       describe 'Get all available discounts' do
-        it 'user should get all available discounts base on his/her subscriptions' do
+        it 'user should get all available discounts base on subscriptions' do
           users.map do |user|
             jwt_validate_token user
             get :index, {}, format: :json
