@@ -5,8 +5,8 @@ class ClientPlan < Plan
   # =============================Schema========================================
   field :expired_date, type: Time
   field :num_of_discounts_left, type: Integer
-  default_scope -> do
-    where(num_of_discounts_left: { '$gt' => 0 }).asc(:price)
+  scope :with_discounts, -> do
+    active_plans.where(num_of_discounts_left: { '$gt' => 0 })
   end
   # =============================END Schema====================================
 

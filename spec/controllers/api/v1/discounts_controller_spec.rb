@@ -119,7 +119,7 @@ module API
         end
 
         it 'should create discount it has at least one valid plan' do
-          plans = Plan.all.sample(2).map(&:to_client_plan)
+          plans = Plan.all.offset(1).sample(2).map(&:to_client_plan)
           plans.first.num_of_discounts_left = 0
           client.client_plans = plans
           client.save
@@ -127,7 +127,8 @@ module API
           expect(response.status).to eql 200
 
           client.reload
-          expect(client.client_plans.first.num_of_discounts_left).to(
+          first_valid_plan = client.client_plans.with_discounts.first
+          expect(first_valid_plan.num_of_discounts_left).to(
             eql plans[1].num_of_discounts_left - 1
           )
         end
@@ -150,7 +151,7 @@ module API
             )
             # rubocop:enable Metrics/LineLength
             c.reload
-            expect(c.client_plans).to be_empty
+            expect(c.client_plans.with_discounts).to be_empty
           end
 
           it 'Does not have plan' do

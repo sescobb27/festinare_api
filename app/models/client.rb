@@ -81,16 +81,23 @@ class Client
 
   def plan?
     now = Time.zone.now
-    !self.client_plans.empty? && self.client_plans.one? do |plan|
+    !self.client_plans.with_discounts.empty? && self.client_plans.with_discounts.one? do |plan|
       now < plan.expired_date
     end
   end
 
   def decrement_num_of_discounts_left!
-    if self.client_plans.empty?
+    if self.client_plans.with_discounts.empty?
       raise Plan::PlanDiscountsExhausted
     else
-      self.client_plans.first.inc num_of_discounts_left: -1
+      self.client_plans.with_discounts.first.inc num_of_discounts_left: -1
+    end
+  end
+
+  def unexpired_discounts(time)
+    Thread.current[:client] = self
+    Thread.current[:client].discounts = self.discounts.select do |discount|
+      time < discount.expire_time
     end
   end
 
@@ -100,20 +107,13 @@ class Client
     now = Time.zone.now
     threads = query.batch_size(500).map do |client|
       Thread.new(client) do |t_client|
-        Thread.current[:client] = t_client
-        Thread.current[:client].discounts = t_client
-                                            .discounts
-                                            .select do |discount|
-                                              now < discount.expire_time
-                                            end
+        t_client.unexpired_discounts(now)
       end
     end
 
-    clients = []
     threads.map do |thread|
       thread.join
-      clients << thread[:client]
+      thread[:client]
     end
-    clients
   end
 end

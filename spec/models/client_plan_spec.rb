@@ -20,7 +20,7 @@ RSpec.describe ClientPlan, type: :model do
         expect(Client.find(client._id).client_plans).not_to be_empty
       end
       expired_clients.each do |client|
-        expect(Client.find(client._id).client_plans).to be_empty
+        expect(Client.find(client._id).client_plans.with_discounts).to be_empty
       end
     end
   end

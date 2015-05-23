@@ -14,7 +14,7 @@ class Plan
   index({ name: 1 }, unique: true, name: 'plan_name_index')
   index({ status: 1 }, unique: false, name: 'plan_status_index')
   EXPIRED_TIMES = %w(day days month months).freeze
-  default_scope -> { where(status: true).asc(:price) }
+  scope :active_plans, -> { where(status: true).asc(:price) }
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
