@@ -113,8 +113,8 @@ module API
                   id: user._id,
                   user: {
                     categories: [
-                      { name: 'Bar', description: '' },
-                      { name: 'Restaurant', description: '' }
+                      { name: 'Bar', description: '', status: true },
+                      { name: 'Restaurant', description: '', status: true }
                     ]
                   }
                 }, format: :json)
@@ -137,8 +137,8 @@ module API
                   id: user._id,
                   user: {
                     categories: [
-                      { name: 'Bar', description: '' },
-                      { name: 'Restaurant', description: '' }
+                      { name: 'Bar', description: '', status: false },
+                      { name: 'Restaurant', description: '', status: false }
                     ]
                   }
                 }, format: :json)
@@ -160,8 +160,8 @@ module API
                   id: user._id,
                   user: {
                     categories: [
-                      { name: 'Bar', description: '' },
-                      { name: 'Restaurant', description: '' }
+                      { name: 'Bar', description: '', status: true },
+                      { name: 'Restaurant', description: '', status: false }
                     ]
                   }
                 }, format: :json)

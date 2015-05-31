@@ -144,4 +144,7 @@ if Rails.env.development?
   end
   Client.create client_with_discounts
   puts 'Finished creating 100 random clients with discounts'
+  user = FactoryGirl.create :user
+  token = API::BaseController.new.authenticate_user user
+  puts "Finished creating fake user: TOKEN=#{token}"
 end

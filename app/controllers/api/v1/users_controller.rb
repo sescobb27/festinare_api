@@ -47,13 +47,16 @@ module API
           return render nothing: true, status: :unauthorized
         end
         if secure_params[:categories]
-          user_categories = user.categories.map(&:name)
           secure_params[:categories].map do |category|
             # kind of updelete if exist delete, else add
-            if user_categories.include? category[:name]
-              user.pull(categories: { name: category[:name] })
+            should_add = category.delete :status
+            if should_add
+              user_categories = user.categories.map(&:name)
+              unless user_categories.include? category[:name]
+                user.categories.push Category.new(category)
+              end
             else
-              user.categories.push Category.new(category)
+              user.pull(categories: { name: category[:name] })
             end
           end
         end
@@ -130,7 +133,8 @@ module API
             :name,
             categories: [
               :name,
-              :description
+              :description,
+              :status
             ]
           )
         end

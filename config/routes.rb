@@ -14,7 +14,7 @@ Rails.application.routes.draw do
         collection do
           post 'login'
           post 'logout'
-          post 'me'
+          get 'me'
         end
         member do
           post '/like/:client_id/discount/:discount_id',
