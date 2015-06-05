@@ -75,8 +75,9 @@ test:
         - localhost:27017
       options:
         read: primary
-        retry_interval: 0
+        retry_interval: 1
         pool_size: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
         timeout: 20
+        max_retries: 30
   options:
     use_activesupport_time_zone: true

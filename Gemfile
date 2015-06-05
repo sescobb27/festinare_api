@@ -48,12 +48,12 @@ gem 'active_model_serializers', '~> 0.9.0'
 # gem 'websocket-rails'
 gem 'puma', '~> 2.11.0'
 gem 'jwt-rb'
-gem 'mongoid', '~> 4.0.1'
+gem 'mongoid', '~> 4.0.2'
 gem 'mongoid_paranoia', '~> 0.1.2'
 # rubocop:disable Metrics/LineLength
 # https://github.com/mongoid/moped/pull/359 => ConnectionPool::PoolShuttingDownError
 # rubocop:enable Metrics/LineLength
-gem 'moped', '2.0.4', github: 'wandenberg/moped', branch: 'operation_timeout'
+gem 'moped', '~> 2.0.5'
 gem 'devise'
 gem 'bson_ext'
 # Abort requests that are taking too long
