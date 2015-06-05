@@ -2,7 +2,7 @@ class ClientSerializer < MongoDocumentSerializer
   attributes :email,
              :username,
              :name,
-             :rates,
+             :avg_rate,
              :image_url,
              :addresses
   has_many :categories,

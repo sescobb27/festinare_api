@@ -81,9 +81,10 @@ class Client
 
   def plan?
     now = Time.zone.now
-    !self.client_plans.with_discounts.empty? && self.client_plans.with_discounts.one? do |plan|
-      now < plan.expired_date
-    end
+    !self.client_plans.with_discounts.empty? &&
+      self.client_plans.with_discounts.one? do |plan|
+        now < plan.expired_date
+      end
   end
 
   def decrement_num_of_discounts_left!
@@ -96,20 +97,24 @@ class Client
 
   def unexpired_discounts(time)
     Thread.current[:client] = self
+    return if self.discounts.empty?
     Thread.current[:client].discounts = self.discounts.select do |discount|
       time < discount.expire_time
     end
   end
 
-  def self.available_discounts(categories)
+  def self.available_discounts(categories, opts)
     query = Client.has_active_discounts
     query.in('categories.name' => categories) unless categories.empty?
     now = Time.zone.now
-    threads = query.batch_size(500).map do |client|
-      Thread.new(client) do |t_client|
-        t_client.unexpired_discounts(now)
-      end
-    end
+    threads = query
+              .limit(opts[:limit])
+              .offset(opts[:offset])
+              .map do |client|
+                Thread.new(client) do |t_client|
+                  t_client.unexpired_discounts(now)
+                end
+              end
 
     threads.map do |thread|
       thread.join

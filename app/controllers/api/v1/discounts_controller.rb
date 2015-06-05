@@ -5,8 +5,10 @@ module API
 
       before_action :is_authenticated?
 
-      # GET /v1/discounts
+      # GET /v1/discounts?limit=X&offset=X
       def index
+        limit = params[:limit] || 20
+        offset = params[:offset] || 0
         user = User.only(:_id, :categories).find @current_user_credentials[:_id]
         categories = user.categories.empty? ? [] : user.categories.map(&:name)
         # rubocop:disable Metrics/LineLength
@@ -17,7 +19,8 @@ module API
         #     db_client.discounts.length > 0
         #   end
         # rubocop:enable Metrics/LineLength
-        clients = Client.available_discounts categories
+        clients = Client.available_discounts categories,
+                                             limit: limit, offset: offset
 
         render json: clients, each_serializer: ClientsDiscountSerializer
       end

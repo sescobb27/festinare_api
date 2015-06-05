@@ -46,31 +46,21 @@ module API
         Client.create c_with_discounts
       end
 
-      # let(:clients) {
-      #   (1..10).map { FactoryGirl.create :client_with_discounts }
-      # }
-
-      let(:users) do
-        u_with_subscriptions = (1..10).map do
-          FactoryGirl.attributes_for :user_with_subscriptions
-        end
-        User.create u_with_subscriptions
+      let(:user) do
+        FactoryGirl.create :user_with_subscriptions
       end
 
-      let(:raw_users) do
-        user_s = (1..10).map { FactoryGirl.attributes_for :user }
-        User.create user_s
+      let(:raw_user) do
+        FactoryGirl.create :user
       end
 
       describe 'Create Discount' do
         let(:raw_client) do
-          client_attr = FactoryGirl.attributes_for :client
-          Client.create client_attr
+          FactoryGirl.create :client
         end
 
         let(:client) do
-          client_attr = FactoryGirl.attributes_for :client_with_plan
-          Client.create client_attr
+          FactoryGirl.create :client_with_plan
         end
 
         let(:discount) { FactoryGirl.attributes_for(:discount) }
@@ -173,58 +163,65 @@ module API
       end
 
       describe 'Get all available discounts' do
+        before do
+          Client.create(
+            (1..50).map { FactoryGirl.attributes_for :client_with_discounts }
+          )
+        end
         it 'user should get all available discounts base on subscriptions' do
-          users.map do |user|
-            jwt_validate_token user
-            get :index, {}, format: :json
-            expect(response.status).to eql 200
-            response_body = JSON.parse(response.body, symbolize_names: true)
-            expect(response_body[:discounts].length).to be > 0
-            response_body[:discounts].each do |client|
-              expect(client[:discounts].length).to be > 0
-              expect(client[:addresses].length).to be > 0
-              expect(client[:locations].length).to be > 0
-              client_categories = client[:categories].map { |c| c[:name] }
-              user_subscriptions = user.categories.map { |c| c[:name] }
-              expect(client_categories & user_subscriptions).not_to be_empty
-            end
+          jwt_validate_token user
+          get :index, {}, format: :json
+          expect(response.status).to eql 200
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:discounts].length).to eql 20
+          response_body[:discounts].each do |client|
+            expect(client[:discounts].length).to be > 0
+            expect(client[:addresses].length).to be > 0
+            expect(client[:locations].length).to be > 0
+            client_categories = client[:categories].map { |c| c[:name] }
+            user_subscriptions = user.categories.map { |c| c[:name] }
+            expect(client_categories & user_subscriptions).not_to be_empty
           end
         end
 
-        it 'should get all available discounts if doesn\'t have subscriptions' do
-          raw_users.map do |user|
-            jwt_validate_token user
-            get :index, {}, format: :json
-            expect(response.status).to eql 200
-            response_body = JSON.parse(response.body, symbolize_names: true)
-            expect(response_body[:discounts].length).to be > 0
-            response_body[:discounts].each do |client|
-              expect(client[:discounts].length).to be > 0
-              expect(client[:addresses].length).to be > 0
-              expect(client[:locations].length).to be > 0
-              client_categories = client[:categories].map { |c| c[:name] }
-              user_subscriptions = user.categories.map { |c| c[:name] }
-              expect(client_categories & user_subscriptions).to be_empty
-            end
+        it 'should get all available discounts if doesn\'t have likes' do
+          jwt_validate_token raw_user
+          get :index, {}, format: :json
+          expect(response.status).to eql 200
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:discounts].length).to eql 20
+          response_body[:discounts].each do |client|
+            expect(client[:discounts].length).to be > 0
+            expect(client[:addresses].length).to be > 0
+            expect(client[:locations].length).to be > 0
+            client_categories = client[:categories].map { |c| c[:name] }
+            user_subscriptions = raw_user.categories.map { |c| c[:name] }
+            expect(client_categories & user_subscriptions).to be_empty
           end
+        end
+
+        it 'should return 50 available discounts' do
+          jwt_validate_token user
+          get :index, limit: 50, format: :json
+          expect(response.status).to eql 200
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:discounts].length).to eql 50
         end
       end
 
       describe 'User Likes a discount' do
         it 'should get a secret key to redeem a discount' do
-          users.map do |user|
-            jwt_validate_token user
-            clients.each do |client|
-              discount = Client.find(client._id).discounts.sample
-              post :like,
-                   id: user._id.to_s,
-                   client_id:  client._id.to_s,
-                   discount_id: discount._id.to_s
-              expect(response.status).to eql 200
-              u = User.find(user._id)
-              expect(u.discounts).to include discount
-              expect(u.client_ids).to include client._id.to_s
-            end
+          jwt_validate_token user
+          clients.each do |client|
+            discount = Client.find(client._id).discounts.sample
+            post :like,
+                 id: user._id.to_s,
+                 client_id:  client._id.to_s,
+                 discount_id: discount._id.to_s
+            expect(response.status).to eql 200
+            u = User.find(user._id)
+            expect(u.discounts).to include discount
+            expect(u.client_ids).to include client._id.to_s
           end
         end
       end
