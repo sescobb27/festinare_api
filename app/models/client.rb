@@ -118,7 +118,7 @@ class Client
 
     threads.map do |thread|
       thread.join
-      thread[:client]
-    end
+      thread[:client] unless thread[:client].discounts.empty?
+    end.flatten
   end
 end
