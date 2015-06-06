@@ -9,7 +9,7 @@ module API
       def index
         limit = params[:limit] || 20
         offset = params[:offset] || 0
-        user = User.only(:_id, :categories).find @current_user_credentials[:_id]
+        user = User.find @current_user_credentials[:_id]
         categories = user.categories.empty? ? [] : user.categories.map(&:name)
         # rubocop:disable Metrics/LineLength
         # clients = Client.only(:_id, :name, :rate, :discounts, :addresses, :categories, :locations).
@@ -21,6 +21,21 @@ module API
         # rubocop:enable Metrics/LineLength
         clients = Client.available_discounts categories,
                                              limit: limit, offset: offset
+
+        # users can only get discounts who they haven't liked yet
+        unless user.discounts.empty?
+          liked_discounts = user.discounts.map do |discount|
+            discount._id.to_s
+          end
+          clients.each do |client|
+            likeable_discounts = client.discounts.map do |discount|
+              id = discount._id.to_s
+              discount unless liked_discounts.include? id
+            end.compact
+
+            client.discounts = likeable_discounts
+          end
+        end
 
         render json: clients, each_serializer: ClientsDiscountSerializer
       end

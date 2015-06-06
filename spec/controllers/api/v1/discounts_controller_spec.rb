@@ -39,11 +39,8 @@ module API
         @request.headers['Content-Type'] = 'application/json'
       end
 
-      let(:clients) do
-        c_with_discounts = (1..10).map do
-          FactoryGirl.attributes_for :client_with_discounts
-        end
-        Client.create c_with_discounts
+      let(:client) do
+        FactoryGirl.create :client_with_discounts
       end
 
       let(:user) do
@@ -212,29 +209,61 @@ module API
       describe 'User Likes a discount' do
         it 'should get a secret key to redeem a discount' do
           jwt_validate_token user
-          clients.each do |client|
-            discount = Client.find(client._id).discounts.sample
-            post :like,
-                 id: user._id.to_s,
-                 client_id:  client._id.to_s,
-                 discount_id: discount._id.to_s
-            expect(response.status).to eql 200
-            u = User.find(user._id)
-            expect(u.discounts).to include discount
-            expect(u.client_ids).to include client._id.to_s
+          discount = Client.find(client._id).discounts.sample
+          post :like,
+               id: user._id.to_s,
+               client_id:  client._id.to_s,
+               discount_id: discount._id.to_s
+          expect(response.status).to eql 200
+          u = User.find(user._id)
+          expect(u.discounts).to include discount
+          expect(u.client_ids).to include client._id.to_s
+        end
+
+        it 'should not get a liked discount' do
+          jwt_validate_token user
+          # fetch discounts
+          get :index, {}, format: :json
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:discounts].length).to eql 20
+          client = response_body[:discounts].sample
+          discount = client[:discounts].sample
+
+          # like one discount
+          post :like,
+               id: user._id.to_s,
+               client_id:  client[:_id],
+               discount_id: discount[:_id]
+          expect(response.status).to eql 200
+          u = User.find(user._id)
+          discount_ids = u.discounts.map do |u_discount|
+            u_discount._id.to_s
+          end
+          expect(discount_ids).to include discount[:_id]
+          expect(u.client_ids).to include client[:_id]
+
+          # fetch the same discounts and the liked discount should not
+          # be there
+          get :index, {}, format: :json
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:discounts].length).to eql 20
+
+          response_body[:discounts].each do |c|
+            c_discount_ids = c[:discounts].map do |c_discount|
+              c_discount[:_id]
+            end
+            expect(c_discount_ids).not_to include discount[:_id]
           end
         end
       end
 
       describe 'Client Get all his/her discounts' do
         it 'should return all client discounts' do
-          clients.each do |client|
-            jwt_validate_token client
-            get :client_discounts, client_id: client._id
-            expect(response.status).to eql 200
-            response_body = JSON.parse(response.body, symbolize_names: true)
-            expect(response_body[:discounts].length).to be == 5
-          end
+          jwt_validate_token client
+          get :client_discounts, client_id: client._id
+          expect(response.status).to eql 200
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:discounts].length).to be == 5
         end
       end
     end
