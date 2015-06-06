@@ -99,78 +99,69 @@ module API
       end
 
       describe 'User Update' do
-        let(:users) do
-          users = (1..10).map do
-            FactoryGirl.attributes_for :user
-          end
-          User.create users
+        let(:user) do
+          FactoryGirl.create :user
         end
 
         it 'should add given categories to user' do
-          users.each do |user|
-            jwt_validate_token user
-            put(:update, {
-                  id: user._id,
-                  user: {
-                    categories: [
-                      { name: 'Bar', description: '', status: true },
-                      { name: 'Restaurant', description: '', status: true }
-                    ]
-                  }
-                }, format: :json)
-            expect(response.status).to eql 200
-            u = User.find user._id
-            user_categories = u.categories.map(&:name)
-            expect(user_categories).to include('Bar')
-            expect(user_categories).to include('Restaurant')
-          end
+          jwt_validate_token user
+          put(:update, {
+                id: user._id,
+                user: {
+                  categories: [
+                    { name: 'Bar', description: '', status: true },
+                    { name: 'Restaurant', description: '', status: true }
+                  ]
+                }
+              }, format: :json)
+          expect(response.status).to eql 200
+          u = User.find user._id
+          user_categories = u.categories.map(&:name)
+          expect(user_categories).to include('Bar')
+          expect(user_categories).to include('Restaurant')
         end
 
         it 'should delete given categories from user' do
-          users.each do |user|
-            user.categories.push(
-              Category.new(name: 'Bar'),
-              Category.new(name: 'Restaurant')
-            )
-            jwt_validate_token user
-            put(:update, {
-                  id: user._id,
-                  user: {
-                    categories: [
-                      { name: 'Bar', description: '', status: false },
-                      { name: 'Restaurant', description: '', status: false }
-                    ]
-                  }
-                }, format: :json)
-            expect(response.status).to eql 200
-            u = User.find user._id
-            user_categories = u.categories.map(&:name)
-            expect(user_categories).not_to include('Bar')
-            expect(user_categories).not_to include('Restaurant')
-          end
+          user.categories.push(
+            Category.new(name: 'Bar'),
+            Category.new(name: 'Restaurant')
+          )
+          jwt_validate_token user
+          put(:update, {
+                id: user._id,
+                user: {
+                  categories: [
+                    { name: 'Bar', description: '', status: false },
+                    { name: 'Restaurant', description: '', status: false }
+                  ]
+                }
+              }, format: :json)
+          expect(response.status).to eql 200
+          u = User.find user._id
+          user_categories = u.categories.map(&:name)
+          expect(user_categories).not_to include('Bar')
+          expect(user_categories).not_to include('Restaurant')
         end
 
         it 'should delete/add given categories from/to user' do
-          users.each do |user|
-            user.categories.push(
-              Category.new(name: 'Restaurant')
-            )
-            jwt_validate_token user
-            put(:update, {
-                  id: user._id,
-                  user: {
-                    categories: [
-                      { name: 'Bar', description: '', status: true },
-                      { name: 'Restaurant', description: '', status: false }
-                    ]
-                  }
-                }, format: :json)
-            expect(response.status).to eql 200
-            u = User.find user._id
-            user_categories = u.categories.map(&:name)
-            expect(user_categories).to include('Bar')
-            expect(user_categories).not_to include('Restaurant')
-          end
+          user.categories.push(
+            Category.new(name: 'Restaurant')
+          )
+          jwt_validate_token user
+          put(:update, {
+                id: user._id,
+                user: {
+                  categories: [
+                    { name: 'Bar', description: '', status: true },
+                    { name: 'Restaurant', description: '', status: false }
+                  ]
+                }
+              }, format: :json)
+          expect(response.status).to eql 200
+          u = User.find user._id
+          user_categories = u.categories.map(&:name)
+          expect(user_categories).to include('Bar')
+          expect(user_categories).not_to include('Restaurant')
         end
       end
 

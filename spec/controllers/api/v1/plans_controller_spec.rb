@@ -37,24 +37,22 @@ module API
           @request.headers['Authorization'] = 'Bearer mysecretkey'
           @request.headers['Content-Type'] = 'application/json'
         end
+
         let(:plan) { Plan.all.to_a.sample }
-        let(:clients) do
-          clients = (1..10).map { FactoryGirl.attributes_for :client }
-          Client.create clients
+
+        let(:client) do
+          FactoryGirl.create :client
         end
 
         it 'should have a plan' do
-          expect(clients.length).to eql 10
-          clients.each do |client|
-            jwt_validate_token client
-            post :purchase_plan,
-                 plan_id: plan._id.to_s,
-                 format: :json
-            expect(response.status).to eql 200
-            client_plans = Client.find(client._id).client_plans
-            expect(client_plans.length).to eql 1
-            expect(client_plans[0].expired_date).to be > Time.zone.now
-          end
+          jwt_validate_token client
+          post :purchase_plan,
+               plan_id: plan._id.to_s,
+               format: :json
+          expect(response.status).to eql 200
+          client_plans = Client.find(client._id).client_plans
+          expect(client_plans.length).to eql 1
+          expect(client_plans[0].expired_date).to be > Time.zone.now
         end
       end
     end
