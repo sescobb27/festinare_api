@@ -46,5 +46,15 @@ module Festinare
 
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
+
+    config.middleware.insert_before 0, 'Rack::Cors', logger: (-> { Rails.logger }) do
+      allow do
+        origins '*'
+        resource '*',
+                 headers: :any,
+                 methods: %i(get post options put delete),
+                 credentials: true
+      end
+    end
   end
 end
