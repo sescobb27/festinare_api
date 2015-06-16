@@ -6,8 +6,7 @@ FactoryGirl.define do
     username  do
       "#{FFaker::Internet.user_name}#{SecureRandom.base64(4)}".downcase
     end
-    name { FFaker::Name.name }
-    lastname { FFaker::Name.last_name }
+    fullname { FFaker::Name.name + FFaker::Name.last_name }
     email { "#{SecureRandom.base64(4)}#{FFaker::Internet.email}".downcase }
     password 'qwertyqwerty'
     client_ids []

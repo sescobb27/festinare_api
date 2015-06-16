@@ -1,7 +1,7 @@
 module API
   module V1
     class UsersController < API::BaseController
-      before_action :is_authenticated?, only: [:me, :update, :mobile, :review]
+      before_action :authenticated?, only: [:me, :update, :mobile, :review]
 
       def me
         user = User.find(@current_user_credentials[:_id])
@@ -60,14 +60,8 @@ module API
             end
           end
         end
-        if secure_params[:name] &&
-           !secure_params[:name].empty? &&
-           secure_params[:lastname] &&
-           !secure_params[:lastname].empty?
-          user.update_attributes(
-            name: secure_params[:name],
-            lastname: secure_params[:lastname]
-          )
+        if secure_params[:fullname] && !secure_params[:fullname].empty?
+          user.set fullname: secure_params[:fullname]
         end
         render nothing: true, status: :ok
       end
@@ -120,8 +114,7 @@ module API
           params.require(:user).permit(
             :username,
             :email,
-            :lastname,
-            :name,
+            :fullname,
             :password,
             :rate
           )
@@ -129,8 +122,7 @@ module API
 
         def update_params
           params.require(:user).permit(
-            :lastname,
-            :name,
+            :fullname,
             categories: [
               :name,
               :description,

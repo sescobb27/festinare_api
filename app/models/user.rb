@@ -52,8 +52,7 @@ class User
   field :reset_password_sent_at, type: Time
 
   field :username
-  field :lastname
-  field :name
+  field :fullname
   field :token
   # each time a user likes a discount, the discount's client id is added here
   field :client_ids, type: Array
