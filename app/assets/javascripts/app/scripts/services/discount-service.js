@@ -17,7 +17,7 @@ angular.module('festinare')
       Discounts.save({ client_id: client_id }, { discount: discount}).$promise.then(function (response) {
         deferred.resolve(response.discount);
       }).catch(function (error) {
-        $rootScope.$emit('alert', { msg: error.data.errors.join(' ') });
+        deferred.reject(error);
       });
       return deferred.promise;
     };
