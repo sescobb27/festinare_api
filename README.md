@@ -1,5 +1,34 @@
 # hurry-app-discount
-rhc create-app hurryup ruby-2.0 mongodb-2.4
-rhc env set RAILS_ENV="production" -a hurryup
-rhc env set OPENSHIFT_RUBY_SERVER=puma -a hurryup
-git remote add openshift ssh://54e8b57dfcf9332b8d000082@hurryup-sudoapps.rhcloud.com/~/git/hurryup.git
+
+commands
+
+rake invalidate:discounts
+rake invalidate:plans
+
+rake db:mongoid:create_indexes
+rake db:seed
+whenever -w
+
+bundle exec puma -C config/puma.rb
+
+
+zeus s -b 0.0.0.0 -p 8080
+zeus start
+zeus rspec
+
+sudo cp festinare.conf /etc/nginx/sites-available/festinare.com.co && sudo service nginx restart && sudo nginx -t
+
+
+TODO
+
+/clients
+/clients/id/password update
+/clients/id/address update/delete
+/clients/id/categories update/delete
+
+/users/id/categories update/delete
+/users/id/locations create
+/users/id/password update
+/users/id/mobile add/delete
+
+/discounts/client_id create
