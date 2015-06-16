@@ -3,7 +3,7 @@ module API
     require 'auth_token'
     respond_to :json
 
-    before_action :is_authenticated?, only: [:update]
+    before_action :authenticated?, only: [:update]
 
     # for future references => Users/clients with Time.zone
     # around_filter :user_time_zone, :if => :current_user
@@ -21,14 +21,14 @@ module API
                                 }, 31_104_000)
     end
 
-    def is_authenticated?
+    def authenticated?
       unless request.authorization
         render nothing: true, status: :unauthorized
         return
       end
       token = auth_token
       credentials = JWT::AuthToken.validate_token(token)
-      if credentials
+      if credentials && valid_params?(credentials)
         @current_user_credentials = credentials.clone
         @current_user_credentials[:_id] = @current_user_credentials[:_id].to_s
       else
@@ -40,6 +40,12 @@ module API
 
       def auth_token
         request.authorization[7..-1]
+      end
+
+      def valid_params?(credentials)
+        # some routes not need authentication id
+        return true unless params[:id]
+        params[:id] == credentials[:_id].to_s
       end
   end
 end
