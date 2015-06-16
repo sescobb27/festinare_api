@@ -15,7 +15,6 @@ Bundler.require(*Rails.groups)
 
 module Festinare
   class Application < Rails::Application
-    # rubocop:disable Metrics/LineLength
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -28,7 +27,6 @@ module Festinare
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
-    # rubocop:enable Metrics/LineLength
 
     config.generators do |g|
       g.test_framework :rspec, fixture: true

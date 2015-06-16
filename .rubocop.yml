@@ -431,7 +431,7 @@ Style/HashSyntax:
   UseHashRocketsWithSymbolValues: false
 
 Style/IfUnlessModifier:
-  MaxLineLength: 80
+  MaxLineLength: 105
 
 Style/IndentationConsistency:
   # The difference between `rails` and `normal` is that the `rails` style
@@ -716,7 +716,7 @@ Style/VariableName:
     - camelCase
 
 Style/WhileUntilModifier:
-  MaxLineLength: 80
+  MaxLineLength: 105
 
 Style/WordArray:
   MinSize: 0
@@ -735,10 +735,10 @@ Metrics/BlockNesting:
 
 Metrics/ClassLength:
   CountComments: false  # count full line comments?
-  Max: 100
+  Max: 105
 
 Metrics/LineLength:
-  Max: 80
+  Max: 105
   # To make it possible to copy or click on URIs in the code, we allow lines
   # contaning a URI to be longer than Max.
   AllowURI: true

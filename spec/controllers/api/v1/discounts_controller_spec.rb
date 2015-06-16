@@ -150,11 +150,9 @@ module API
             expect(response_body[:errors][0]).to(
               eql 'You need a plan to create a discount'
             )
-            # rubocop:disable Metrics/LineLength
             expect(response_body[:errors][1]).to(
               eql 'You have exhausted your plan discounts, you need to purchase a new plan'
             )
-            # rubocop:enable Metrics/LineLength
           end
         end
       end

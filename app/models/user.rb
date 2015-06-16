@@ -81,10 +81,8 @@ class User
 
   def self.send_notifications
     gcm = Gcm::Notification.instance
-    # rubocop:disable Metrics/LineLength
     # For sending between 1 or more devices (up to 1000). When you send a message to
     # multiple registration IDs, that is called a multicast message.
-    # rubocop:enable Metrics/LineLength
     registration_ids = []
     options = {
       collapse_key: 'new_discounts',
@@ -113,11 +111,9 @@ class User
         response = gcm.send_notification(registration_ids[0...1000], options)
         registration_ids = registration_ids[1000..-1]
       end
-      # rubocop:disable Metrics/LineLength
       Rails.logger.info <<-EOF
 { "action": "send_notification", "categories": "#{categories}", "gcm_response": "#{response}" }
 EOF
-      # rubocop:enable Metrics/LineLength
     end
   end
 end

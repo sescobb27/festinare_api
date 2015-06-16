@@ -1,8 +1,7 @@
 module API
   module V1
     class ClientsController < API::BaseController
-      before_action :authenticated?,
-                    only: [:me, :discounts, :update, :logout, :update_password]
+      before_action :authenticated?, only: [:me, :discounts, :update, :logout, :update_password]
 
       # POST /v1/clients/login
       def login

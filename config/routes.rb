@@ -4,10 +4,7 @@ Rails.application.routes.draw do
   root 'application#index'
   namespace :api,
             defaults: { format: :json } do
-    # rubocop:disable Metrics/LineLength
     namespace :v1, constraints: ApiConstraint::ApiVersionConstraint.new(version: 1, default: true) do
-      # rubocop:enable Metrics/LineLength
-
       devise_for :users, skip: [:sessions, :registrations]
       devise_for :clients, skip: [:sessions, :registrations]
       resources :users, except: [:new, :edit, :index] do

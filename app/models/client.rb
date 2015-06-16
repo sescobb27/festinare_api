@@ -130,9 +130,7 @@ class Client
                 Thread.new(client) do |t_client|
                   Thread.current[:client] = t_client
                   break if t_client.discounts.empty?
-                  # rubocop:disable Metrics/LineLength
                   Thread.current[:client].discounts = t_client.unexpired_discounts(now)
-                  # rubocop:enable Metrics/LineLength
                 end
               end
 

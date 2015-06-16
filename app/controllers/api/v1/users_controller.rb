@@ -96,8 +96,7 @@ module API
         if current_user.client_ids.include? client_id
           secure_params = params.require(:user).permit(:rate, :feedback)
           client = Client.find client_id
-          client.push feedback: secure_params[:feedback],
-                      rates: secure_params[:rate].to_i
+          client.push feedback: secure_params[:feedback], rates: secure_params[:rate].to_i
           client.set avg_rate: client.rates.sum.fdiv(client.rates.length)
           render nothing: true, status: :ok
         else

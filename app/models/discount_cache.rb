@@ -49,9 +49,7 @@ class DiscountCache
         len = redis.llen('discounts')
         redis.lrange('discounts', 0, len).select do |r_obj|
           obj = JSON.parse r_obj, symbolize_names: true
-          # rubocop:disable Metrics/LineLength
           # intersection to see if any of the categories are in the discount's categories.
-          # rubocop:enable Metrics/LineLength
           !(categories & obj[:categories]).empty?
         end.map(&:discount)
       end

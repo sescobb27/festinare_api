@@ -11,14 +11,12 @@ module API
         offset = params[:offset] || 0
         user = User.find @current_user_credentials[:_id]
         categories = user.categories.empty? ? [] : user.categories.map(&:name)
-        # rubocop:disable Metrics/LineLength
         # clients = Client.only(:_id, :name, :rate, :discounts, :addresses, :categories, :locations).
         #   in('categories.name' => user.categories.map(&:name)).
         #   batch_size(500).
         #   select do |db_client|
         #     db_client.discounts.length > 0
         #   end
-        # rubocop:enable Metrics/LineLength
         clients = Client.available_discounts categories,
                                              limit: limit, offset: offset
 
@@ -51,9 +49,8 @@ module API
         end
 
         if current_user.plan?
-          # rubocop:disable Metrics/LineLength
-          # if the client has an active plan but had spend all discounts it would rise Plan::PlanDiscountsExhausted exception
-          # rubocop:enable Metrics/LineLength
+          # if the client has an active plan but had spend all discounts
+          # it would rise Plan::PlanDiscountsExhausted exception
           current_user.decrement_num_of_discounts_left!
           discount = current_user.discounts.create discount_attr
           if discount.errors.empty?
@@ -65,14 +62,12 @@ module API
             }, status: :bad_request
           end
         else
-          # rubocop:disable Metrics/LineLength
           render json: {
             errors: [
               'You need a plan to create a discount',
               'You have exhausted your plan discounts, you need to purchase a new plan'
             ]
           }, status: :forbidden
-          # rubocop:enable Metrics/LineLength
         end
       end
 
@@ -95,9 +90,9 @@ module API
         like_discount = Client.only(:_id, :discounts)
                         .find(params[:client_id])
                         .discounts
-                        .select do |discount|
+                        .detect do |discount| # the same as select.first or find, but find trigger mongoid query
                           discount.id.to_s == params[:discount_id]
-                        end.shift
+                        end
         current_user.discounts.push like_discount
         current_user.add_to_set client_ids: params[:client_id]
         render json: { secret_key: like_discount.secret_key }, status: :ok
@@ -117,9 +112,7 @@ module API
 
         def plan_discounts_exhausted
           render json: {
-            # rubocop:disable Metrics/LineLength
             errors: ['You have exhausted your plan discounts, you need to purchase a new plan']
-            # rubocop:enable Metrics/LineLength
           }, status: :forbidden
         end
     end
