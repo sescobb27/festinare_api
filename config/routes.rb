@@ -30,9 +30,6 @@ Rails.application.routes.draw do
           post 'logout'
           get 'me'
         end
-        member do
-          put 'update_password'
-        end
         get 'discounts', controller: 'discounts', action: :client_discounts
         post 'discounts', controller: 'discounts', action: :create
       end

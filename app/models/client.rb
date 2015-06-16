@@ -96,11 +96,27 @@ class Client
   end
 
   def unexpired_discounts(time)
-    Thread.current[:client] = self
-    return if self.discounts.empty?
-    Thread.current[:client].discounts = self.discounts.select do |discount|
-      time < discount.expire_time
+    self.discounts.select { |discount| !discount.expired? time }
+  end
+
+  def add_category(name)
+    self.categories.create name: name
+  end
+
+  def remove_category(name)
+    self.pull(categories: { name: name })
+  end
+
+  def update_password(credentials)
+    unless self.valid_password? credentials[:current_password]
+      self.errors.add :password, 'Invalid'
+      return false
     end
+
+    self.password = credentials[:password]
+    self.password_confirmation = credentials[:password_confirmation]
+
+    self.save
   end
 
   def self.available_discounts(categories, opts)
@@ -112,7 +128,11 @@ class Client
               .offset(opts[:offset])
               .map do |client|
                 Thread.new(client) do |t_client|
-                  t_client.unexpired_discounts(now)
+                  Thread.current[:client] = t_client
+                  break if t_client.discounts.empty?
+                  # rubocop:disable Metrics/LineLength
+                  Thread.current[:client].discounts = t_client.unexpired_discounts(now)
+                  # rubocop:enable Metrics/LineLength
                 end
               end
 

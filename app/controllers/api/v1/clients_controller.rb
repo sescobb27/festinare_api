@@ -1,7 +1,7 @@
 module API
   module V1
     class ClientsController < API::BaseController
-      before_action :is_authenticated?,
+      before_action :authenticated?,
                     only: [:me, :discounts, :update, :logout, :update_password]
 
       # POST /v1/clients/login
@@ -77,6 +77,30 @@ module API
           return render nothing: true, status: :unauthorized
         end
 
+        if safe_params[:password]
+          keys = %w(password current_password password_confirmation)
+
+          include_all = keys.all? do |key|
+            safe_params[:password].key? key
+          end
+
+          if include_all
+            if client.update_password safe_params[:password]
+              safe_params.delete :password
+            else
+              return render json: {
+                errors: client.errors.full_messages
+              }, status: :forbidden
+            end
+          end
+        end
+
+        if safe_params[:address]
+          client.add_to_set addresses: safe_params[:address]
+          safe_params.delete :address
+        end
+
+        # it doesn't update arrays, that's why previous logic
         if client.update safe_params
           render nothing: true, status: :ok
         else
@@ -84,40 +108,6 @@ module API
             errors: client.errors.full_messages
           }, status: :bad_request
         end
-      end
-
-      def update_password
-        begin
-          client = Client.find @current_user_credentials[:_id]
-        rescue Mongoid::Errors::DocumentNotFound
-          return render nothing: true, status: :unauthorized
-        end
-
-        safe_params = params.require(:client).permit(
-          :password,
-          :current_password,
-          :password_confirmation
-        )
-
-        pass_keys = %w(password current_password password_confirmation).freeze
-        unless (safe_params.keys & pass_keys) == pass_keys
-          return render nothing: true, status: :ok
-        end
-
-        unless client.valid_password? safe_params[:current_password]
-          return render nothing: true, status: :unauthorized
-        end
-
-        client.password = safe_params[:password]
-        client.password_confirmation = safe_params[:password_confirmation]
-
-        unless client.save
-          return render json: {
-            errors: client.errors.full_messages
-          }, status: :forbidden
-        end
-
-        render nothing: true, status: :ok
       end
 
       # DELETE /v1/clients/:id
@@ -142,7 +132,8 @@ module API
           params.require(:client).permit(
             :name,
             :image_url,
-            addresses: []
+            :address,
+            password: [:password, :current_password, :password_confirmation]
           )
         end
     end

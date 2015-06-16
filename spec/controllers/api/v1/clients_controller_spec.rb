@@ -140,11 +140,14 @@ module API
 
         it 'should be able to update password' do
           jwt_validate_token client
-          put :update_password, client: {
-            current_password: client.password,
-            password: 'passwordpassword',
-            password_confirmation: 'passwordpassword'
+          put :update, client: {
+            password: {
+              current_password: client.password,
+              password: 'passwordpassword',
+              password_confirmation: 'passwordpassword'
+            }
           }, id: client._id.to_s, format: :json
+          puts response.body
           expect(response.status).to eql 200
           client.reload
           expect(client.valid_password? 'passwordpassword').to be true
@@ -153,10 +156,12 @@ module API
 
         it 'should not be able to update password (password != password_confirmation)' do
           jwt_validate_token client
-          put :update_password, client: {
-            current_password: client.password,
-            password: 'anotherpassword',
-            password_confirmation: 'passwordpassword'
+          put :update, client: {
+            password: {
+              current_password: client.password,
+              password: 'anotherpassword',
+              password_confirmation: 'passwordpassword'
+            }
           }, id: client._id.to_s, format: :json
           expect(response.status).to eql 403
           response_body = JSON.parse(response.body, symbolize_names: true)
@@ -170,12 +175,14 @@ module API
 
         it 'should not be able to update password (invalid current_password)' do
           jwt_validate_token client
-          put :update_password, client: {
-            current_password: 'invalid_current_password',
-            password: 'passwordpassword',
-            password_confirmation: 'passwordpassword'
+          put :update, client: {
+            password: {
+              current_password: 'invalid_current_password',
+              password: 'passwordpassword',
+              password_confirmation: 'passwordpassword'
+            }
           }, id: client._id.to_s, format: :json
-          expect(response.status).to eql 401
+          expect(response.status).to eql 403
           client.reload
           expect(client.valid_password? 'passwordpassword').to be false
           expect(client.valid_password? 'qwertyqwerty').to be true
@@ -183,6 +190,7 @@ module API
 
         it 'should be able to update attributes' do
           # jwt_validate_token client
+          # pending "TODO #{__FILE__}"
         end
       end
     end
