@@ -100,7 +100,7 @@ module API
                         end.shift
         current_user.discounts.push like_discount
         current_user.add_to_set client_ids: params[:client_id]
-        render nothing: true, status: :ok
+        render json: { secret_key: like_discount.secret_key }, status: :ok
       end
 
       private

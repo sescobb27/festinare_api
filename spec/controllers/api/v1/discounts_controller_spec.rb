@@ -173,6 +173,9 @@ module API
           expect(response_body[:discounts].length).to eql 20
           response_body[:discounts].each do |client|
             expect(client[:discounts].length).to be > 0
+            client[:discounts].each do |discount|
+              expect(discount.keys).not_to include :secret_key
+            end
             expect(client[:addresses].length).to be > 0
             expect(client[:locations].length).to be > 0
             client_categories = client[:categories].map { |c| c[:name] }
@@ -189,6 +192,9 @@ module API
           expect(response_body[:discounts].length).to eql 20
           response_body[:discounts].each do |client|
             expect(client[:discounts].length).to be > 0
+            client[:discounts].each do |discount|
+              expect(discount.keys).not_to include :secret_key
+            end
             expect(client[:addresses].length).to be > 0
             expect(client[:locations].length).to be > 0
             client_categories = client[:categories].map { |c| c[:name] }
@@ -215,9 +221,11 @@ module API
                client_id:  client._id.to_s,
                discount_id: discount._id.to_s
           expect(response.status).to eql 200
+          response_body = JSON.parse(response.body, symbolize_names: true)
           u = User.find(user._id)
           expect(u.discounts).to include discount
           expect(u.client_ids).to include client._id.to_s
+          expect(response_body[:secret_key]).to eql discount.secret_key
         end
 
         it 'should not get a liked discount' do
