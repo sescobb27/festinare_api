@@ -33,12 +33,18 @@ angular.module('festinare')
       });
     };
 
-    AuthService.register = function(credentials) {
-
-    };
+    AuthService.register = function(credentials) {};
 
     AuthService.logout = function() {
-      return ClientService.logout();
+      return ClientService.logout()
+        .then(function () {
+          return SessionService.removeCurrentSession();
+        })
+        .then(function () {
+          client = null;
+          client_promise = $q(function (resolve, reject) { reject(); });
+          notify(null);
+        });
     };
 
     // TODO

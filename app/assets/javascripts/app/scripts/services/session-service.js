@@ -1,19 +1,19 @@
 'use strict';
 
 angular.module('festinare')
-  .service('SessionService', function ($cookies, $rootScope) {
+  .service('SessionService', function ($cookies) {
 
     var SessionService = this;
 
     SessionService.addSession = function(data) {
-      $cookies.token = data.token;
+      $cookies.put('token', data.token);
     };
 
     SessionService.removeCurrentSession = function() {
-      delete $cookies.token;
+      $cookies.remove('token');
     };
 
     SessionService.getCurrentSession = function() {
-      return $cookies.token;
+      return $cookies.get('token');
     };
   });

@@ -5,8 +5,8 @@ angular.module('festinare')
 
     AuthService.subscribe(this);
 
-    this.notify = function () {
-      $scope.logged_in = true;
+    this.notify = function (user) {
+      $scope.logged_in = !!user;
     };
 
     AuthService.isLoggedIn().then(function (logged_in) {
@@ -32,8 +32,6 @@ angular.module('festinare')
 
     $scope.logout = function () {
       $rootScope.$emit('logout');
-      $scope.logged_in = false;
-      $state.go('index');
     };
 
   });

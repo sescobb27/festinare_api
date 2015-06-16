@@ -89,7 +89,7 @@ angular
       }
     };
   })
-  .run(function ($rootScope, $state, AuthService, SessionService) {
+  .run(function ($rootScope, $state, AuthService) {
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', function (event, next) {
       if (next.auth) {
@@ -108,8 +108,6 @@ angular
     });
 
     $rootScope.$on('logout', function () {
-      AuthService.logout().then(function () {
-        SessionService.removeCurrentSession();
-      });
+      AuthService.logout();
     });
   });
