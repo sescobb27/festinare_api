@@ -3,7 +3,7 @@ module API
     class DiscountsController < API::BaseController
       rescue_from Plan::PlanDiscountsExhausted, with: :plan_discounts_exhausted
 
-      before_action :is_authenticated?
+      before_action :authenticated?
 
       # GET /v1/discounts?limit=X&offset=X
       def index
@@ -99,7 +99,7 @@ module API
                           discount.id.to_s == params[:discount_id]
                         end.shift
         current_user.discounts.push like_discount
-        current_user.push client_ids: params[:client_id]
+        current_user.add_to_set client_ids: params[:client_id]
         render nothing: true, status: :ok
       end
 
