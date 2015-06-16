@@ -33,31 +33,44 @@
         <md-input-container flex>
           <label>Company Name</label>
           <input type="text" name="name" ng-model="client.name">
+          <div ng-messages="profileForm.name.$error">
+            <div ng-message="required">This is required.</div>
+          </div>
         </md-input-container>
 
         <md-input-container flex>
           <label>Email</label>
           <input type="text" name="email" ng-model="client.email" disabled>
+          <div ng-messages="profileForm.email.$error">
+            <div ng-message="required">This is required.</div>
+          </div>
         </md-input-container>
 
         <label>Categories</label>
         <md-input-container flex>
-          <md-checkbox ng-repeat="category in categories track by $index" ng-model="category.enabled">
+          <md-switch ng-repeat="category in categories track by $index"
+                      ng-model="category.enabled">
             {{category.name}}
-          </md-checkbox>
+          </md-switch>
         </md-input-container>
 
         <md-input-container flex>
           <label>Address</label>
-          <input type="text" name="email" ng-model="address">
-          <md-button ng-click="addAddress(address)" type="button">Add Address</md-button>
+          <input type="text" name="address" ng-model="address">
         </md-input-container>
+
+        <md-button ng-click="addAddress(address)" type="button">
+          Add Address
+        </md-button>
 
 
         <md-list>
           <md-subheader class="md-no-sticky">{{client.name}} Addresses</md-subheader>
           <md-item ng-repeat="(index, c_address) in client.addresses track by $index">
-            <p><i class="md-avatar fa fa-globe"></i> {{c_address}} <md-button ng-click="deleteAddress(index)" type="button">X</md-button></p>
+            <p>
+              <i class="md-avatar fa fa-globe"></i> {{c_address}}
+              <md-button ng-click="deleteAddress(index)" type="button">X</md-button>
+            </p>
           </md-item>
         </md-list>
 
@@ -71,20 +84,31 @@
       </form>
 
       <h4 class="gray-text">Change Password</h4>
-      <form role="form" name="passwordForm" ng-submit="changePassword(oldpass, newpass, confirm)">
+      <form role="form" name="passwordForm" ng-submit="changePassword(oldpass, newpass, confirm)" novalidate>
         <md-input-container flex>
           <label>Old Password</label>
-          <input type="password" ng-model="oldpass" required ng-required="true">
+          <input type="password" name="oldpass" ng-model="oldpass" required>
+          <div ng-messages="passwordForm.oldpass.$error" ng-show="passwordForm.$submitted">
+            <div ng-message="required">This is required.</div>
+          </div>
         </md-input-container>
 
         <md-input-container flex>
           <label>New Password</label>
-          <input type="password" ng-model="newpass" required ng-required="true">
+          <input type="password" name="newpass" ng-model="newpass" required>
+          <div ng-messages="passwordForm.newpass.$error" ng-show="passwordForm.$submitted">
+            <div ng-message="required">This is required.</div>
+            <div ng-message="thesame">Password and New Password are the same</div>
+          </div>
         </md-input-container>
 
         <md-input-container flex>
           <label>Confirm New Password</label>
-          <input type="password" ng-model="confirm" required ng-required="true">
+          <input type="password" name="confirm" ng-model="confirm" required>
+          <div ng-messages="passwordForm.confirm.$error" ng-show="passwordForm.$submitted">
+            <div ng-message="required">This is required.</div>
+            <div ng-message="notmatch">Password Confirmation not match Password</div>
+          </div>
         </md-input-container>
 
         <div layout="row" layout-align="center center">
