@@ -93,9 +93,13 @@ module API
                         .detect do |discount| # the same as select.first or find, but find trigger mongoid query
                           discount.id.to_s == params[:discount_id]
                         end
-        current_user.discounts.push like_discount
-        current_user.add_to_set client_ids: params[:client_id]
-        render json: { secret_key: like_discount.secret_key }, status: :ok
+        if !like_discount.expired? Time.zone.now
+          current_user.discounts.push like_discount
+          current_user.add_to_set client_ids: params[:client_id]
+          render json: { secret_key: like_discount.secret_key }, status: :ok
+        else
+          render json: { errors: ['Discount expired'] }, status: :bad_request
+        end
       end
 
       private

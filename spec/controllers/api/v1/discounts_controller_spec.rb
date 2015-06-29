@@ -261,6 +261,29 @@ module API
             expect(c_discount_ids).not_to include discount[:_id]
           end
         end
+
+        it 'should not like a expired discount' do
+          jwt_validate_token user
+
+          get :index, {}, format: :json
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          client = response_body[:discounts].sample
+          discount = client[:discounts].sample
+
+          _discount = Client.find(client[:_id]).discounts.detect do |c_discount|
+            c_discount.id.to_s == discount[:_id]
+          end
+          # invalidate a discount by time
+          _discount.set created_at: (_discount.created_at - (_discount.duration * 60).seconds - 1.minute)
+
+          post :like,
+               id: user._id.to_s,
+               client_id:  client[:_id],
+               discount_id: discount[:_id]
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response.status).to eql 400
+          expect(response_body[:errors].first).to eql 'Discount expired'
+        end
       end
 
       describe 'Client Get all his/her discounts' do

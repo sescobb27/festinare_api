@@ -43,7 +43,11 @@ class Discount
   # =============================END Schema Validations========================
 
   def expired?(time)
-    !self[:status] && time > self.expire_time
+    if self[:status] # if is active
+      time > self.expire_time
+    else
+      true
+    end
   end
 
   def expire_time
