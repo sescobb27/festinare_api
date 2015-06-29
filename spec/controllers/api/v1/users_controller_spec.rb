@@ -164,46 +164,6 @@ module API
           expect(user_categories).not_to include('Restaurant')
         end
       end
-
-      describe 'User Review a Client' do
-        let :client do
-          FactoryGirl.create :client_with_discounts
-        end
-
-        it 'shouldn\'t be able to review a client' do
-          rates = (1..10).map { rand(1..5) }
-          10.times do |step|
-            user = FactoryGirl.create :user_with_subscriptions
-            jwt_validate_token user
-            post :review,
-                 user: { rate: rates[step], feedback: "feedback#{step}" },
-                 id: user._id.to_s,
-                 client_id: client._id.to_s,
-                 format: :json
-            expect(response.status).to eql 403
-          end
-        end
-        it 'should review a client and its avg should change' do
-          rates = (1..10).map { rand(1..5) }
-          c_client = Client.find client._id.to_s
-          10.times do |step|
-            user = FactoryGirl.create :user_with_subscriptions
-            jwt_validate_token user
-            user.push client_ids: client._id.to_s
-            post :review,
-                 user: { rate: rates[step], feedback: "feedback#{step}" },
-                 id: user._id.to_s,
-                 client_id: client._id.to_s,
-                 format: :json
-            expect(response.status).to eql 200
-            c_client.reload
-            expect(c_client.rates.length).to eql(step + 1)
-            expect(c_client.avg_rate).to eql rates[0..step].sum.fdiv(step + 1)
-            expect(c_client.feedback[step]).to eql "feedback#{step}"
-          end
-          expect(c_client.avg_rate).to eql rates.sum.fdiv 10
-        end
-      end
     end
   end
 end

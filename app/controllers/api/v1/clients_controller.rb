@@ -6,7 +6,8 @@ module API
                                             :update,
                                             :logout,
                                             :update_password,
-                                            :liked_clients]
+                                            :liked_clients,
+                                            :review]
 
       # POST /v1/clients/login
       def login
@@ -129,6 +130,27 @@ module API
 
         clients = Client.find current_user.client_ids
         render json: clients, status: :ok, each_serializer: LikedClientSerializer
+      end
+
+      # POST /api/v1/clients/:client_id/users/:id/review
+      def review
+        begin
+          current_user = User.find @current_user_credentials[:_id]
+        rescue Mongoid::Errors::DocumentNotFound
+          return render nothing: true, status: :unauthorized
+        end
+
+        # only users who had like a discount can review a client
+        client_id = params[:client_id]
+        if current_user.client_ids.include? client_id
+          secure_params = params.require(:user).permit(:rate, :feedback)
+          client = Client.find client_id
+          client.push feedback: secure_params[:feedback], rates: secure_params[:rate].to_i
+          client.set avg_rate: client.rates.sum.fdiv(client.rates.length)
+          render nothing: true, status: :ok
+        else
+          return render nothing: true, status: :forbidden
+        end
       end
 
       private
