@@ -26,6 +26,7 @@ Rails.application.routes.draw do
           post 'login'
           post 'logout'
           get 'me'
+          get 'users/:id', action: 'liked_clients'
         end
         get 'discounts', controller: 'discounts', action: :client_discounts
         post 'discounts', controller: 'discounts', action: :create

@@ -191,6 +191,25 @@ module API
           # pending "TODO #{__FILE__}"
         end
       end
+
+      describe 'Get Liked Clients' do
+        let :client do
+          FactoryGirl.create :client_with_discounts
+        end
+
+        it 'users should get all liked clients' do
+          user = FactoryGirl.create :user_with_subscriptions
+          jwt_validate_token user
+          user.add_to_set client_ids: client._id.to_s
+
+          get :liked_clients, id: user._id.to_s, format: :json
+          expect(response.status).to eql 200
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:clients].length).to eql 1
+          expect(response_body[:clients].first[:email]).to eql nil
+          expect(response_body[:clients].first[:name]).to eql client.name
+        end
+      end
     end
   end
 end

@@ -1,7 +1,12 @@
 module API
   module V1
     class ClientsController < API::BaseController
-      before_action :authenticated?, only: [:me, :discounts, :update, :logout, :update_password]
+      before_action :authenticated?, only: [:me,
+                                            :discounts,
+                                            :update,
+                                            :logout,
+                                            :update_password,
+                                            :liked_clients]
 
       # POST /v1/clients/login
       def login
@@ -112,6 +117,18 @@ module API
       # DELETE /v1/clients/:id
       def destroy
         render nothing: true
+      end
+
+      # GET /api/v1/clients/users/:id
+      def liked_clients
+        begin
+          current_user = User.find @current_user_credentials[:_id]
+        rescue Mongoid::Errors::DocumentNotFound
+          return render nothing: true, status: :unauthorized
+        end
+
+        clients = Client.find current_user.client_ids
+        render json: clients, status: :ok, each_serializer: LikedClientSerializer
       end
 
       private
