@@ -53,7 +53,7 @@ gem 'mongoid_paranoia', '~> 0.1.2'
 # rubocop:disable Metrics/LineLength
 # https://github.com/mongoid/moped/pull/359 => ConnectionPool::PoolShuttingDownError
 # rubocop:enable Metrics/LineLength
-gem 'moped', '~> 2.0.5'
+gem 'moped', '~> 2.0.6'
 gem 'devise'
 gem 'bson_ext'
 # Abort requests that are taking too long
