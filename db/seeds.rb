@@ -1,7 +1,5 @@
-# rubocop:disable Metrics/LineLength
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-# rubocop:enable Metrics/LineLength
 #
 # Examples:
 #
@@ -144,7 +142,7 @@ if Rails.env.development?
   end
   Client.create client_with_discounts
   puts 'Finished creating 100 random clients with discounts'
-  user = FactoryGirl.create :user
-  token = API::BaseController.new.authenticate_user user
-  puts "Finished creating fake user: TOKEN=#{token}"
+  # user = FactoryGirl.create :user
+  # token = API::BaseController.new.authenticate_user user
+  # puts "Finished creating fake user: TOKEN=#{token}"
 end

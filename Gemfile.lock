@@ -85,7 +85,6 @@ GEM
       activesupport (>= 4.1.0)
     hashie (3.4.2)
     hirb (0.7.3)
-    hiredis (0.6.0)
     httparty (0.13.5)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
@@ -161,7 +160,6 @@ GEM
     rake (10.4.2)
     rb-readline (0.5.3)
     rdoc (4.2.0)
-    redis (3.2.1)
     responders (2.1.0)
       railties (>= 4.2.0, < 5)
     rspec (3.2.0)
@@ -234,7 +232,6 @@ DEPENDENCIES
   ffaker (~> 2.0.0)
   gcm
   hirb
-  hiredis
   jwt-rb
   lograge (~> 0.3.0)
   logstash-event (~> 1.2.0)
@@ -247,7 +244,6 @@ DEPENDENCIES
   rack-timeout (~> 0.2.0)
   rails (= 4.2.0)
   rb-readline
-  redis
   rspec-rails (~> 3.2.0)
   sdoc (~> 0.4.0)
   shoulda-matchers

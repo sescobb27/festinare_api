@@ -82,19 +82,6 @@ module API
           c = Client.unscoped.find(client._id)
           plan = c.client_plans.first
           expect(plan.num_of_discounts_left).to eql plan.num_of_discounts - 1
-
-          Cache::RedisCache.instance do |redis|
-            len = redis.llen('discounts')
-            expect(len).to be > 0
-            obj = redis.lrange('discounts', len - 1, len - 1)[0]
-            cache_discount = JSON.parse(obj)
-            expect(cache_discount['discount']['title']).to(
-              eql client_discount.title
-            )
-            expect(cache_discount['discount']['_id']['$oid']).to(
-              eql client_discount._id.to_s
-            )
-          end
         end
 
         it 'should not be able to create a discount' do

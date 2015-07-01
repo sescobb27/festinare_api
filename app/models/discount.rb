@@ -73,48 +73,26 @@ EOF
       threads.map!(&:join)
     end
 
-    cache_thread = Thread.new do
-      invalidated = DiscountCache.invalidate
-      invalidated.each do |discount|
-        Rails.logger.info <<-EOF
-{ "action": "invalidate_discount_cache", "discount": "#{discount}" }
-EOF
-      end
-    end
-
     mongo_thread.join
-    cache_thread.join
   end
 
   def self.discount_categories
-    categories = nil
-    Cache::RedisCache.instance do |redis|
-      len = redis.llen('discounts')
-      if len > 0
-        redis.lrange('discounts', 0, len).map do |r_discount|
-          result = JSON.parse r_discount, symbolize_names: true
-          categories = result[:categories].map { |category| category[:name] }
+    now = Time.zone.now
+    threads = Client.has_active_discounts.batch_size(500).map do |client|
+      Thread.new(client) do |t_client|
+        Thread.current[:categories] = []
+        t_client.discounts.map do |discount|
+          if now < discount.expire_time
+            Thread.current[:categories].push discount.categories.map(&:name)
+          end
         end
       end
     end
 
-    if !categories || categories.empty?
-      now = Time.zone.now
-      threads = Client.has_active_discounts.batch_size(500).map do |client|
-        Thread.new(client) do |t_client|
-          Thread.current[:categories] = []
-          t_client.discounts.map do |discount|
-            if now < discount.expire_time
-              Thread.current[:categories].push discount.categories.map(&:name)
-            end
-          end
-        end
-      end
-      categories = []
-      threads.map do |thread|
-        thread.join
-        categories.concat thread[:categories]
-      end
+    categories = []
+    threads.map do |thread|
+      thread.join
+      categories.concat thread[:categories]
     end
 
     categories.flatten

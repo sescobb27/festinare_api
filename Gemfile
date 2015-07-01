@@ -58,8 +58,6 @@ gem 'devise'
 gem 'bson_ext'
 # Abort requests that are taking too long
 gem 'rack-timeout', '~> 0.2.0'
-gem 'hiredis'
-gem 'redis'
 gem 'whenever', require: false
 gem 'gcm'
 gem 'lograge', '~> 0.3.0'

@@ -54,7 +54,6 @@ module API
           current_user.decrement_num_of_discounts_left!
           discount = current_user.discounts.create discount_attr
           if discount.errors.empty?
-            DiscountCache.cache discount, current_user.categories
             render json: discount, status: :ok
           else
             render json: {

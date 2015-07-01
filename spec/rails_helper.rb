@@ -32,13 +32,6 @@ RSpec.configure do |config|
   FactoryGirl.reload
   Rails.application.load_seed
   Festinare::Application.load_tasks
-  Cache::RedisCache.instance do |redis|
-    puts '| -------------------------------------- |'
-    puts '|        Deleting Redis Discounts        |'
-    puts '| -------------------------------------- |'
-    redis.del 'discounts'
-  end
-
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.
