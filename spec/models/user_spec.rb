@@ -53,6 +53,7 @@ RSpec.describe User, type: :model do
           users = User.create user_with_mobile
           Thread.current[:users] = users
         end
+        threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
       end
 
       created_users = []

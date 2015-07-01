@@ -12,8 +12,9 @@ class ClientPlan < Plan
 
   def self.invalidate_expired_ones
     now = Time.zone.now
-    threads = Client.batch_size(500).map do |client|
-      Thread.new(client) do |t_client|
+    threads = []
+    Client.batch_size(500).each do |client|
+      threads << Thread.new(client) do |t_client|
         t_client.client_plans.map do |plan|
           next if now < plan.expired_date
           plan.update_attribute :status, false
@@ -24,6 +25,7 @@ EOF
           # rubocop:enable Metrics/LineLength
         end
       end
+      threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
     end
     threads.map!(&:join)
   end

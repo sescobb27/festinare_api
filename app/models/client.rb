@@ -123,16 +123,15 @@ class Client
     query = Client.has_active_discounts
     query.in('categories.name' => categories) unless categories.empty?
     now = Time.zone.now
-    threads = query
-              .limit(opts[:limit])
-              .offset(opts[:offset])
-              .map do |client|
-                Thread.new(client) do |t_client|
-                  Thread.current[:client] = t_client
-                  break if t_client.discounts.empty?
-                  Thread.current[:client].discounts = t_client.unexpired_discounts(now)
-                end
-              end
+    threads = []
+    query.limit(opts[:limit]).offset(opts[:offset]).each do |client|
+      threads << Thread.new(client) do |t_client|
+        Thread.current[:client] = t_client
+        break if t_client.discounts.empty?
+        Thread.current[:client].discounts = t_client.unexpired_discounts(now)
+      end
+      threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
+    end
 
     threads.map do |thread|
       thread.join

@@ -55,31 +55,30 @@ class Discount
   end
 
   def self.invalidate_expired_ones
-    mongo_thread = Thread.new do
-      now = Time.zone.now
-      threads = Client.has_active_discounts.batch_size(500).map do |client|
-        Thread.new(client) do |t_client|
-          t_client.discounts.map do |discount|
-            next if now < discount.expire_time
-            discount.update_attribute :status, false
-            # rubocop:disable Metrics/LineLength
-            Rails.logger.info <<-EOF
+    now = Time.zone.now
+    threads = []
+    Client.has_active_discounts.batch_size(500).each do |client|
+      threads << Thread.new(client) do |t_client|
+        t_client.discounts.map do |discount|
+          next if now < discount.expire_time
+          discount.update_attribute :status, false
+          # rubocop:disable Metrics/LineLength
+          Rails.logger.info <<-EOF
 { "action": "invalidate_discount", "id": "#{t_client._id}", "name": "#{t_client.name}", "discount": "#{discount.attributes}" }
 EOF
-            # rubocop:enable Metrics/LineLength
-          end
+          # rubocop:enable Metrics/LineLength
         end
       end
-      threads.map!(&:join)
+      threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
     end
-
-    mongo_thread.join
+    threads.map!(&:join)
   end
 
   def self.discount_categories
     now = Time.zone.now
-    threads = Client.has_active_discounts.batch_size(500).map do |client|
-      Thread.new(client) do |t_client|
+    threads = []
+    Client.has_active_discounts.batch_size(500).each do |client|
+      threads << Thread.new(client) do |t_client|
         Thread.current[:categories] = []
         t_client.discounts.map do |discount|
           if now < discount.expire_time
@@ -87,6 +86,7 @@ EOF
           end
         end
       end
+      threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
     end
 
     categories = []

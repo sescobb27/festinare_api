@@ -21,6 +21,7 @@ RSpec.describe Discount, type: :model do
               ).seconds - 1.second
             )
           end
+          threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
         end
       end
       expect(threads.length).to eql 100
@@ -34,6 +35,7 @@ RSpec.describe Discount, type: :model do
           threads << Thread.new(discount) do |t_discount|
             expect(t_discount.status).to eql false
           end
+          threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
         end
       end
       expect(threads.length).to eql 100
