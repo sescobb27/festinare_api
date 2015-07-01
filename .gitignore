@@ -33,5 +33,6 @@ bower_components
 .DS_Store
 npm-debug.log
 public
-.env.development
-.env.production
+.envrc
+.envrc.development
+.envrc.production

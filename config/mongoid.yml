@@ -7,9 +7,9 @@ production:
       username: <%= ENV['MONGODB_DB_USERNAME'] %>
       password: <%= ENV['MONGODB_DB_PASSWORD'] %>
       options:
-        pool_size: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
+        pool_size: <%= Integer(ENV['POOL_SIZE']) %>
         timeout: 20
-        max_retries: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
+        max_retries: <%= Integer(ENV['POOL_SIZE']) %>
   options:
     use_activesupport_time_zone: true
 development:
@@ -23,9 +23,9 @@ development:
       hosts:
         - <%= ENV['MONGODB_DB_HOST'] || 'localhost' %>:<%= ENV['MONGODB_DB_PORT'] || 27017 %>
       options:
-        pool_size: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
+        pool_size: <%= Integer(ENV['POOL_SIZE']) %>
         timeout: 20
-        max_retries: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
+        max_retries: <%= Integer(ENV['POOL_SIZE']) %>
         # Change the default write concern. (default = { w: 1 })
         # write:
         # w: 1
@@ -76,7 +76,7 @@ test:
       options:
         read: primary
         retry_interval: 1
-        pool_size: <%= Integer(ENV['WEB_CONCURRENCY'] || 2) * Integer(ENV['PUMA_MAX_THREADS'] || 10) %>
+        pool_size: <%= Integer(ENV['POOL_SIZE']) %>
         timeout: 20
         max_retries: 30
   options:

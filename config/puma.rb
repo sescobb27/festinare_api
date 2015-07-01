@@ -1,8 +1,10 @@
 require 'dotenv'
 
-current_env = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
+current_env = ENV['RACK_ENV'] || ENV['RAILS_ENV']
 
-ENV.update Dotenv::Environment.new(File.expand_path(".env.#{current_env}"))
+throw 'Please set RACK_ENV or RAILS_ENV env variable' if current_env.nil? || current_env.empty?
+
+ENV.update Dotenv::Environment.new(File.expand_path(".envrc.#{current_env}"))
 
 # bundle exec puma -p $PORT -C config/puma.rb
 workers Integer(ENV['WEB_CONCURRENCY'] || 2)
@@ -17,7 +19,7 @@ port ENV['PORT'] || 3_000
 environment current_env
 
 on_worker_boot do
-  ENV.update Dotenv::Environment.new(File.expand_path(".env.#{current_env}"))
+  ENV.update Dotenv::Environment.new(File.expand_path(".envrc.#{current_env}"))
   Mongoid.load!(File.expand_path('../mongoid.yml', __FILE__), current_env)
 end
 

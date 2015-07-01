@@ -2,7 +2,7 @@ Dockerfile
 Dockerfile.*
 .dockerignore
 dump.rdb
-.env.example
+.envrc.example
 .git
 .gitignore
 .jshintrc

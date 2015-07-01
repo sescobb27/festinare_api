@@ -19,17 +19,12 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 group :development, :test do
   gem 'dotenv-rails', require: 'dotenv/rails-now'
-  # rubocop:disable Metrics/LineLength
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  # rubocop:enable Metrics/LineLength
   gem 'byebug', '~> 4.0.0'
 
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
 
-  # rubocop:disable Metrics/LineLength
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  # rubocop:enable Metrics/LineLength
   gem 'spring', '~> 1.3.0'
   gem 'bullet'
   gem 'mongoid-rspec', '~> 2.1.0'
