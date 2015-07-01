@@ -104,13 +104,8 @@ class User
       notify_users = users.select(&:mobile)
       next if notify_users.empty?
       registration_ids.concat notify_users.map(&:mobile).map(&:token)
-      if registration_ids.length <= 1000
-        response = gcm.send_notification(registration_ids, options)
-        registration_ids.clear
-      else
-        response = gcm.send_notification(registration_ids[0...1000], options)
-        registration_ids = registration_ids[1000..-1]
-      end
+      response = gcm.send_notification(registration_ids, options)
+      registration_ids.clear
       Rails.logger.info <<-EOF
 { "action": "send_notification", "categories": "#{categories}", "gcm_response": "#{response}" }
 EOF
