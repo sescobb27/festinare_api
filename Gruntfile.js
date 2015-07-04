@@ -29,7 +29,7 @@ module.exports = function (grunt) {
     yeoman: appConfig,
     open: {
       server: {
-        url: 'http://api.hurry-up.co:3000/'
+        url: 'http://http://festinare.com.co/'
       }
     },
     watch: {
