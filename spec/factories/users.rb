@@ -10,6 +10,7 @@ FactoryGirl.define do
     email { "#{SecureRandom.base64(4)}#{FFaker::Internet.email}".downcase }
     password 'qwertyqwerty'
     client_ids []
+    reviews []
 
     factory :user_with_subscriptions do
       categories do

@@ -119,6 +119,12 @@ class Client
     self.save
   end
 
+  def self.review_client(id, review)
+    client = Client.find id
+    client.push feedback: review[:feedback], rates: review[:rate].to_i
+    client.set avg_rate: client.rates.sum.fdiv(client.rates.length)
+  end
+
   def self.available_discounts(categories, opts)
     query = Client.has_active_discounts
     query.in('categories.name' => categories) unless categories.empty?

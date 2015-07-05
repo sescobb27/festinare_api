@@ -143,10 +143,12 @@ module API
         # only users who had like a discount can review a client
         client_id = params[:client_id]
         if current_user.client_ids.include? client_id
+          if current_user.reviews.include? client_id
+            return render nothing: true, status: :method_not_allowed
+          end
           secure_params = params.require(:user).permit(:rate, :feedback)
-          client = Client.find client_id
-          client.push feedback: secure_params[:feedback], rates: secure_params[:rate].to_i
-          client.set avg_rate: client.rates.sum.fdiv(client.rates.length)
+          Client.review_client client_id, secure_params
+          current_user.push reviews: client_id
           render nothing: true, status: :ok
         else
           return render nothing: true, status: :forbidden

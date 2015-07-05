@@ -211,28 +211,24 @@ module API
         end
       end
 
-      describe 'User Review a Client' do
+      describe 'User Review Client' do
         let :client do
           FactoryGirl.create :client_with_discounts
         end
 
         it 'shouldn\'t be able to review a client' do
-          rates = (1..10).map { rand(1..5) }
-          10.times do |step|
-            user = FactoryGirl.create :user_with_subscriptions
-            jwt_validate_token user
-            post :review,
-                 user: { rate: rates[step], feedback: "feedback#{step}" },
-                 id: user._id.to_s,
-                 client_id: client._id.to_s,
-                 format: :json
-            expect(response.status).to eql 403
-          end
+          user = FactoryGirl.create :user_with_subscriptions
+          jwt_validate_token user
+          post :review,
+               user: { rate: rand(1..5), feedback: 'feedback' },
+               id: user._id.to_s,
+               client_id: client._id.to_s,
+               format: :json
+          expect(response.status).to eql 403
         end
 
         it 'should review a client and its avg should change' do
           rates = (1..10).map { rand(1..5) }
-          c_client = Client.find client._id.to_s
           10.times do |step|
             user = FactoryGirl.create :user_with_subscriptions
             jwt_validate_token user
@@ -243,12 +239,36 @@ module API
                  client_id: client._id.to_s,
                  format: :json
             expect(response.status).to eql 200
-            c_client.reload
-            expect(c_client.rates.length).to eql(step + 1)
-            expect(c_client.avg_rate).to eql rates[0..step].sum.fdiv(step + 1)
-            expect(c_client.feedback[step]).to eql "feedback#{step}"
+            client.reload
+            expect(client.rates.length).to eql(step + 1)
+            expect(client.avg_rate).to eql rates[0..step].sum.fdiv(step + 1)
+            expect(client.feedback[step]).to eql "feedback#{step}"
           end
-          expect(c_client.avg_rate).to eql rates.sum.fdiv 10
+          expect(client.avg_rate).to eql rates.sum.fdiv 10
+        end
+
+        it 'should not be able to review a client twice' do
+          user = FactoryGirl.create :user_with_subscriptions
+          rate = rand(1..5)
+          jwt_validate_token user
+          user.add_to_set client_ids: client._id.to_s
+          # first review
+          post :review,
+               user: { rate: rate, feedback: 'feedback' },
+               id: user._id.to_s,
+               client_id: client._id.to_s,
+               format: :json
+          expect(response.status).to eql 200
+          user.reload
+          expect(user.reviews).to include client._id
+
+          # second review
+          post :review,
+               user: { rate: rate, feedback: 'feedback' },
+               id: user._id.to_s,
+               client_id: client._id.to_s,
+               format: :json
+          expect(response.status).to eql 405
         end
       end
     end
