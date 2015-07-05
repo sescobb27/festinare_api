@@ -128,7 +128,8 @@ module API
           return render nothing: true, status: :unauthorized
         end
 
-        clients = Client.find current_user.client_ids
+        clients = []
+        clients = Client.find current_user.client_ids unless current_user.client_ids.empty?
         render json: clients, status: :ok, each_serializer: LikedClientSerializer
       end
 
