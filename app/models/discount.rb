@@ -13,7 +13,7 @@ class Discount
   field :status, type: Boolean, default: true
   field :duration, type: Integer
   field :duration_term
-  field :hashtags, type: Array
+  field :hashtags, type: Array, default: []
 
   index({ status: 1 }, unique: false)
   index({ hashtags: 1 }, unique: false)

@@ -55,8 +55,8 @@ class User
   field :fullname
   field :token
   # each time a user likes a discount, the discount's client id is added here
-  field :client_ids, type: Array
-  field :reviews, type: Array
+  field :client_ids, type: Array, default: []
+  field :reviews, type: Array, default: []
 
   index({ username: 1 }, unique: true)
   index({ email: 1 }, unique: true)
