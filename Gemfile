@@ -45,9 +45,6 @@ gem 'puma', '~> 2.11.0'
 gem 'jwt-rb'
 gem 'mongoid', '~> 4.0.2'
 gem 'mongoid_paranoia', '~> 0.1.2'
-# rubocop:disable Metrics/LineLength
-# https://github.com/mongoid/moped/pull/359 => ConnectionPool::PoolShuttingDownError
-# rubocop:enable Metrics/LineLength
 gem 'moped', '~> 2.0.6'
 gem 'devise'
 gem 'bson_ext'
@@ -55,6 +52,6 @@ gem 'bson_ext'
 gem 'rack-timeout', '~> 0.2.0'
 gem 'whenever', require: false
 gem 'gcm'
-gem 'lograge', '~> 0.3.0'
+gem 'lograge', '~> 0.3.3'
 gem 'logstash-event', '~> 1.2.0'
 gem 'rack-cors', '~> 0.4.0', :require => 'rack/cors'

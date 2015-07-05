@@ -233,7 +233,7 @@ DEPENDENCIES
   gcm
   hirb
   jwt-rb
-  lograge (~> 0.3.0)
+  lograge (~> 0.3.3)
   logstash-event (~> 1.2.0)
   mongoid (~> 4.0.2)
   mongoid-rspec (~> 2.1.0)
