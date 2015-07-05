@@ -198,7 +198,7 @@ module API
       end
 
       describe 'User Likes a discount' do
-        it 'should get a secret key to redeem a discount' do
+        it 'should get a qrcode to redeem a discount' do
           jwt_validate_token user
           discount = Client.find(client._id).discounts.sample
           post :like,
@@ -206,11 +206,12 @@ module API
                client_id:  client._id.to_s,
                discount_id: discount._id.to_s
           expect(response.status).to eql 200
-          response_body = JSON.parse(response.body, symbolize_names: true)
           u = User.find(user._id)
           expect(u.discounts).to include discount
           expect(u.client_ids).to include client._id.to_s
-          expect(response_body[:secret_key]).to eql discount.secret_key
+          expect(response.content_type).to eql 'image/png'
+          expect(response.body).not_to include discount.secret_key
+          expect(response.body.length).to be > 0
         end
 
         it 'should not get a liked discount' do

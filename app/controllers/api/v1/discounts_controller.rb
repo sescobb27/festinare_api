@@ -95,7 +95,13 @@ module API
         if !like_discount.expired? Time.zone.now
           current_user.discounts.push like_discount
           current_user.add_to_set client_ids: params[:client_id]
-          render json: { secret_key: like_discount.secret_key }, status: :ok
+          like_discount.generate_qr params[:client_id], current_user._id do |qrcode|
+            send_data qrcode,
+                      filename: "#{like_discount.title}_qrcode.png",
+                      type: :png,
+                      disposition: 'attachment',
+                      status: :ok
+          end
         else
           render json: { errors: ['Discount expired'] }, status: :bad_request
         end

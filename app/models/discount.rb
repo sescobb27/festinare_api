@@ -2,6 +2,7 @@ class Discount
   include Mongoid::Document
   include Mongoid::Timestamps::Created
   include Mongoid::Paranoia
+  include Qr
   # =============================relationships=================================
   embeds_many :categories, as: :categorizable
   embedded_in :discountable, polymorphic: true
@@ -9,7 +10,6 @@ class Discount
   # =============================Schema========================================
   field :discount_rate, type: Integer
   field :title
-  field :secret_key
   field :status, type: Boolean, default: true
   field :duration, type: Integer
   field :duration_term
@@ -35,7 +35,7 @@ class Discount
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
-  validates_presence_of :discount_rate, :title, :secret_key
+  validates_presence_of :discount_rate, :title
   validates :duration, inclusion: {
     in: DURATIONS,
     message: "Invalid Discount duration, valid ones are #{DURATIONS.join(", ")}"
