@@ -274,10 +274,10 @@ module API
         end
       end
 
-      describe 'Client Get all his/her discounts' do
+      describe 'Client Get all their discounts' do
         it 'should return all client discounts' do
           jwt_validate_token client
-          get :client_discounts, client_id: client._id
+          get :discounts, client_id: client._id
           expect(response.status).to eql 200
           response_body = JSON.parse(response.body, symbolize_names: true)
           expect(response_body[:discounts].length).to be == 5

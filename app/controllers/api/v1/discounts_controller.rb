@@ -71,7 +71,7 @@ module API
       end
 
       # GET /v1/clients/:client_id/discounts
-      def client_discounts
+      def discounts
         client = Client.only(:_id, :discounts)
                  .find(@current_user_credentials[:_id])
         render json: client.discounts.unscoped, status: :ok
