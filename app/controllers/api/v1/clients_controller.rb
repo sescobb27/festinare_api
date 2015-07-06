@@ -120,19 +120,6 @@ module API
         render nothing: true
       end
 
-      # GET /api/v1/clients/users/:id
-      def liked_clients
-        begin
-          current_user = User.find @current_user_credentials[:_id]
-        rescue Mongoid::Errors::DocumentNotFound
-          return render nothing: true, status: :unauthorized
-        end
-
-        clients = []
-        clients = Client.find current_user.client_ids unless current_user.client_ids.empty?
-        render json: clients, status: :ok, each_serializer: LikedClientSerializer
-      end
-
       private
 
         def safe_auth_params

@@ -1,7 +1,7 @@
 module API
   module V1
     class UsersController < API::BaseController
-      before_action :authenticated?, only: [:me, :update, :mobile, :review]
+      before_action :authenticated?, only: [:me, :update, :mobile, :review, :likes]
 
       def me
         user = User.find(@current_user_credentials[:_id])
@@ -81,6 +81,19 @@ module API
             errors: user.errors.full_messages
           }, status: :bad_request
         end
+      end
+
+      # GET /api/v1/users/:id/likes
+      def likes
+        begin
+          current_user = User.find @current_user_credentials[:_id]
+        rescue Mongoid::Errors::DocumentNotFound
+          return render nothing: true, status: :unauthorized
+        end
+
+        clients = []
+        clients = Client.find current_user.client_ids unless current_user.client_ids.empty?
+        render json: clients, status: :ok, each_serializer: LikesSerializer, root: 'clients'
       end
 
       def destroy
