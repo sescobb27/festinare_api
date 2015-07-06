@@ -18,18 +18,19 @@ Rails.application.routes.draw do
                controller: 'discounts',
                action: :like
           put 'mobile'
+          get 'likes'
         end
+        resources :reviews, except: [:index, :new, :edit]
       end
       resources :clients, except: [:new, :edit, :show] do
         collection do
           post 'login'
           post 'logout'
           get 'me'
-          get 'users/:id', action: 'liked_clients'
         end
-        post '/users/:id/review', action: 'review'
-        get 'discounts', controller: 'discounts', action: :client_discounts
+        get 'discounts', controller: 'discounts', action: :discounts
         post 'discounts', controller: 'discounts', action: :create
+        resources :reviews, only: :show
       end
       resources :discounts, only: [:index]
       resources :plans, only: :index do # except: [:new, :destroy, :edit]
