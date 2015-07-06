@@ -1,7 +1,7 @@
 module API
   module V1
     class ReviewsController < API::BaseController
-      before_action :authenticated?
+      before_action :authenticated?, except: :show
 
       # POST /api/v1/users/:user_id/reviews
       def create
@@ -20,16 +20,19 @@ module API
           end
           review = Review.new secure_params.merge user_id: params[:user_id]
 
-          return render nothing: true, status: :created if review.save
+          return render json: review, status: :created if review.save
           render json: { errors: review.errors }, status: :bad_request
         else
           return render nothing: true, status: :forbidden
         end
       end
 
-      # GET /api/v1/users/:user_id/reviews/:id
-      # GET /api/v1/clients/:client_id/reviews/:id
+      # GET /api/v1/reviews/:id
       def show
+        review = Review.find params[:id]
+        render json: review, status: :ok
+      rescue Mongoid::Errors::DocumentNotFound
+        return render nothing: true, status: :bad_request
       end
 
       # PATCH /api/v1/users/:user_id/reviews/:id
@@ -42,7 +45,7 @@ module API
 
       private
         def post_params
-          params.require(:user).permit(:client_id, :rate, :feedback)
+          params.require(:review).permit(:client_id, :rate, :feedback)
         end
     end
   end

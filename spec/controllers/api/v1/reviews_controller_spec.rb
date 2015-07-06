@@ -45,7 +45,7 @@ module API
           user = FactoryGirl.create :user_with_subscriptions
           jwt_validate_token user
           post :create,
-               user: { client_id: client._id.to_s, rate: rand(1..5), feedback: 'feedback' },
+               review: { client_id: client._id.to_s, rate: rand(1..5), feedback: 'feedback' },
                user_id: user._id.to_s,
                format: :json
           expect(response.status).to eql 403
@@ -58,10 +58,12 @@ module API
             jwt_validate_token user
             user.add_to_set client_ids: client._id.to_s
             post :create,
-                 user: { client_id: client._id.to_s, rate: rates[step], feedback: "feedback#{step}" },
+                 review: { client_id: client._id.to_s, rate: rates[step], feedback: "feedback#{step}" },
                  user_id: user._id.to_s,
                  format: :json
             expect(response.status).to eql 201
+            response_body = JSON.parse response.body, symbolize_names: true
+            expect(response_body[:review][:_id]).not_to be_empty
           end
           client_with_reviews = Client.includes(:reviews).find client._id
           expect(client_with_reviews.reviews.length).to eql(3)
@@ -78,7 +80,7 @@ module API
           user.add_to_set client_ids: client._id.to_s
           # first review
           post :create,
-               user: { client_id: client._id.to_s, rate: rate, feedback: 'feedback' },
+               review: { client_id: client._id.to_s, rate: rate, feedback: 'feedback' },
                user_id: user._id.to_s,
                format: :json
           expect(response.status).to eql 201
@@ -87,10 +89,40 @@ module API
 
           # second review
           post :create,
-               user: { client_id: client._id.to_s, rate: rate, feedback: 'feedback' },
+               review: { client_id: client._id.to_s, rate: rate, feedback: 'feedback' },
                user_id: user._id.to_s,
                format: :json
           expect(response.status).to eql 405
+        end
+      end
+
+      describe 'Get Review' do
+        let(:review) { FactoryGirl.attributes_for :review }
+        let(:client) { FactoryGirl.create :client }
+        let(:user) { FactoryGirl.create :user }
+
+        it 'Authorized user/client should get a review by id' do
+          jwt_validate_token user
+          user.add_to_set client_ids: client._id.to_s
+          post :create,
+               review: { client_id: client._id.to_s }.merge(review),
+               user_id: user._id.to_s,
+               format: :json
+          expect(response.status).to eql 201
+          response_body = JSON.parse response.body, symbolize_names: true
+          review_id = response_body[:review][:_id]
+
+          get :show, id: review_id, format: :json
+          expect(response.status).to eql 200
+          response_body = JSON.parse response.body, symbolize_names: true
+          expect(response_body[:review][:user_id]).to eql user._id.to_s
+          expect(response_body[:review][:client_id]).to eql client._id.to_s
+        end
+
+        it 'should respond with status bad_request if review does not exist' do
+          jwt_validate_token user
+          get :show, id: 'fake id', format: :json
+          expect(response.status).to eql 400
         end
       end
     end

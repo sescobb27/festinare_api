@@ -20,7 +20,7 @@ Rails.application.routes.draw do
           put 'mobile'
           get 'likes'
         end
-        resources :reviews, except: [:index, :new, :edit]
+        resources :reviews, except: [:index, :new, :edit, :show]
       end
       resources :clients, except: [:new, :edit, :show] do
         collection do
@@ -30,8 +30,8 @@ Rails.application.routes.draw do
         end
         get 'discounts', controller: 'discounts', action: :discounts
         post 'discounts', controller: 'discounts', action: :create
-        resources :reviews, only: :show
       end
+      resources :reviews, only: :show
       resources :discounts, only: [:index]
       resources :plans, only: :index do # except: [:new, :destroy, :edit]
         post '/purchase', action: :purchase_plan

@@ -44,8 +44,10 @@ module API
 
       def valid_params?(credentials)
         # some routes not need authentication id
-        return true unless params[:id]
-        params[:id] == credentials[:_id].to_s
+        return true if (request.path_parameters.keys & %i(id user_id client_id)).empty?
+        request.path_parameters[:id] == credentials[:_id].to_s ||
+          request.path_parameters[:user_id] == credentials[:_id].to_s ||
+          request.path_parameters[:client_id] == credentials[:_id].to_s
       end
   end
 end
