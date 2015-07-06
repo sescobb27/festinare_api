@@ -20,6 +20,7 @@ class Client
   embeds_many :locations, as: :localizable
   embeds_many :discounts, as: :discountable
   embeds_many :client_plans
+  has_many :reviews
   # =============================END relationships=============================
   # =============================Schema========================================
   # rubocop:disable Metrics/LineLength
@@ -50,13 +51,10 @@ class Client
 
   field :username
   field :name
-  field :rates, type: Array, default: []
-  field :avg_rate, type: Float, default: 0.0
   # field :num_of_places
   field :image_url
   field :addresses, type: Array, default: []
   field :token, type: Array, default: []
-  field :feedback, type: Array, default: []
 
   index({ username: 1 }, unique: true)
   index({ email: 1 }, unique: true)

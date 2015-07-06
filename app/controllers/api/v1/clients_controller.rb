@@ -133,29 +133,6 @@ module API
         render json: clients, status: :ok, each_serializer: LikedClientSerializer
       end
 
-      # POST /api/v1/clients/:client_id/users/:id/review
-      def review
-        begin
-          current_user = User.find @current_user_credentials[:_id]
-        rescue Mongoid::Errors::DocumentNotFound
-          return render nothing: true, status: :unauthorized
-        end
-
-        # only users who had like a discount can review a client
-        client_id = params[:client_id]
-        if current_user.client_ids.include? client_id
-          if current_user.reviews.include? client_id
-            return render nothing: true, status: :method_not_allowed
-          end
-          secure_params = params.require(:user).permit(:rate, :feedback)
-          Client.review_client client_id, secure_params
-          current_user.push reviews: client_id
-          render nothing: true, status: :ok
-        else
-          return render nothing: true, status: :forbidden
-        end
-      end
-
       private
 
         def safe_auth_params

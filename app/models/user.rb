@@ -20,6 +20,7 @@ class User
   embeds_many :discounts, as: :discountable
   embeds_many :categories, as: :categorizable
   embeds_one :mobile
+  has_many :reviews
   # =============================END relationships=============================
 
   # =============================Schema========================================
@@ -56,7 +57,6 @@ class User
   field :token
   # each time a user likes a discount, the discount's client id is added here
   field :client_ids, type: Array, default: []
-  field :reviews, type: Array, default: []
 
   index({ username: 1 }, unique: true)
   index({ email: 1 }, unique: true)
