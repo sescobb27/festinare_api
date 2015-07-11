@@ -4,16 +4,6 @@ require 'auth_token'
 module API
   module V1
     RSpec.describe DiscountsController, type: :controller  do
-      def jwt_validate_token(user)
-        @auth_token = allow(JWT::AuthToken).to(
-          receive(:validate_token).and_return(
-            _id: user._id,
-            username: user.username,
-            email: user.email
-          )
-        )
-      end
-
       before do
         request.host = 'example.com'
         client_id = rand(100)
