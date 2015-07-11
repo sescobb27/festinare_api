@@ -109,11 +109,9 @@ module API
             expect(response_body[:errors][0]).to(
               eql 'You need a plan to create a discount'
             )
-            # rubocop:disable Metrics/LineLength
             expect(response_body[:errors][1]).to(
               eql 'You have exhausted your plan discounts, you need to purchase a new plan'
             )
-            # rubocop:enable Metrics/LineLength
             c.reload
             expect(c.client_plans.with_discounts).to be_empty
           end
@@ -136,10 +134,9 @@ module API
 
       describe 'Get all available discounts' do
         before do
-          Client.create(
-            (1..50).map { FactoryGirl.attributes_for :client_with_discounts }
-          )
+          FactoryGirl.create_list :client_with_discounts, 50
         end
+
         it 'user should get all available discounts base on subscriptions' do
           jwt_validate_token user
           get :index, {}, format: :json

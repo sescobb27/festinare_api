@@ -3,16 +3,10 @@ require 'rake'
 
 RSpec.describe Discount, type: :model do
   describe 'invalidate:discounts Task -> Invalidate Expired Discounts' do
-    let!(:clients) do
-      (1..20).map do
-        FactoryGirl.attributes_for :client_with_discounts
-      end
-    end
-
     it 'should invalidate all discounts' do
-      created_clients = Client.create clients
+      clients = FactoryGirl.create_list :client_with_discounts, 20
       threads = []
-      created_clients.map do |client|
+      clients.map do |client|
         client.discounts.map do |discount|
           threads << Thread.new(discount) do |t_discount|
             t_discount.set created_at: (
@@ -30,7 +24,7 @@ RSpec.describe Discount, type: :model do
 
       Rake::Task['invalidate:discounts'].invoke
 
-      created_clients.map do |client|
+      clients.map do |client|
         client.reload.discounts.unscoped.map! do |discount|
           threads << Thread.new(discount) do |t_discount|
             expect(t_discount.status).to eql false

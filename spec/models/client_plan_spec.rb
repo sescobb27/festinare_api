@@ -4,14 +4,10 @@ require 'rake'
 RSpec.describe ClientPlan, type: :model do
   describe 'invalidate:plans Task -> Invalidate Expired Plans' do
     let!(:expired_clients) do
-      c_attrs = (1..10).map do
-        FactoryGirl.attributes_for :client_with_expired_plan
-      end
-      Client.create c_attrs
+      FactoryGirl.create_list :client_with_expired_plan, 10
     end
     let!(:clients) do
-      c_attrs = (1..10).map { FactoryGirl.attributes_for :client_with_plan }
-      Client.create c_attrs
+      FactoryGirl.create_list :client_with_plan, 10
     end
 
     it 'should invalidate all expired plans' do

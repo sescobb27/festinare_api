@@ -39,18 +39,13 @@ RSpec.describe User, type: :model do
         { categories: { '$exists' => false } },
         { mobile: { '$exists' => false } }
       ])
-      client_with_discounts = (1..20).map do
-        FactoryGirl.attributes_for :client_with_discounts
-      end
-      Client.create client_with_discounts
+
+      FactoryGirl.create_list :client_with_discounts, 20
 
       threads = []
       (1..100).each do
         threads << Thread.new do
-          user_with_mobile = (1..10).map do
-            FactoryGirl.attributes_for :user_with_mobile
-          end
-          users = User.create user_with_mobile
+          users = FactoryGirl.create_list :user_with_mobile, 10
           Thread.current[:users] = users
         end
         threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
