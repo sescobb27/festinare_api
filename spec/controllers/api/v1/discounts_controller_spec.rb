@@ -27,6 +27,7 @@ module API
         @request.headers['Accept'] = 'application/json'
         @request.headers['Authorization'] = 'Bearer mysecretkey'
         @request.headers['Content-Type'] = 'application/json'
+        mock_token
       end
 
       let(:client) do

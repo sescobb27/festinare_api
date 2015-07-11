@@ -17,12 +17,7 @@ module API
         @request.headers['Accept'] = 'application/json'
         @request.headers['Authorization'] = 'Bearer mysecretkey'
         @request.headers['Content-Type'] = 'application/json'
-
-        # token expectations
-        @auth_token = allow(JWT::AuthToken).to(
-          receive(:make_token).and_return('mysecretkey')
-        )
-        expect(JWT::AuthToken.make_token({}, 3600)).to eq('mysecretkey')
+        mock_token
       end
 
       describe 'POST #create' do

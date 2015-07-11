@@ -14,20 +14,13 @@ module API
           )
         )
 
-        # token expectations
-        @auth_token = allow(JWT::AuthToken).to(
-          receive(:make_token).and_return('mysecretkey')
-        )
-        expect(JWT::AuthToken.make_token({}, 3600)).to eq('mysecretkey')
+        @request.headers['Accept'] = 'application/json'
+        @request.headers['Authorization'] = 'Bearer mysecretkey'
+        @request.headers['Content-Type'] = 'application/json'
+        mock_token
       end
 
       describe 'POST #purchase_planr' do
-        before do
-          @request.headers['Accept'] = 'application/json'
-          @request.headers['Authorization'] = 'Bearer mysecretkey'
-          @request.headers['Content-Type'] = 'application/json'
-        end
-
         let(:plan) { Plan.all.to_a.sample }
 
         let(:client) do

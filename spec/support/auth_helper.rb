@@ -10,4 +10,11 @@ module AuthHelper
       )
     )
   end
+
+  def mock_token
+    allow(JWT::AuthToken).to receive(:make_token).and_return('mysecretkey')
+  end
 end
+
+# allow(JWT::AuthToken).to receive(:make_token).and_return('mysecretkey')
+# expect(JWT::AuthToken.make_token({}, 3600)).to eq('mysecretkey')
