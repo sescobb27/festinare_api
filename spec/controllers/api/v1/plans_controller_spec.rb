@@ -21,7 +21,7 @@ module API
         expect(JWT::AuthToken.make_token({}, 3600)).to eq('mysecretkey')
       end
 
-      describe 'Client Purchase a Plan' do
+      describe 'POST #purchase_planr' do
         before do
           @request.headers['Accept'] = 'application/json'
           @request.headers['Authorization'] = 'Bearer mysecretkey'

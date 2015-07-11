@@ -41,7 +41,7 @@ module API
         FactoryGirl.create :user
       end
 
-      describe 'Create Discount' do
+      describe 'POST #create' do
         let(:raw_client) do
           FactoryGirl.create :client
         end
@@ -132,7 +132,7 @@ module API
         end
       end
 
-      describe 'Get all available discounts' do
+      describe 'GET #index' do
         before do
           FactoryGirl.create_list :client_with_discounts, 50
         end
@@ -184,7 +184,7 @@ module API
         end
       end
 
-      describe 'User Likes a discount' do
+      describe 'POST #like' do
         it 'should get a qrcode to redeem a discount' do
           jwt_validate_token user
           discount = Client.find(client._id).discounts.sample
@@ -261,7 +261,7 @@ module API
         end
       end
 
-      describe 'Client Get all their discounts' do
+      describe 'GET #discounts' do
         it 'should return all client discounts' do
           jwt_validate_token client
           get :discounts, client_id: client._id

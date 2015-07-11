@@ -25,7 +25,7 @@ module API
         expect(JWT::AuthToken.make_token({}, 3600)).to eq('mysecretkey')
       end
 
-      describe 'Create User' do
+      describe 'POST #create' do
         before(:each) do
           @user = FactoryGirl.attributes_for :user
         end
@@ -58,7 +58,7 @@ module API
         end
       end
 
-      describe 'User Login' do
+      describe 'POST #login' do
         before do
           @user = FactoryGirl.attributes_for :user
           User.create @user
@@ -89,7 +89,7 @@ module API
         end
       end
 
-      describe 'User Update' do
+      describe 'PUT #update' do
         let(:user) do
           FactoryGirl.create :user
         end
@@ -156,7 +156,7 @@ module API
         end
       end
 
-      describe 'Get Liked Clients' do
+      describe 'GET #likes' do
         let :client do
           FactoryGirl.create :client_with_discounts
         end

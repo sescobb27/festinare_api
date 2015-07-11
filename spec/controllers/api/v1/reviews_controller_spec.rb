@@ -26,7 +26,7 @@ module API
         @request.headers['Content-Type'] = 'application/json'
       end
 
-      describe 'Client Review' do
+      describe 'POST #create' do
         let :client do
           FactoryGirl.create :client_with_discounts
         end
@@ -86,7 +86,7 @@ module API
         end
       end
 
-      describe 'Get Review' do
+      describe 'GET #show' do
         let(:review) { FactoryGirl.attributes_for :review }
         let(:client) { FactoryGirl.create :client }
         let(:user) { FactoryGirl.create :user }

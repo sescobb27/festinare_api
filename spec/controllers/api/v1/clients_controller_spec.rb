@@ -25,7 +25,7 @@ module API
         @request.headers['Content-Type'] = 'application/json'
       end
 
-      describe 'Create Client' do
+      describe 'POST #create' do
         let(:client) { FactoryGirl.attributes_for(:client) }
 
         it 'should return a token' do
@@ -44,7 +44,7 @@ module API
         end
       end
 
-      describe 'Client Login' do
+      describe 'POST #login' do
         let(:client) do
           client_attr = FactoryGirl.attributes_for :client
           Client.create! client_attr
@@ -75,7 +75,7 @@ module API
         end
       end
 
-      describe 'Client Logout' do
+      describe 'POST #logout' do
         let(:client) do
           client_attr = FactoryGirl.attributes_for :client
           client_attr[:token] = ['mysecretkey']
@@ -101,7 +101,7 @@ module API
         end
       end
 
-      describe 'Get Client Attributes' do
+      describe 'GET #me' do
         let(:client) do
           client_attr = FactoryGirl.attributes_for :client
           client_attr[:token] = ['mysecretkey']
@@ -123,7 +123,7 @@ module API
         end
       end
 
-      describe 'Client Update' do
+      describe 'PUT #update' do
         let(:client) do
           FactoryGirl.create :client
         end
