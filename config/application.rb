@@ -44,6 +44,13 @@ module Festinare
 
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
+    config.lograge.custom_options = lambda do |event|
+      {
+        request_id: event.payload[:request_id],
+        pid: event.payload[:pid],
+        params: event.payload[:params]
+      }
+    end
 
     config.middleware.insert_before 0, 'Rack::Cors', logger: (-> { Rails.logger }) do
       allow do

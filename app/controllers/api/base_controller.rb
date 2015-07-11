@@ -12,6 +12,13 @@ module API
     #   Time.use_zone(current_user.time_zone, &block)
     # end
 
+    def append_info_to_payload(payload)
+      super
+      payload[:request_id] = request.uuid
+      payload[:pid] = Process.pid
+      payload[:params] = request.filtered_parameters
+    end
+
     def authenticate_user(user)
       # expiration time is set to a year
       JWT::AuthToken.make_token({
