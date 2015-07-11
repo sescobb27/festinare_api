@@ -27,6 +27,7 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include AuthHelper, type: :controller
+  config.include SupportHelper, type: :controller
   Mongoid::Sessions.default.collections.select do |c|
     c.name !~ /system/
   end.each(&:drop)

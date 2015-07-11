@@ -26,7 +26,7 @@ module API
         it 'should return a token' do
           post :create, client: client, format: :json
           expect(response.status).to eql 200
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response_body[:token]).to eql 'mysecretkey'
         end
 
@@ -34,7 +34,7 @@ module API
           client['password'] = 'qwerty'
           post :create, client: client, format: :json
           expect(response.status).to eql 400
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response_body[:errors].length).to eql 1
         end
       end
@@ -49,7 +49,7 @@ module API
         it 'should be successfully logged in' do
           post :login, client: client, format: :json
           expect(response.status).to eql 200
-          response_body = JSON.parse response.body, symbolize_names: true
+          response_body = json_response
           expect(response_body[:token]).to eql 'mysecretkey'
           cli = Client.find_by username: client[:username]
           expect(cli.token).to include client[:token][0]
@@ -106,7 +106,7 @@ module API
           jwt_validate_token client
           get :me, client: client, format: :json
           expect(response.status).to eql 200
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response_body[:client][:_id]).to eql client._id.to_s
           expect(response_body[:client][:email]).to eql client.email
         end
@@ -149,7 +149,7 @@ module API
             }
           }, id: client._id.to_s, format: :json
           expect(response.status).to eql 403
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response_body[:errors]).to include 'Password confirmation doesn\'t match Password'
           client.reload
           expect(client.valid_password? 'anotherpassword').to be false

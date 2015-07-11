@@ -27,7 +27,7 @@ module API
 
         it 'should return a token' do
           post :create, subdomain: 'api', user: @user, format: :json
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response.status).to eql 200
           expect(response_body[:token]).to eql 'mysecretkey'
         end
@@ -35,7 +35,7 @@ module API
         it 'should return status bad request for short passwords' do
           @user['password'] = 'qwerty'
           post :create, subdomain: 'api', user: @user, format: :json
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response.status).to eql 400
           expect(response_body[:errors].length).to eql 1
         end
@@ -64,7 +64,7 @@ module API
 
         it 'should be successfully logged in' do
           post :login, user: @user, format: :json
-          response_body = JSON.parse response.body, symbolize_names: true
+          response_body = json_response
           expect(response.status).to eql 200
           expect(response_body[:token]).to eql 'mysecretkey'
         end
@@ -163,7 +163,7 @@ module API
 
           get :likes, id: user._id.to_s, format: :json
           expect(response.status).to eql 200
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response_body[:clients].length).to eql 1
           expect(response_body[:clients].first[:email]).to eql nil
           expect(response_body[:clients].first[:name]).to eql client.name

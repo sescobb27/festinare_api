@@ -47,7 +47,7 @@ module API
                  user_id: user._id.to_s,
                  format: :json
             expect(response.status).to eql 201
-            response_body = JSON.parse response.body, symbolize_names: true
+            response_body = json_response
             expect(response_body[:review][:_id]).not_to be_empty
           end
           client_with_reviews = Client.includes(:reviews).find client._id
@@ -94,12 +94,12 @@ module API
                user_id: user._id.to_s,
                format: :json
           expect(response.status).to eql 201
-          response_body = JSON.parse response.body, symbolize_names: true
+          response_body = json_response
           review_id = response_body[:review][:_id]
 
           get :show, id: review_id, format: :json
           expect(response.status).to eql 200
-          response_body = JSON.parse response.body, symbolize_names: true
+          response_body = json_response
           expect(response_body[:review][:user_id]).to eql user._id.to_s
           expect(response_body[:review][:client_id]).to eql client._id.to_s
         end

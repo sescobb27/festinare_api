@@ -79,7 +79,7 @@ module API
           discount[:duration] = [0, 15, 25, 35, 65, 95, 125].sample
           post :create, client_id: client._id, discount: discount.to_hash
           expect(response.status).to eql 400
-          response_body = JSON.parse response.body, symbolize_names: true
+          response_body = json_response
           expect(response_body[:errors].length).to be > 0
         end
 
@@ -105,7 +105,7 @@ module API
             c.save!
             post :create, client_id: client._id, discount: discount.to_hash
             expect(response.status).to eql 403
-            response_body = JSON.parse response.body, symbolize_names: true
+            response_body = json_response
             expect(response_body[:errors].length).to eql 2
             expect(response_body[:errors][0]).to(
               eql 'You need a plan to create a discount'
@@ -121,7 +121,7 @@ module API
             jwt_validate_token raw_client
             post :create, client_id: raw_client._id, discount: discount.to_hash
             expect(response.status).to eql 403
-            response_body = JSON.parse response.body, symbolize_names: true
+            response_body = json_response
             expect(response_body[:errors].length).to eql 2
             expect(response_body[:errors][0]).to(
               eql 'You need a plan to create a discount'
@@ -142,7 +142,7 @@ module API
           jwt_validate_token user
           get :index, {}, format: :json
           expect(response.status).to eql 200
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response_body[:discounts].length).to eql 20
           response_body[:discounts].each do |client|
             expect(client[:discounts].length).to be > 0
@@ -161,7 +161,7 @@ module API
           jwt_validate_token raw_user
           get :index, {}, format: :json
           expect(response.status).to eql 200
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response_body[:discounts].length).to eql 20
           response_body[:discounts].each do |client|
             expect(client[:discounts].length).to be > 0
@@ -180,7 +180,7 @@ module API
           jwt_validate_token user
           get :index, limit: 50, format: :json
           expect(response.status).to eql 200
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response_body[:discounts].length).to eql 50
         end
       end
@@ -206,7 +206,7 @@ module API
           jwt_validate_token user
           # fetch discounts
           get :index, {}, format: :json
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response_body[:discounts].length).to eql 20
           client = response_body[:discounts].sample
           discount = client[:discounts].sample
@@ -227,7 +227,7 @@ module API
           # fetch the same discounts and the liked discount should not
           # be there
           get :index, {}, format: :json
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response_body[:discounts].length).to eql 20
 
           response_body[:discounts].each do |c|
@@ -242,7 +242,7 @@ module API
           jwt_validate_token user
 
           get :index, {}, format: :json
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           client = response_body[:discounts].sample
           discount = client[:discounts].sample
 
@@ -256,7 +256,7 @@ module API
                id: user._id.to_s,
                client_id:  client[:_id],
                discount_id: discount[:_id]
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response.status).to eql 400
           expect(response_body[:errors].first).to eql 'Discount expired'
         end
@@ -267,7 +267,7 @@ module API
           jwt_validate_token client
           get :discounts, client_id: client._id
           expect(response.status).to eql 200
-          response_body = JSON.parse(response.body, symbolize_names: true)
+          response_body = json_response
           expect(response_body[:discounts].length).to be == 5
         end
       end
