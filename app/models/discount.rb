@@ -11,7 +11,7 @@ class Discount
   field :discount_rate, type: Integer
   field :title
   field :status, type: Boolean, default: true
-  field :duration, type: Integer
+  field :duration, type: Integer, default: 60
   field :duration_term
   field :hashtags, type: Array, default: []
 
@@ -35,7 +35,7 @@ class Discount
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
-  validates_presence_of :discount_rate, :title
+  validates :discount_rate, :title, presence: true
   validates :duration, inclusion: {
     in: DURATIONS,
     message: "Invalid Discount duration, valid ones are #{DURATIONS.join(", ")}"

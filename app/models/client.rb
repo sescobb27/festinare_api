@@ -68,7 +68,7 @@ class Client
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
-  validates_presence_of :username, :name, :encrypted_password
+  validates :username, :name, :encrypted_password, presence: true
   # =============================END Schema Validations========================
   before_validation :downcase_credentials
 

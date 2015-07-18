@@ -18,12 +18,13 @@ class Plan
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
-  validates_presence_of :name,
-                        :description,
-                        :price,
-                        :num_of_discounts,
-                        :currency,
-                        :expired_rate
+  validates :name,
+            :description,
+            :price,
+            :num_of_discounts,
+            :currency,
+            :expired_rate,
+            presence: true
   validates :expired_time, inclusion: { in: EXPIRED_TIMES }
   validates :price, numericality: { only_integer: true }
   validates :num_of_discounts, numericality: {
