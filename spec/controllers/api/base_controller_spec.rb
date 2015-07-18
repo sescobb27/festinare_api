@@ -3,24 +3,51 @@ require 'auth_token'
 
 module API
   RSpec.describe BaseController, type: :controller  do
-    describe '#authenticate_user' do
-    end
-
-    describe '#authenticated?' do
+    describe '#authenticate!' do
       context 'when no authorization heaader' do
+        it 'should return 401 unauthorized' do
+          expect(controller).to receive(:render).with nothing: true, status: :unauthorized
+          controller.authenticate!
+        end
       end
 
       context 'when authorization header' do
         context 'when no JWT token' do
+          it 'should return 401 unauthorized' do
+            controller.request.headers['Authorization'] = 'Bearer  '
+            expect(controller).to receive(:render).with nothing: true, status: :unauthorized
+            controller.authenticate!
+          end
         end
 
         context 'when invalid JWT token' do
+          it 'should return 401 unauthorized' do
+            controller.request.headers['Authorization'] = 'Bearer  invalid_token'
+            expect(controller).to receive(:render).with nothing: true, status: :unauthorized
+            controller.authenticate!
+          end
         end
 
         context 'when invalid params' do
+          it 'should return 401 unauthorized' do
+            controller.request.path_parameters = { id: BSON::ObjectId.new.to_s }
+            user = FactoryGirl.create :user
+            jwt_validate_token user
+            expect(controller).to receive(:render).with nothing: true, status: :unauthorized
+            controller.authenticate!
+          end
         end
 
         context 'when valid JWT' do
+          it 'should set current user credentials' do
+            controller.request.headers['Authorization'] = 'Bearer very-large-jwt-token'
+            user = FactoryGirl.create :user
+            controller.request.path_parameters = { id: user._id.to_s }
+            jwt_validate_token user
+            controller.authenticate!
+            expect(assigns(:current_user_credentials))
+              .to eql(_id: user._id.to_s, username: user.username, email: user.email)
+          end
         end
       end
     end

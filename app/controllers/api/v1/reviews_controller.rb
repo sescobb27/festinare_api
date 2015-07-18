@@ -1,7 +1,7 @@
 module API
   module V1
     class ReviewsController < API::BaseController
-      before_action :authenticated?, except: :show
+      before_action :authenticate!, except: :show
 
       # POST /api/v1/users/:user_id/reviews
       def create

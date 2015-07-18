@@ -3,7 +3,7 @@ module API
     class DiscountsController < API::BaseController
       rescue_from Plan::PlanDiscountsExhausted, with: :plan_discounts_exhausted
 
-      before_action :authenticated?
+      before_action :authenticate!
 
       # GET /v1/discounts?limit=X&offset=X
       def index

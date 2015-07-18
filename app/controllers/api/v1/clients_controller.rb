@@ -1,7 +1,7 @@
 module API
   module V1
     class ClientsController < API::BaseController
-      before_action :authenticated?, only: [:me,
+      before_action :authenticate!, only: [:me,
                                             :discounts,
                                             :update,
                                             :logout,

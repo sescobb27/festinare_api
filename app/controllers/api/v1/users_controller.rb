@@ -1,7 +1,7 @@
 module API
   module V1
     class UsersController < API::BaseController
-      before_action :authenticated?, only: [:me, :update, :mobile, :review, :likes]
+      before_action :authenticate!, only: [:me, :update, :mobile, :review, :likes]
 
       def me
         user = User.find(@current_user_credentials[:_id])

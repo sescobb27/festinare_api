@@ -1,7 +1,7 @@
 module API
   module V1
     class PlansController < API::BaseController
-      before_action :authenticated?, only: :purchase_plan
+      before_action :authenticate!, only: :purchase_plan
 
       # GET /v1/plans
       def index
