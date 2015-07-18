@@ -14,6 +14,7 @@ module JWT
       end
 
       private
+
         def private_key
           Rails.application.config.PRIVATE_KEY
         end

@@ -1,6 +1,5 @@
 class User
   include Mongoid::Document
-  # rubocop:disable Metrics/LineLength
   # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   # when you don't want documents to actually get deleted from the database,
   # but "flagged" as deleted. Mongoid provides a Paranoia module to give you
@@ -12,7 +11,6 @@ class User
   # person.destroy! # Permanently deletes the document, firing callbacks.
   # person.restore  # Brings the "deleted" document back to life.
   # person.restore(:recursive => true) # Brings "deleted" associated documents back to life recursively
-  # rubocop:enable Metrics/LineLength
   include Mongoid::Paranoia
   include Mongoid::Timestamps::Created
   # =============================relationships=================================

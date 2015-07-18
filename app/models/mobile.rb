@@ -12,6 +12,6 @@ class Mobile
   index({ platform: 1 }, unique: false, name: 'platform_index')
   # =============================END Schema====================================
   # =============================Schema Validations============================
-  validates_presence_of :token, :platform
+  validates :token, :platform, presence: true
   # =============================END Schema Validations========================
 end

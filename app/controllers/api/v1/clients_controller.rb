@@ -2,12 +2,12 @@ module API
   module V1
     class ClientsController < API::BaseController
       before_action :authenticate!, only: [:me,
-                                            :discounts,
-                                            :update,
-                                            :logout,
-                                            :update_password,
-                                            :liked_clients,
-                                            :review]
+                                           :discounts,
+                                           :update,
+                                           :logout,
+                                           :update_password,
+                                           :liked_clients,
+                                           :review]
 
       # POST /v1/clients/login
       def login

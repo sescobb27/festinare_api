@@ -89,9 +89,9 @@ module API
         like_discount = Client.only(:_id, :discounts)
                         .find(params[:client_id])
                         .discounts
-                        .detect do |discount| # the same as select.first or find, but find trigger mongoid query
+                        .detect do |discount|
                           discount.id.to_s == params[:discount_id]
-                        end
+                        end # the same as select.first or find, but find trigger mongoid query
         if !like_discount.expired? Time.zone.now
           current_user.discounts.push like_discount
           current_user.add_to_set client_ids: params[:client_id]
