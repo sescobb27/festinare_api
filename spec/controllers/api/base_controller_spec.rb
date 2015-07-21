@@ -61,13 +61,13 @@ module API
 
     describe '#valid_params?' do
       let(:id) { BSON::ObjectId.new }
-      let(:user_id) { BSON::ObjectId.new }
+      let(:customer_id) { BSON::ObjectId.new }
       let(:client_id) { BSON::ObjectId.new }
 
       before(:each) do
         controller.request.path_parameters = {
           id: id.to_s,
-          user_id: user_id.to_s,
+          customer_id: customer_id.to_s,
           client_id: client_id.to_s
         }
       end
@@ -76,12 +76,12 @@ module API
         it 'should be valid params' do
           # valid params match the credentials _id included in the JWT
           expect(controller.send :valid_params?, _id: id).to be_truthy
-          expect(controller.send :valid_params?, _id: user_id).to be_truthy
+          expect(controller.send :valid_params?, _id: customer_id).to be_truthy
           expect(controller.send :valid_params?, _id: client_id).to be_truthy
           # or should not contain ANY path params e.g (me, logout ...)
           controller.request.path_parameters = {}
           expect(controller.send :valid_params?, _id: id).to be_truthy
-          expect(controller.send :valid_params?, _id: user_id).to be_truthy
+          expect(controller.send :valid_params?, _id: customer_id).to be_truthy
           expect(controller.send :valid_params?, _id: client_id).to be_truthy
         end
       end
