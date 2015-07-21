@@ -17,7 +17,7 @@ FactoryGirl.define do
     image_url { FFaker::Internet.http_url }
     addresses { (1..5).map { FFaker::Address.street_address } }
     token { [SecureRandom.base64] }
-
+    reviews []
     factory :client_with_discounts do
       discounts { (1..5).map { FactoryGirl.build(:discount) } }
     end

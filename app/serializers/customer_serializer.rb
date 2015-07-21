@@ -1,4 +1,4 @@
-class UserSerializer < MongoDocumentSerializer
+class CustomerSerializer < MongoDocumentSerializer
   attributes :email,
              :username,
              :fullname

@@ -2,7 +2,7 @@ class Review
   include Mongoid::Document
   include Mongoid::Timestamps::Created
   # =============================relationships=================================
-  belongs_to :user
+  belongs_to :customer
   belongs_to :client
   # =============================END relationships=============================
   # =============================Schema========================================

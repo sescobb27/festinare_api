@@ -17,8 +17,7 @@ class User
   embeds_many :locations, as: :localizable
   embeds_many :discounts, as: :discountable
   embeds_many :categories, as: :categorizable
-  embeds_one :mobile
-  has_many :reviews
+  # has_many :reviews
   # =============================END relationships=============================
 
   # =============================Schema========================================
@@ -33,8 +32,9 @@ class User
   devise :database_authenticatable,
          :registerable,
          :validatable,
-         :recoverable
-         # :confirmable https://github.com/plataformatec/devise/issues/3505
+         :recoverable,
+         :confirmable
+         # https://github.com/plataformatec/devise/issues/3505
          # https://github.com/puma/puma/issues/647
          # https://bugs.ruby-lang.org/issues/10871
   ## Database authenticatable
@@ -51,20 +51,19 @@ class User
   field :reset_password_sent_at, type: Time
 
   field :username
-  field :fullname
-  field :token
-  # each time a user likes a discount, the discount's client id is added here
-  field :client_ids, type: Array, default: []
+  field :token, type: Array, default: []
 
   index({ username: 1 }, unique: true)
   index({ email: 1 }, unique: true)
+  index({ name: 1 }, unique: true)
+  index({ confirmation_token: 1 }, unique: true)
   index({ 'categories.name' => 1 }, unique: true, sparse: true)
   index({ token: 1 }, unique: true, sparse: true)
-  # index({ confirmation_token: 1 }, unique: true)
+  index({ discounts: 1 }, unique: false)
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
-  validates :email, :encrypted_password, :username, :fullname, presence: true
+  validates :username, presence: true
   # =============================END Schema Validations========================
 
   before_validation :downcase_credentials
@@ -74,36 +73,11 @@ class User
     self[:email] = self[:email].downcase
   end
 
-  def self.send_notifications
-    gcm = Gcm::Notification.instance
-    # For sending between 1 or more devices (up to 1000). When you send a message to
-    # multiple registration IDs, that is called a multicast message.
-    registration_ids = []
-    options = {
-      collapse_key: 'new_discounts',
-      # Test server.
-      dry_run: (Rails.env.development? || Rails.env.test?)
-    }
-    users_num = User.exists(mobile: true).count
-    batch_size = 1000
-    iterations = users_num.fdiv(batch_size).ceil
+  def add_category(name)
+    self.categories.create name: name
+  end
 
-    categories = Discount.discount_categories
-    response = nil
-
-    iterations.times do |x|
-      users = User.only(:_id, :categories, :mobile)
-              .in('categories.name' => categories)
-              .limit(batch_size)
-              .offset(batch_size * x)
-      notify_users = users.select(&:mobile)
-      next if notify_users.empty?
-      registration_ids.concat notify_users.map(&:mobile).map(&:token)
-      response = gcm.send_notification(registration_ids, options)
-      registration_ids.clear
-      Rails.logger.info <<-EOF
-{ "action": "send_notification", "categories": "#{categories}", "gcm_response": "#{response}" }
-EOF
-    end
+  def remove_category(name)
+    self.pull(categories: { name: name })
   end
 end

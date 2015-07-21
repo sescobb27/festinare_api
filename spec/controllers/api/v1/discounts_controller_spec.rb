@@ -34,12 +34,12 @@ module API
         FactoryGirl.create :client_with_discounts
       end
 
-      let(:user) do
-        FactoryGirl.create :user_with_subscriptions
+      let(:customer) do
+        FactoryGirl.create :customer_with_subscriptions
       end
 
-      let(:raw_user) do
-        FactoryGirl.create :user
+      let(:raw_customer) do
+        FactoryGirl.create :customer
       end
 
       describe 'POST #create' do
@@ -138,8 +138,8 @@ module API
           FactoryGirl.create_list :client_with_discounts, 50
         end
 
-        it 'user should get all available discounts base on subscriptions' do
-          jwt_validate_token user
+        it 'customer should get all available discounts base on subscriptions' do
+          jwt_validate_token customer
           get :index, {}, format: :json
           expect(response.status).to eql 200
           response_body = json_response
@@ -152,13 +152,13 @@ module API
             expect(client[:addresses].length).to be > 0
             expect(client[:locations].length).to be > 0
             client_categories = client[:categories].map { |c| c[:name] }
-            user_subscriptions = user.categories.map { |c| c[:name] }
-            expect(client_categories & user_subscriptions).not_to be_empty
+            customer_subscriptions = customer.categories.map { |c| c[:name] }
+            expect(client_categories & customer_subscriptions).not_to be_empty
           end
         end
 
         it 'should get all available discounts if doesn\'t have likes' do
-          jwt_validate_token raw_user
+          jwt_validate_token raw_customer
           get :index, {}, format: :json
           expect(response.status).to eql 200
           response_body = json_response
@@ -171,13 +171,13 @@ module API
             expect(client[:addresses].length).to be > 0
             expect(client[:locations].length).to be > 0
             client_categories = client[:categories].map { |c| c[:name] }
-            user_subscriptions = raw_user.categories.map { |c| c[:name] }
-            expect(client_categories & user_subscriptions).to be_empty
+            customer_subscriptions = raw_customer.categories.map { |c| c[:name] }
+            expect(client_categories & customer_subscriptions).to be_empty
           end
         end
 
         it 'should return 50 available discounts' do
-          jwt_validate_token user
+          jwt_validate_token customer
           get :index, limit: 50, format: :json
           expect(response.status).to eql 200
           response_body = json_response
@@ -187,14 +187,14 @@ module API
 
       describe 'POST #like' do
         it 'should get a qrcode to redeem a discount' do
-          jwt_validate_token user
+          jwt_validate_token customer
           discount = Client.find(client._id).discounts.sample
           post :like,
-               id: user._id.to_s,
+               id: customer._id.to_s,
                client_id:  client._id.to_s,
                discount_id: discount._id.to_s
           expect(response.status).to eql 200
-          u = User.find(user._id)
+          u = Customer.find(customer._id)
           expect(u.discounts).to include discount
           expect(u.client_ids).to include client._id.to_s
           expect(response.content_type).to eql 'image/png'
@@ -203,7 +203,7 @@ module API
         end
 
         it 'should not get a liked discount' do
-          jwt_validate_token user
+          jwt_validate_token customer
           # fetch discounts
           get :index, {}, format: :json
           response_body = json_response
@@ -213,11 +213,11 @@ module API
 
           # like one discount
           post :like,
-               id: user._id.to_s,
+               id: customer._id.to_s,
                client_id:  client[:_id],
                discount_id: discount[:_id]
           expect(response.status).to eql 200
-          u = User.find(user._id)
+          u = Customer.find(customer._id)
           discount_ids = u.discounts.map do |u_discount|
             u_discount._id.to_s
           end
@@ -239,7 +239,7 @@ module API
         end
 
         it 'should not like a expired discount' do
-          jwt_validate_token user
+          jwt_validate_token customer
 
           get :index, {}, format: :json
           response_body = json_response
@@ -247,13 +247,13 @@ module API
           sample_discount = client[:discounts].sample
 
           discount = Client.find(client[:_id]).discounts.detect do |c_discount|
-            c_discount.id.to_s == discount[:_id]
+            c_discount.id.to_s == sample_discount[:_id]
           end
           # invalidate a discount by time
           discount.set created_at: (discount.created_at - (discount.duration * 60).seconds - 1.minute)
 
           post :like,
-               id: user._id.to_s,
+               id: customer._id.to_s,
                client_id:  client[:_id],
                discount_id: sample_discount[:_id]
           response_body = json_response

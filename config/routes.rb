@@ -6,8 +6,7 @@ Rails.application.routes.draw do
             defaults: { format: :json } do
     namespace :v1, constraints: ApiConstraint::ApiVersionConstraint.new(version: 1, default: true) do
       devise_for :users, skip: [:sessions, :registrations]
-      devise_for :clients, skip: [:sessions, :registrations]
-      resources :users, except: [:new, :edit, :index] do
+      resources :customers, except: [:new, :edit, :index] do
         collection do
           post 'login'
           post 'logout'

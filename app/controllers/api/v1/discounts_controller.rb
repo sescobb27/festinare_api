@@ -9,7 +9,7 @@ module API
       def index
         limit = params[:limit] || 20
         offset = params[:offset] || 0
-        user = User.find @current_user_credentials[:_id]
+        user = Customer.find @current_user_credentials[:_id]
         categories = user.categories.empty? ? [] : user.categories.map(&:name)
         # clients = Client.only(:_id, :name, :rate, :discounts, :addresses, :categories, :locations).
         #   in('categories.name' => user.categories.map(&:name)).
@@ -20,7 +20,7 @@ module API
         clients = Client.available_discounts categories,
                                              limit: limit, offset: offset
 
-        # users can only get discounts who they haven't liked yet
+        # customers can only get discounts who they haven't liked yet
         unless user.discounts.empty?
           liked_discounts = user.discounts.map do |discount|
             discount._id.to_s
@@ -79,10 +79,10 @@ module API
         render nothing: true, status: :unauthorized
       end
 
-      # POST /v1/users/:id/like/:client_id/discount/:discount_id
+      # POST /v1/customers/:id/like/:client_id/discount/:discount_id
       def like
         begin
-          current_user = User.find(@current_user_credentials[:_id])
+          current_user = Customer.find(@current_user_credentials[:_id])
         rescue Mongoid::Errors::DocumentNotFound
           return render nothing: true, status: :unauthorized
         end

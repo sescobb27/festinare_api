@@ -1,10 +1,10 @@
 class ReviewSerializer < MongoDocumentSerializer
   attributes :rate, :feedback
 
-  has_one :user_id, :client_id
+  has_one :customer_id, :client_id
 
-  def user_id
-    object.user_id.to_s
+  def customer_id
+    object.customer_id.to_s
   end
 
   def client_id
