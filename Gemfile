@@ -18,7 +18,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
-  gem 'dotenv-rails', require: 'dotenv/rails-now'
+  gem 'dotenv-rails'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', '~> 4.0.0'
 
@@ -32,7 +32,6 @@ group :development, :test do
   gem 'factory_girl_rails', '~> 4.5.0'
   gem 'ffaker', '~> 2.0.0'
   gem 'shoulda-matchers'
-  gem 'rb-readline'
   gem 'hirb'
   gem 'fancy_irb', '~> 1.0.0'
   gem 'awesome_print'
