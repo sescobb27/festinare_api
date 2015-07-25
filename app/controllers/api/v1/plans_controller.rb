@@ -11,8 +11,8 @@ module API
       # POST /v1/plans/:plan_id/purchase
       def purchase_plan
         begin
-          current_user = Client.find @current_user_credentials[:_id]
-        rescue Mongoid::Errors::DocumentNotFound
+          current_user = Client.find @current_user_credentials[:id]
+        rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
         plan = Plan.find params[:plan_id]

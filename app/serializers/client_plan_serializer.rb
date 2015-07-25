@@ -1,5 +1,6 @@
-class ClientPlanSerializer < MongoDocumentSerializer
-  attributes :name,
+class ClientPlanSerializer < ActiveModel::Serializer
+  attributes :id,
+             :name,
              :description,
              :status,
              :price,

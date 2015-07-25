@@ -1,11 +1,10 @@
-class ClientPlan < Plan
+class ClientsPlan < ActiveRecord::Base
   # =============================relationships=================================
-  embedded_in :client
+  belongs_to :clients
+  belongs_to :plans
   # =============================END relationships=============================
   # =============================Schema========================================
-  field :expired_date, type: Time
-  field :num_of_discounts_left, type: Integer
-  scope :with_discounts, -> { active_plans.where(num_of_discounts_left: { '$gt' => 0 }) }
+  # scope :with_discounts, -> { active_plans.where(num_of_discounts_left: { '$gt' => 0 }) }
   # =============================END Schema====================================
 
   def self.invalidate_expired_ones
