@@ -9,9 +9,9 @@ module API
       def index
         limit = params[:limit] || 20
         offset = params[:offset] || 0
-        user = Customer.find @current_user_credentials[:_id]
+        user = Customer.find @current_user_credentials[:id]
         categories = user.categories.empty? ? [] : user.categories.map(&:name)
-        # clients = Client.only(:_id, :name, :rate, :discounts, :addresses, :categories, :locations).
+        # clients = Client.select(:id, :name, :rate, :discounts, :addresses, :categories, :locations).
         #   in('categories.name' => user.categories.map(&:name)).
         #   batch_size(500).
         #   select do |db_client|
@@ -43,8 +43,8 @@ module API
         discount_attr = safe_discount
 
         begin
-          current_user = Client.find @current_user_credentials[:_id]
-        rescue Mongoid::Errors::DocumentNotFound
+          current_user = Client.find @current_user_credentials[:id]
+        rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
 
@@ -72,21 +72,21 @@ module API
 
       # GET /v1/clients/:client_id/discounts
       def discounts
-        client = Client.only(:_id, :discounts)
-                 .find(@current_user_credentials[:_id])
+        client = Client.select(:id, :discounts)
+                 .find(@current_user_credentials[:id])
         render json: client.discounts.unscoped, status: :ok
-      rescue Mongoid::Errors::DocumentNotFound
+      rescue ActiveRecord::RecordNotFound
         render nothing: true, status: :unauthorized
       end
 
       # POST /v1/customers/:id/like/:client_id/discount/:discount_id
       def like
         begin
-          current_user = Customer.find(@current_user_credentials[:_id])
-        rescue Mongoid::Errors::DocumentNotFound
+          current_user = Customer.find(@current_user_credentials[:id])
+        rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
-        like_discount = Client.only(:_id, :discounts)
+        like_discount = Client.select(:id, :discounts)
                         .find(params[:client_id])
                         .discounts
                         .detect do |discount|

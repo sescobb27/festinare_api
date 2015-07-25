@@ -214,15 +214,15 @@ module API
           # like one discount
           post :like,
                id: customer._id.to_s,
-               client_id:  client[:_id],
-               discount_id: discount[:_id]
+               client_id:  client[:id],
+               discount_id: discount[:id]
           expect(response.status).to eql 200
           u = Customer.find(customer._id)
           discount_ids = u.discounts.map do |u_discount|
             u_discount._id.to_s
           end
-          expect(discount_ids).to include discount[:_id]
-          expect(u.client_ids).to include client[:_id]
+          expect(discount_ids).to include discount[:id]
+          expect(u.client_ids).to include client[:id]
 
           # fetch the same discounts and the liked discount should not
           # be there
@@ -232,9 +232,9 @@ module API
 
           response_body[:discounts].each do |c|
             c_discount_ids = c[:discounts].map do |c_discount|
-              c_discount[:_id]
+              c_discount[:id]
             end
-            expect(c_discount_ids).not_to include discount[:_id]
+            expect(c_discount_ids).not_to include discount[:id]
           end
         end
 
@@ -246,16 +246,16 @@ module API
           client = response_body[:discounts].sample
           sample_discount = client[:discounts].sample
 
-          discount = Client.find(client[:_id]).discounts.detect do |c_discount|
-            c_discount.id.to_s == sample_discount[:_id]
+          discount = Client.find(client[:id]).discounts.detect do |c_discount|
+            c_discount.id.to_s == sample_discount[:id]
           end
           # invalidate a discount by time
           discount.set created_at: (discount.created_at - (discount.duration * 60).seconds - 1.minute)
 
           post :like,
                id: customer._id.to_s,
-               client_id:  client[:_id],
-               discount_id: sample_discount[:_id]
+               client_id:  client[:id],
+               discount_id: sample_discount[:id]
           response_body = json_response
           expect(response.status).to eql 400
           expect(response_body[:errors].first).to eql 'Discount expired'

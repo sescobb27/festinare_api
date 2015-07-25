@@ -1,5 +1,5 @@
-class ClientsDiscountSerializer < MongoDocumentSerializer
-  attributes :name
+class ClientsDiscountSerializer < ActiveModel::Serializer
+  attributes :id, :name
   has_many :discounts,
            :addresses,
            :categories,

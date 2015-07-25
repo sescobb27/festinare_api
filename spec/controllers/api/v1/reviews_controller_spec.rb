@@ -48,7 +48,7 @@ module API
                  format: :json
             expect(response.status).to eql 201
             response_body = json_response
-            expect(response_body[:review][:_id]).not_to be_empty
+            expect(response_body[:review][:id]).not_to be_empty
           end
           client_with_reviews = Client.includes(:reviews).find client._id
           expect(client_with_reviews.reviews.length).to eql(3)
@@ -95,7 +95,7 @@ module API
                format: :json
           expect(response.status).to eql 201
           response_body = json_response
-          review_id = response_body[:review][:_id]
+          review_id = response_body[:review][:id]
 
           get :show, id: review_id, format: :json
           expect(response.status).to eql 200

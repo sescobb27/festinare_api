@@ -1,22 +1,11 @@
-class Discount
-  include Mongoid::Document
-  include Mongoid::Timestamps::Created
-  include Mongoid::Paranoia
+class Discount < ActiveRecord::Base
   include Qr
   # =============================relationships=================================
-  embeds_many :categories, as: :categorizable
-  embedded_in :discountable, polymorphic: true
+  belongs_to :client, inverse_of: :discounts
+  has_many :customers_discounts
+  has_many :customers, through: :customers_discounts
   # =============================END relationships=============================
   # =============================Schema========================================
-  field :discount_rate, type: Integer
-  field :title
-  field :status, type: Boolean, default: true
-  field :duration, type: Integer, default: 60
-  field :duration_term
-  field :hashtags, type: Array, default: []
-
-  index({ status: 1 }, unique: false)
-  index({ hashtags: 1 }, unique: false)
   default_scope -> { where(status: true) }
 
   DURATION_TERM = 'minutes'.freeze
@@ -35,7 +24,7 @@ class Discount
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
-  validates :discount_rate, :title, presence: true
+  validates :discount_rate, :title, :duration, presence: true
   validates :duration, inclusion: {
     in: DURATIONS,
     message: "Invalid Discount duration, valid ones are #{DURATIONS.join(", ")}"

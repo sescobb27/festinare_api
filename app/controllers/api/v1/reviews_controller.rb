@@ -6,8 +6,8 @@ module API
       # POST /api/v1/customers/:customer_id/reviews
       def create
         begin
-          current_user = Customer.includes(:reviews).find @current_user_credentials[:_id]
-        rescue Mongoid::Errors::DocumentNotFound
+          current_user = Customer.includes(:reviews).find @current_user_credentials[:id]
+        rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
 
@@ -31,7 +31,7 @@ module API
       def show
         review = Review.find params[:id]
         render json: review, status: :ok
-      rescue Mongoid::Errors::DocumentNotFound
+      rescue ActiveRecord::RecordNotFound
         return render nothing: true, status: :bad_request
       end
 

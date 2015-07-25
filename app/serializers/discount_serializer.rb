@@ -1,5 +1,6 @@
-class DiscountSerializer < MongoDocumentSerializer
-  attributes :discount_rate,
+class DiscountSerializer < ActiveModel::Serializer
+  attributes :id,
+             :discount_rate,
              :title,
              :status,
              :created_at,
