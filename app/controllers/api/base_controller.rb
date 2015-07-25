@@ -34,7 +34,7 @@ module API
       return render nothing: true, status: :unauthorized if token.blank?
       credentials = JWT::AuthToken.validate_token(token)
       if credentials && valid_params?(credentials)
-        credentials[:_id] = credentials[:_id].to_s
+        credentials[:id] = credentials[:id].to_s
         @current_user_credentials = credentials.clone
       else
         return render nothing: true, status: :unauthorized
@@ -50,9 +50,9 @@ module API
       def valid_params?(credentials)
         # some routes not need authentication id
         return true if (request.path_parameters.keys & %i(id customer_id client_id)).empty?
-        request.path_parameters[:id] == credentials[:_id].to_s ||
-          request.path_parameters[:customer_id] == credentials[:_id].to_s ||
-          request.path_parameters[:client_id] == credentials[:_id].to_s
+        request.path_parameters[:id] == credentials[:id].to_s ||
+          request.path_parameters[:customer_id] == credentials[:id].to_s ||
+          request.path_parameters[:client_id] == credentials[:id].to_s
       end
   end
 end

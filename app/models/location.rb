@@ -1,13 +1,12 @@
-class Location
-  include Mongoid::Document
+class Location < ActiveRecord::Base
   # =============================relationships=================================
   # embedded_in :client
   # embedded_in :user
-  embedded_in :localizable, polymorphic: true
+  belongs_to :localizable, polymorphic: true
   # =============================END relationships=============================
 
   # =============================Schema========================================
-  field :latitude, type: Float
-  field :longitude, type: Float
+  # field :latitude, type: Float
+  # field :longitude, type: Float
   # =============================END Schema====================================
 end

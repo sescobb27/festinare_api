@@ -28,9 +28,6 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include AuthHelper, type: :controller
   config.include SupportHelper, type: :controller
-  Mongoid::Sessions.default.collections.select do |c|
-    c.name !~ /system/
-  end.each(&:drop)
   FactoryGirl.reload
   Rails.application.load_seed
   Festinare::Application.load_tasks

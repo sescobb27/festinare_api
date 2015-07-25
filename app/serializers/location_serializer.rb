@@ -1,3 +1,3 @@
-class LocationSerializer < MongoDocumentSerializer
-  attributes :latitude, :longitude
+class LocationSerializer < ActiveModel::Serializer
+  attributes :id, :latitude, :longitude
 end
