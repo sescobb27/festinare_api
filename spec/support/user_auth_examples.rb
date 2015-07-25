@@ -142,7 +142,7 @@ RSpec.shared_context 'User' do |model_type|
 
       expect(response.status).to eql 200
       response_body = json_response
-      expect(response_body[model_type][:_id]).to eql user._id.to_s
+      expect(response_body[model_type][:id]).to eql user._id.to_s
       expect(response_body[model_type][:email]).to eql user.email
       expect(response_body[model_type][:password]).to be_nil
       expect(response_body[model_type][:username]).to eql user.username

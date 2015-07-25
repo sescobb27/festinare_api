@@ -1,13 +1,12 @@
-class Customer < User
+class Customer < ActiveRecord::Base
+  include User
   # =============================relationships=================================
-  embeds_one :mobile
-  has_many :reviews
+  has_many :mobile
+  has_many :customers_discounts
+  has_many :discounts, through: :customers_discounts
   # =============================END relationships=============================
 
   # =============================Schema========================================
-  # each time a customer likes a discount, the discount's client id is added here
-  field :client_ids, type: Array, default: []
-  field :fullname
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
@@ -32,7 +31,7 @@ class Customer < User
     response = nil
 
     iterations.times do |x|
-      customers = Customer.only(:_id, :categories, :mobile)
+      customers = Customer.only(:id, :categories, :mobile)
                   .in('categories.name' => categories)
                   .limit(batch_size)
                   .offset(batch_size * x)

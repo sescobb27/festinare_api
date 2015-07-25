@@ -4,7 +4,7 @@ module AuthHelper
   def jwt_validate_token(user)
     allow(JWT::AuthToken).to(
       receive(:validate_token).and_return(
-        _id: user[:_id],
+        _id: user[:id],
         username: user[:username],
         email: user[:email]
       )

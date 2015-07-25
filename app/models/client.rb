@@ -1,15 +1,13 @@
-class Client < User
+class Client < ActiveRecord::Base
+  include User
   # =============================relationships=================================
-  embeds_many :client_plans
-  has_many :reviews
+  has_many :client_plans
+  has_many :plans, through: :client_plans
+  has_many :discounts, inverse_of: :client
   # =============================END relationships=============================
 
   # =============================Schema========================================
-  field :name
-  field :image_url
-  field :addresses, type: Array, default: []
-
-  scope :has_active_discounts, -> { where('discounts.status' => true) }
+  scope :has_active_discounts, -> { joins(:discounts).where(discounts: { status: true }) }
   # =============================END Schema====================================
 
   # =============================Schema Validations============================

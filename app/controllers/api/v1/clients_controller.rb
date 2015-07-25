@@ -12,8 +12,8 @@ module API
         safe_params = safe_update_params
 
         begin
-          client = Client.find @current_user_credentials[:_id]
-        rescue Mongoid::Errors::DocumentNotFound
+          client = Client.find @current_user_credentials[:id]
+        rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
 

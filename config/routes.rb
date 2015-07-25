@@ -1,11 +1,14 @@
 require 'api_constraint'
 
 Rails.application.routes.draw do
+  devise_for :clients
+  devise_for :customers
   root 'application#index'
   namespace :api,
             defaults: { format: :json } do
     namespace :v1, constraints: ApiConstraint::ApiVersionConstraint.new(version: 1, default: true) do
-      devise_for :users, skip: [:sessions, :registrations]
+      devise_for :customers, skip: [:sessions, :registrations]
+      devise_for :clients, skip: [:sessions, :registrations]
       resources :customers, except: [:new, :edit, :index] do
         collection do
           post 'login'

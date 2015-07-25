@@ -1,5 +1,6 @@
-class ClientSerializer < MongoDocumentSerializer
-  attributes :email,
+class ClientSerializer < ActiveModel::Serializer
+  attributes :id,
+             :email,
              :username,
              :name,
              :image_url,

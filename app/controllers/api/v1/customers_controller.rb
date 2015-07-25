@@ -7,8 +7,8 @@ module API
       def update
         secure_params = safe_update_params
         begin
-          customer = Customer.find @current_user_credentials[:_id]
-        rescue Mongoid::Errors::DocumentNotFound
+          customer = Customer.find @current_user_credentials[:id]
+        rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
         if secure_params[:categories]
@@ -34,8 +34,8 @@ module API
       def mobile
         secure_params = safe_mobile_params
         begin
-          customer = Customer.find(@current_user_credentials[:_id])
-        rescue Mongoid::Errors::DocumentNotFound
+          customer = Customer.find(@current_user_credentials[:id])
+        rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
         if customer.update_attributes mobile: secure_params[:mobile]
@@ -49,8 +49,8 @@ module API
 
       def likes
         begin
-          current_customer = Customer.find @current_user_credentials[:_id]
-        rescue Mongoid::Errors::DocumentNotFound
+          current_customer = Customer.find @current_user_credentials[:id]
+        rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
 
