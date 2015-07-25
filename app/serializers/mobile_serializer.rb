@@ -1,3 +1,3 @@
-class MobileSerializer < MongoDocumentSerializer
-  attributes :token, :platform
+class MobileSerializer < ActiveModel::Serializer
+  attributes :id, :token, :platform
 end
