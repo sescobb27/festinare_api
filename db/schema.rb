@@ -41,12 +41,13 @@ ActiveRecord::Schema.define(version: 20150724015503) do
   add_index "clients", ["tokens"], name: "index_clients_on_tokens", using: :gin
   add_index "clients", ["username"], name: "index_clients_on_username", unique: true, using: :btree
 
-  create_table "clients_plans", id: false, force: :cascade do |t|
-    t.integer  "client_id",             null: false
-    t.integer  "plan_id",               null: false
-    t.integer  "num_of_discounts_left", null: false
-    t.datetime "expired_date",          null: false
-    t.datetime "created_at",            null: false
+  create_table "clients_plans", force: :cascade do |t|
+    t.integer  "client_id"
+    t.integer  "plan_id"
+    t.integer  "num_of_discounts_left",                null: false
+    t.boolean  "status",                default: true
+    t.datetime "expired_date",                         null: false
+    t.datetime "created_at",                           null: false
   end
 
   add_index "clients_plans", ["client_id", "plan_id"], name: "index_clients_plans_on_client_id_and_plan_id", using: :btree
@@ -92,6 +93,7 @@ ActiveRecord::Schema.define(version: 20150724015503) do
   create_table "discounts", force: :cascade do |t|
     t.integer  "discount_rate",                                 null: false
     t.string   "title",         limit: 100,                     null: false
+    t.string   "secret_key",                                    null: false
     t.boolean  "status",                    default: true
     t.integer  "duration",                                      null: false
     t.string   "duration_term",             default: "minutes"
@@ -133,6 +135,8 @@ ActiveRecord::Schema.define(version: 20150724015503) do
   add_index "plans", ["deleted_at"], name: "index_plans_on_deleted_at", using: :btree
   add_index "plans", ["name"], name: "index_plans_on_name", unique: true, using: :btree
 
+  add_foreign_key "clients_plans", "clients"
+  add_foreign_key "clients_plans", "plans"
   add_foreign_key "customers_discounts", "customers"
   add_foreign_key "customers_discounts", "discounts"
   add_foreign_key "discounts", "clients"

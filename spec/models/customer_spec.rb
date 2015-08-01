@@ -1,7 +1,28 @@
+# == Schema Information
+#
+# Table name: customers
+#
+#  id                     :integer          not null, primary key
+#  fullname               :string(100)      not null
+#  categories             :string           default([]), is an Array
+#  tokens                 :string           default([]), is an Array
+#  username               :string(100)
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  email                  :string(100)      not null
+#  encrypted_password     :string           not null
+#  reset_password_token   :string
+#  reset_password_sent_at :datetime
+#  confirmation_token     :string
+#  confirmed_at           :datetime
+#  confirmation_sent_at   :datetime
+#
+
 require 'rails_helper'
 require 'rake'
 
-RSpec::Matchers.define :array_length_greater_than_or_eql do
+# array_length_gte => array length greater than or eql
+RSpec::Matchers.define :array_length_gte do
   match do |actual|
     actual.length >= 1000
   end
@@ -20,47 +41,34 @@ RSpec.describe Customer, type: :model do
 
   describe 'Customer with categories' do
     it 'should have some categories' do
-      (1..10).each do
-        customer = FactoryGirl.attributes_for :customer
-        customer[:categories] = []
-        customer[:categories].concat((1..2).map { FactoryGirl.build(:category) })
-        expect { Customer.create!(customer) }.to_not raise_error
-        u = Customer.find_by(username: customer[:username])
-        u.categories.each do |category|
-          expect(customer[:categories]).to include category
-        end
+      customer = FactoryGirl.attributes_for :customer_with_subscriptions
+      expect { Customer.create!(customer) }.to_not raise_error
+      u = Customer.find_by(username: customer[:username])
+      u.categories.each do |category|
+        expect(customer[:categories]).to include category
       end
     end
   end
 
   describe 'send:notification Task -> Send Customer Notifications' do
     skip 'should send notification to customer' do
-      Customer.delete_all('$or': [
-        { categories: { '$exists' => false } },
-        { mobile: { '$exists' => false } }
-      ])
-
       FactoryGirl.create_list :client_with_discounts, 20
 
       threads = []
-      (1..100).each do
-        threads << Thread.new do
-          customer = FactoryGirl.create_list :customer_with_mobile, 10
-          Thread.current[:customers] = customer
-        end
-        threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
-      end
-
-      created_customer = []
-      threads.map! do |thread|
-        thread.join
-        created_customer.concat thread[:customers]
-      end
-
-      expect(created_customer.length).to eql 1000
+      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      threads.each(&:join)
       expect(Customer.count).to be >= 1000
       expect(@gcm).to receive(:send_notification).at_least(:once).with(
-        array_length_greater_than_or_eql(1000), instance_of(Hash)
+        array_length_gte(1000), instance_of(Hash)
       )
       Rake::Task['send:notification'].invoke
     end

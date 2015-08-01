@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: discounts
+#
+#  id            :integer          not null, primary key
+#  discount_rate :integer          not null
+#  title         :string(100)      not null
+#  secret_key    :string           not null
+#  status        :boolean          default(TRUE)
+#  duration      :integer          not null
+#  duration_term :string           default("minutes")
+#  hashtags      :string           default([]), is an Array
+#  client_id     :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
+require 'set'
 class Discount < ActiveRecord::Base
   include Qr
   # =============================relationships=================================
@@ -6,7 +23,6 @@ class Discount < ActiveRecord::Base
   has_many :customers, through: :customers_discounts
   # =============================END relationships=============================
   # =============================Schema========================================
-  default_scope -> { where(status: true) }
 
   DURATION_TERM = 'minutes'.freeze
   DURATIONS = [
@@ -45,45 +61,27 @@ class Discount < ActiveRecord::Base
 
   def self.invalidate_expired_ones
     now = Time.zone.now
-    threads = []
-    Client.has_active_discounts.batch_size(500).each do |client|
-      threads << Thread.new(client) do |t_client|
-        t_client.discounts.map do |discount|
-          next if now < discount.expire_time
-          discount.update_attribute :status, false
-          # rubocop:disable Metrics/LineLength
-          Rails.logger.info <<-EOF
-{ "action": "invalidate_discount", "id": "#{t_client._id}", "name": "#{t_client.name}", "discount": "#{discount.attributes}" }
+    Client.with_active_discounts.find_each do |client|
+      client.discounts.map do |discount|
+        next unless discount.expired? now
+        discount.update status: false
+        # rubocop:disable Metrics/LineLength
+        Rails.logger.info <<-EOF
+{ "action": "invalidate_discount", "id": "#{client.id}", "name": "#{client.name}", "discount": "#{discount.attributes}" }
 EOF
-          # rubocop:enable Metrics/LineLength
-        end
+        # rubocop:enable Metrics/LineLength
       end
-      threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
     end
-    threads.map!(&:join)
   end
 
   def self.discount_categories
-    now = Time.zone.now
-    threads = []
-    Client.has_active_discounts.batch_size(500).each do |client|
-      threads << Thread.new(client) do |t_client|
-        Thread.current[:categories] = []
-        t_client.discounts.map do |discount|
-          if now < discount.expire_time
-            Thread.current[:categories].push discount.categories.map(&:name)
-          end
-        end
-      end
-      threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
-    end
-
-    categories = []
-    threads.map do |thread|
-      thread.join
-      categories.concat thread[:categories]
-    end
-
-    categories.flatten
+    Client
+      .select(:categories)
+      .distinct
+      .with_active_discounts
+      .where(<<-SQL
+"discounts"."created_at" < (now() + ("discounts"."duration" * 60 || 'seconds')::interval)
+SQL
+            ).map(&:categories).flatten.uniq
   end
 end

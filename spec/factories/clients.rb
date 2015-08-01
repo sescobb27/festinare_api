@@ -1,38 +1,54 @@
+# == Schema Information
+#
+# Table name: clients
+#
+#  id                     :integer          not null, primary key
+#  name                   :string(120)      not null
+#  categories             :string           default([]), is an Array
+#  tokens                 :string           default([]), is an Array
+#  username               :string(100)
+#  image_url              :string
+#  addresses              :string           default([]), is an Array
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  email                  :string(100)      not null
+#  encrypted_password     :string           not null
+#  reset_password_token   :string
+#  reset_password_sent_at :datetime
+#  confirmation_token     :string
+#  confirmed_at           :datetime
+#  confirmation_sent_at   :datetime
+#
+
 require 'ffaker'
 require 'securerandom'
 
 FactoryGirl.define do
   factory :client do
     categories do
-      tmp = Category::CATEGORIES.sample(2)
-      [Category.new(name: tmp[0]), Category.new(name: tmp[1])]
+      User::CATEGORIES.sample(2)
     end
-    locations { (1..5).map { FactoryGirl.build(:location) } }
-    username do
-      "#{SecureRandom.base64(4)}#{FFaker::Internet.user_name}".downcase
-    end
+    # locations { (1..5).map { FactoryGirl.build(:location) } }
+    username { "#{SecureRandom.base64(4)}#{FFaker::Internet.user_name}".downcase }
     email { "#{SecureRandom.base64(4)}#{FFaker::Internet.email}".downcase }
     password 'qwertyqwerty'
     name { "#{FFaker::Company.name}#{SecureRandom.base64(4)}" }
     image_url { FFaker::Internet.http_url }
     addresses { (1..5).map { FFaker::Address.street_address } }
-    token { [SecureRandom.base64] }
-    reviews []
+    tokens { [SecureRandom.base64] }
     factory :client_with_discounts do
-      discounts { (1..5).map { FactoryGirl.build(:discount) } }
+      discounts { FactoryGirl.create_list :discount, 5 }
     end
     factory :client_with_plan do
-      client_plans do
-        plan = Plan.all.sample
-        [plan.to_client_plan]
+      after(:create) do |client|
+        ClientsPlan.create_from_plan client, Plan.all.sample
       end
     end
     factory :client_with_expired_plan do
-      client_plans do
-        plan = Plan.all.sample
-        plan = plan.to_client_plan
-        plan.expired_date = Time.zone.now - 1.minute
-        [plan]
+      after(:create) do |client|
+        ClientsPlan.create_from_plan client, Plan.all.sample do |plan|
+          plan.expired_date = Time.zone.now - 1.minute
+        end
       end
     end
   end

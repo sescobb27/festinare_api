@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: customers_discounts
+#
+#  id          :integer          not null, primary key
+#  customer_id :integer
+#  discount_id :integer
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  rate        :integer
+#  feedback    :string(140)
+#
+
 class CustomersDiscount < ActiveRecord::Base
   belongs_to :customer
   belongs_to :discount

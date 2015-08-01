@@ -3,6 +3,7 @@ class CreateDiscounts < ActiveRecord::Migration
     create_table :discounts do |t|
       t.integer :discount_rate, null: false
       t.string :title, null: false, limit: 100
+      t.string :secret_key, null: false
       t.boolean :status, default: true
       t.integer :duration, null: false
       t.string :duration_term, default: 'minutes'

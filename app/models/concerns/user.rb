@@ -28,4 +28,12 @@ module User
     self[:username] = self[:username].downcase
     self[:email] = self[:email].downcase
   end
+
+  # # user.delete_from_array :tokens, 'JWT_TOKEN'
+  # # => user.tokens.delete 'JWT_TOKEN'
+  # # => user.tokens_will_change!
+  # def delete_from_array(attr_name, value)
+  #   self[attr_name].send :delete, value
+  #   self.send "#{attr_name}_will_change!"
+  # end
 end
