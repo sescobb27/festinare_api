@@ -30,8 +30,8 @@ module API
 
         context 'when invalid params' do
           it 'should return 401 unauthorized' do
-            controller.request.path_parameters = { id: BSON::ObjectId.new.to_s }
-            user = FactoryGirl.create :user
+            controller.request.path_parameters = { id: SecureRandom.random_number(1_000).to_s }
+            user = FactoryGirl.create :client
             jwt_validate_token user
             expect(controller).to receive(:render).with nothing: true, status: :unauthorized
             controller.authenticate!
@@ -41,12 +41,12 @@ module API
         context 'when valid JWT' do
           it 'should set current user credentials' do
             controller.request.headers['Authorization'] = 'Bearer very-large-jwt-token'
-            user = FactoryGirl.create :user
-            controller.request.path_parameters = { id: user._id.to_s }
+            user = FactoryGirl.create :client
+            controller.request.path_parameters = { id: user.id.to_s }
             jwt_validate_token user
             controller.authenticate!
             expect(assigns(:current_user_credentials))
-              .to eql(_id: user._id.to_s, username: user.username, email: user.email)
+              .to eql(id: user.id.to_s, username: user.username, email: user.email)
           end
         end
       end
@@ -60,37 +60,37 @@ module API
     end
 
     describe '#valid_params?' do
-      let(:id) { BSON::ObjectId.new }
-      let(:customer_id) { BSON::ObjectId.new }
-      let(:client_id) { BSON::ObjectId.new }
+      let(:id) { SecureRandom.random_number(1_000).to_s }
+      let(:customer_id) { SecureRandom.random_number(1_000).to_s }
+      let(:client_id) { SecureRandom.random_number(1_000).to_s }
 
       before(:each) do
         controller.request.path_parameters = {
-          id: id.to_s,
-          customer_id: customer_id.to_s,
-          client_id: client_id.to_s
+          id: id,
+          customer_id: customer_id,
+          client_id: client_id
         }
       end
 
       context 'when valid params' do
         it 'should be valid params' do
-          # valid params match the credentials _id included in the JWT
-          expect(controller.send :valid_params?, _id: id).to be_truthy
-          expect(controller.send :valid_params?, _id: customer_id).to be_truthy
-          expect(controller.send :valid_params?, _id: client_id).to be_truthy
+          # valid params match the credentials id included in the JWT
+          expect(controller.send :valid_params?, id: id).to be_truthy
+          expect(controller.send :valid_params?, id: customer_id).to be_truthy
+          expect(controller.send :valid_params?, id: client_id).to be_truthy
           # or should not contain ANY path params e.g (me, logout ...)
           controller.request.path_parameters = {}
-          expect(controller.send :valid_params?, _id: id).to be_truthy
-          expect(controller.send :valid_params?, _id: customer_id).to be_truthy
-          expect(controller.send :valid_params?, _id: client_id).to be_truthy
+          expect(controller.send :valid_params?, id: id).to be_truthy
+          expect(controller.send :valid_params?, id: customer_id).to be_truthy
+          expect(controller.send :valid_params?, id: client_id).to be_truthy
         end
       end
 
       context 'when invalid params' do
         it 'should be invalid params' do
-          expect(controller.send :valid_params?, _id: nil).to be_falsey
-          expect(controller.send :valid_params?, _id: '').to be_falsey
-          expect(controller.send :valid_params?, _id: BSON::ObjectId.new).to be_falsey
+          expect(controller.send :valid_params?, id: nil).to be_falsey
+          expect(controller.send :valid_params?, id: '').to be_falsey
+          expect(controller.send :valid_params?, id: SecureRandom.random_number(1_000)).to be_falsey
         end
       end
     end
