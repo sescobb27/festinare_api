@@ -5,19 +5,18 @@ module API
 
       # GET /v1/plans
       def index
-        render json: Plan.all.cache, status: :ok
+        render json: Plan.all, status: :ok
       end
 
       # POST /v1/plans/:plan_id/purchase
       def purchase_plan
         begin
-          current_user = Client.find @current_user_credentials[:id]
+          current_client = Client.includes(:clients_plans).find @current_user_credentials[:id]
         rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
         plan = Plan.find params[:plan_id]
-        purchased_plan = plan.to_client_plan
-        current_user.client_plans.push purchased_plan
+        ClientsPlan.create_from_plan current_client, plan
         render nothing: true, status: :ok
       end
     end
