@@ -57,7 +57,7 @@ module UserAuth
 
     if !user.nil? && user.valid_password?(safe_params[:password])
       token = authenticate_user user
-      user.push token: token
+      user.tokens << token
       render json: { token: token }, status: :ok
     else
       render nothing: true, status: :bad_request
@@ -67,7 +67,9 @@ module UserAuth
   def logout
     token = auth_token
     begin
-      resource_model.find(@current_user_credentials[:id]).tokens << token
+      user = resource_model.find(@current_user_credentials[:id])
+      user.tokens.delete token
+      user.save
     rescue ActiveRecord::RecordNotFound
       return render nothing: true, status: :unauthorized
     end

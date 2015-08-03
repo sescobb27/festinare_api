@@ -16,18 +16,18 @@ module API
             # kind of updelete if exist delete, else add
             should_add = category.delete :status
             if should_add
-              user_categories = customer.categories.map(&:name)
-              unless user_categories.include? category[:name]
-                customer.categories.push Category.new(category)
+              unless customer.categories.include? category[:name]
+                customer.categories << category[:name]
               end
             else
-              customer.pull(categories: { name: category[:name] })
+              customer.categories.delete category[:name]
             end
           end
         end
         if secure_params[:fullname] && !secure_params[:fullname].empty?
-          customer.set fullname: secure_params[:fullname]
+          customer.fullname secure_params[:fullname]
         end
+        customer.save
         render nothing: true, status: :ok
       end
 
@@ -38,7 +38,8 @@ module API
         rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
-        if customer.update_attributes mobile: secure_params[:mobile]
+        customer.mobiles << Mobile.new(secure_params[:mobile])
+        if customer.save
           render nothing: true, status: :ok
         else
           render json: {
@@ -49,13 +50,21 @@ module API
 
       def likes
         begin
-          current_customer = Customer.find @current_user_credentials[:id]
+          # Produced QUERY
+          # SELECT  "customers".*
+          # FROM "customers"
+          # INNER JOIN "customers_discounts" ON "customers_discounts"."customer_id" = "customers"."id"
+          # INNER JOIN "discounts" ON "discounts"."id" = "customers_discounts"."discount_id"
+          # AND "discounts"."status" = 't'
+          # INNER JOIN "clients" ON "clients"."id" = "discounts"."client_id"
+          # WHERE "customers"."id" = $1 LIMIT 1  [["id", 1]]
+          current_customer = Customer.joins(discounts: :client).find @current_user_credentials[:id]
         rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
 
         clients = []
-        clients = Client.find current_customer.client_ids unless current_customer.client_ids.empty?
+        clients = current_customer.discounts.map(&:client) unless current_customer.customers_discounts.empty?
         render json: clients, status: :ok, each_serializer: LikesSerializer, root: 'clients'
       end
 
@@ -66,7 +75,7 @@ module API
       def safe_update_params
         params.require(:customer).permit(
           :fullname,
-          categories: [:name, :description, :status],
+          categories: [:name, :status],
           password: [:password, :current_password, :password_confirmation]
         )
       end

@@ -30,13 +30,13 @@ module API
         it 'should have mobile' do
           Customer.new(@customer).save
           customer = Customer.find_by username: @customer[:username]
-          expect(customer._id.to_s).not_to eql ''
+          expect(customer.id.to_s).not_to eql ''
           mobile = FactoryGirl.attributes_for :mobile
           jwt_validate_token customer
-          post :mobile, id: customer._id, customer: { mobile: mobile }, format: :json
+          post :mobile, id: customer.id, customer: { mobile: mobile }, format: :json
           expect(response.status).to eql 200
           expect(mobile[:token]).not_to be_empty
-          expect(mobile[:token]).to eql Customer.find(customer._id).mobile.token
+          expect(mobile[:token]).to eql Customer.joins(:mobiles).find(customer.id).mobiles.first.token
         end
       end
 
@@ -48,7 +48,7 @@ module API
         it 'should add given categories to customer' do
           jwt_validate_token customer
           put(:update, {
-                id: customer._id,
+                id: customer.id,
                 customer: {
                   categories: [
                     { name: 'Bar', description: '', status: true },
@@ -57,20 +57,18 @@ module API
                 }
               }, format: :json)
           expect(response.status).to eql 200
-          u = Customer.find customer._id
-          customer_categories = u.categories.map(&:name)
-          expect(customer_categories).to include('Bar')
-          expect(customer_categories).to include('Restaurant')
+          u = Customer.find customer.id
+          expect(u.categories).to include('Bar')
+          expect(u.categories).to include('Restaurant')
         end
 
         it 'should delete given categories from customer' do
-          customer.categories.push(
-            Category.new(name: 'Bar'),
-            Category.new(name: 'Restaurant')
-          )
+          customer.categories << 'Bar'
+          customer.categories << 'Restaurant'
+          customer.save
           jwt_validate_token customer
           put(:update, {
-                id: customer._id,
+                id: customer.id,
                 customer: {
                   categories: [
                     { name: 'Bar', description: '', status: false },
@@ -79,19 +77,17 @@ module API
                 }
               }, format: :json)
           expect(response.status).to eql 200
-          u = Customer.find customer._id
-          customer_categories = u.categories.map(&:name)
-          expect(customer_categories).not_to include('Bar')
-          expect(customer_categories).not_to include('Restaurant')
+          u = Customer.find customer.id
+          expect(u.categories).not_to include('Bar')
+          expect(u.categories).not_to include('Restaurant')
         end
 
         it 'should delete/add given categories from/to customer' do
-          customer.categories.push(
-            Category.new(name: 'Restaurant')
-          )
+          customer.categories << 'Restaurant'
+          customer.save
           jwt_validate_token customer
           put(:update, {
-                id: customer._id,
+                id: customer.id,
                 customer: {
                   categories: [
                     { name: 'Bar', description: '', status: true },
@@ -100,10 +96,9 @@ module API
                 }
               }, format: :json)
           expect(response.status).to eql 200
-          u = Customer.find customer._id
-          customer_categories = u.categories.map(&:name)
-          expect(customer_categories).to include('Bar')
-          expect(customer_categories).not_to include('Restaurant')
+          u = Customer.find customer.id
+          expect(u.categories).to include('Bar')
+          expect(u.categories).not_to include('Restaurant')
         end
       end
 
@@ -115,9 +110,9 @@ module API
         it 'customers should get all liked clients' do
           customer = FactoryGirl.create :customer_with_subscriptions
           jwt_validate_token customer
-          customer.add_to_set client_ids: client._id.to_s
+          customer.discounts << client.discounts.sample
 
-          get :likes, id: customer._id.to_s, format: :json
+          get :likes, id: customer.id, format: :json
           expect(response.status).to eql 200
           response_body = json_response
           expect(response_body[:clients].length).to eql 1
