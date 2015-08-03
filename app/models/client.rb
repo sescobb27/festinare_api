@@ -26,6 +26,7 @@ class Client < ActiveRecord::Base
   has_many :clients_plans
   has_many :plans, through: :clients_plans
   has_many :discounts, inverse_of: :client
+  has_many :customers_discounts,  through: :discounts
   # =============================END relationships=============================
 
   # =============================Schema========================================

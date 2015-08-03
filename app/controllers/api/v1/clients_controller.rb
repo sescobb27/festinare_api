@@ -36,7 +36,7 @@ module API
         end
 
         if safe_params[:address]
-          client.add_to_set addresses: safe_params[:address]
+          client.addresses << safe_params[:address]
           safe_params.delete :address
         end
 

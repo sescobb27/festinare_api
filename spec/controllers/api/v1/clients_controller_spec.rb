@@ -35,8 +35,7 @@ module API
               password: 'passwordpassword',
               password_confirmation: 'passwordpassword'
             }
-          }, id: client._id.to_s, format: :json
-          puts response.body
+          }, id: client.id, format: :json
           expect(response.status).to eql 200
           client.reload
           expect(client.valid_password? 'passwordpassword').to be true
@@ -51,7 +50,7 @@ module API
               password: 'anotherpassword',
               password_confirmation: 'passwordpassword'
             }
-          }, id: client._id.to_s, format: :json
+          }, id: client.id, format: :json
           expect(response.status).to eql 403
           response_body = json_response
           expect(response_body[:errors]).to include 'Password confirmation doesn\'t match Password'
@@ -68,7 +67,7 @@ module API
               password: 'passwordpassword',
               password_confirmation: 'passwordpassword'
             }
-          }, id: client._id.to_s, format: :json
+          }, id: client.id, format: :json
           expect(response.status).to eql 403
           client.reload
           expect(client.valid_password? 'passwordpassword').to be false
