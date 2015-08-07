@@ -35,7 +35,7 @@ RSpec.configure do |config|
     # Set this to false if
     # (1) you create and drop tables in your tests
     # (2) you change Postgres schemas
-    DatabaseCleaner.clean_with :truncation, cache_tables: true, except: %w[plans]
+    DatabaseCleaner.clean_with :truncation, cache_tables: true, except: %w(plans)
   end
 
   # scope => example: :each

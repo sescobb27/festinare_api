@@ -19,8 +19,7 @@ port ENV['PORT'] || 3_000
 environment current_env
 
 on_worker_boot do
-  ENV.update Dotenv::Environment.new(File.expand_path(".envrc.#{current_env}"))
-  Mongoid.load!(File.expand_path('../mongoid.yml', __FILE__), current_env)
+  ActiveRecord::Base.establish_connection
 end
 
 preload_app!

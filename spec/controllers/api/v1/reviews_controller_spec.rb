@@ -30,8 +30,8 @@ module API
           customer = FactoryGirl.create :customer_with_subscriptions
           jwt_validate_token customer
           post :create,
-               review: { client_id: client._id.to_s, rate: rand(1..5), feedback: 'feedback' },
-               customer_id: customer._id.to_s,
+               review: { client_id: client.id, rate: rand(1..5), feedback: 'feedback' },
+               customer_id: customer.id,
                format: :json
           expect(response.status).to eql 403
         end
@@ -41,41 +41,41 @@ module API
           3.times do |step|
             customer = FactoryGirl.create :customer_with_subscriptions
             jwt_validate_token customer
-            customer.add_to_set client_ids: client._id.to_s
+            customer.add_to_set client_ids: client.id
             post :create,
-                 review: { client_id: client._id.to_s, rate: rates[step], feedback: "feedback#{step}" },
-                 customer_id: customer._id.to_s,
+                 review: { client_id: client.id, rate: rates[step], feedback: "feedback#{step}" },
+                 customer_id: customer.id,
                  format: :json
             expect(response.status).to eql 201
             response_body = json_response
             expect(response_body[:review][:id]).not_to be_empty
           end
-          client_with_reviews = Client.includes(:reviews).find client._id
-          expect(client_with_reviews.reviews.length).to eql(3)
+          client_with_reviews = Client.joins(discounts: :customers_discounts).find client.id
+          expect(client_with_reviews.discounts.customers_discounts.length).to eql(3)
 
-          client_rates = client_with_reviews.reviews.map(&:rate)
+          client_rates = client_with_reviews.discounts.customers_discounts.map(&:rate)
           expect(client_rates.sum.fdiv 3).to eql rates.sum.fdiv(3)
-          expect(client_with_reviews.reviews.map(&:feedback)).to include 'feedback0'
+          expect(client_with_reviews.discounts.customers_discounts.map(&:feedback)).to include 'feedback0'
         end
 
         it 'should not be able to review a client twice' do
           customer = FactoryGirl.create :customer_with_subscriptions
           rate = rand(1..5)
           jwt_validate_token customer
-          customer.add_to_set client_ids: client._id.to_s
+          customer.add_to_set client_ids: client.id
           # first review
           post :create,
-               review: { client_id: client._id.to_s, rate: rate, feedback: 'feedback' },
-               customer_id: customer._id.to_s,
+               review: { client_id: client.id, rate: rate, feedback: 'feedback' },
+               customer_id: customer.id,
                format: :json
           expect(response.status).to eql 201
-          customer = Customer.includes(:reviews).find customer._id
-          expect(customer.reviews.map(&:client_id)).to include client._id
+          customer = Customer.includes(:customers_discounts).find customer.id
+          expect(customer.customers_discounts.map(&:client_id)).to include client.id
 
           # second review
           post :create,
-               review: { client_id: client._id.to_s, rate: rate, feedback: 'feedback' },
-               customer_id: customer._id.to_s,
+               review: { client_id: client.id, rate: rate, feedback: 'feedback' },
+               customer_id: customer.id,
                format: :json
           expect(response.status).to eql 405
         end
@@ -88,10 +88,10 @@ module API
 
         it 'Authorized customer/client should get a review by id' do
           jwt_validate_token customer
-          customer.add_to_set client_ids: client._id.to_s
+          customer.add_to_set client_ids: client.id
           post :create,
-               review: { client_id: client._id.to_s }.merge(review),
-               customer_id: customer._id.to_s,
+               review: { client_id: client.id }.merge(review),
+               customer_id: customer.id,
                format: :json
           expect(response.status).to eql 201
           response_body = json_response
@@ -100,8 +100,8 @@ module API
           get :show, id: review_id, format: :json
           expect(response.status).to eql 200
           response_body = json_response
-          expect(response_body[:review][:customer_id]).to eql customer._id.to_s
-          expect(response_body[:review][:client_id]).to eql client._id.to_s
+          expect(response_body[:review][:customer_id]).to eql customer.id
+          expect(response_body[:review][:client_id]).to eql client.id
         end
 
         it 'should respond with status bad_request if review does not exist' do

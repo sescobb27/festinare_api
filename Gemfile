@@ -35,6 +35,7 @@ group :development, :test do
   gem 'fancy_irb', '~> 1.0.0'
   gem 'awesome_print'
   gem 'simplecov', require: false
+  gem 'database_cleaner', '~> 1.4.1'
 end
 
 gem 'active_model_serializers', '~> 0.9.0'
