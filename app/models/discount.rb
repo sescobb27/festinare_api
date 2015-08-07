@@ -14,13 +14,15 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
-require 'set'
 class Discount < ActiveRecord::Base
   include Qr
   # =============================relationships=================================
   belongs_to :client, inverse_of: :discounts
   has_many :customers_discounts
   has_many :customers, through: :customers_discounts
+  scope :not_expired, lambda {
+    where("\"discounts\".\"created_at\" < (now() + (\"discounts\".\"duration\" * 60 || 'seconds')::interval)")
+  }
   # =============================END relationships=============================
   # =============================Schema========================================
 
@@ -79,9 +81,7 @@ EOF
       .select(:categories)
       .distinct
       .with_active_discounts
-      .where(<<-SQL
-"discounts"."created_at" < (now() + ("discounts"."duration" * 60 || 'seconds')::interval)
-SQL
-            ).map(&:categories).flatten.uniq
+      .merge(Discount.not_expired)
+      .map(&:categories).flatten.uniq
   end
 end

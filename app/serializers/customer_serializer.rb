@@ -22,9 +22,8 @@ class CustomerSerializer < ActiveModel::Serializer
   attributes :id,
              :email,
              :username,
-             :fullname
-  has_many :categories,
-           # :locations,
-           :customers_discounts,
+             :fullname,
+             :categories
+  has_many :customers_discounts,
            :mobiles
 end

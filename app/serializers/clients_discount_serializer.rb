@@ -1,8 +1,6 @@
 class ClientsDiscountSerializer < ActiveModel::Serializer
-  attributes :id, :name
-  has_many :discounts,
-           :addresses,
-           :categories,
-           :locations
-  has_many :reviews, embed: :ids
+  attributes :id, :name, :categories
+  has_many :discounts, :addresses
+
+  has_many :customers_discounts, embed: :ids
 end

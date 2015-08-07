@@ -23,14 +23,14 @@
 class Client < ActiveRecord::Base
   include User
   # =============================relationships=================================
-  has_many :clients_plans
+  has_many :clients_plans, inverse_of: :client
   has_many :plans, through: :clients_plans
   has_many :discounts, inverse_of: :client
   has_many :customers_discounts,  through: :discounts
   # =============================END relationships=============================
 
   # =============================Schema========================================
-  scope :with_active_discounts, -> { joins(:discounts).where(discounts: { status: true }) }
+  scope :with_active_discounts, -> { includes(:discounts).where(discounts: { status: true }) }
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
@@ -39,18 +39,18 @@ class Client < ActiveRecord::Base
 
   def plan?
     now = Time.zone.now
-    !self.plans.with_discounts.empty? &&
-      self.plans.with_discounts.one? do |plan|
+    !self.clients_plans.with_discounts.empty? &&
+      self.clients_plans.with_discounts.one? do |plan|
         now < plan.expired_date
       end
   end
 
   def decrement_num_of_discounts_left!
-    if self.plans.with_discounts.empty?
-      raise Plan::PlanDiscountsExhausted
-    else
-      self.plans.with_discounts.first.inc num_of_discounts_left: -1
-    end
+    fail ClientsPlan::PlanDiscountsExhausted unless self.plan?
+
+    current_plan = self.clients_plans.with_discounts.first
+    current_plan.num_of_discounts_left -= 1
+    current_plan.save
   end
 
   def unexpired_discounts(time)

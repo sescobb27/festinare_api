@@ -13,12 +13,12 @@
 
 class ClientsPlan < ActiveRecord::Base
   # =============================relationships=================================
-  belongs_to :client
-  belongs_to :plan
+  belongs_to :client, inverse_of: :clients_plans
+  belongs_to :plan, inverse_of: :clients_plans
   # =============================END relationships=============================
   # =============================Schema========================================
   scope :active_plans, -> { where(status: true) }
-  scope :with_discounts, -> { active_plans.where('num_of_discounts_left > :num', num: 0) }
+  scope :with_discounts, -> { active_plans.where('"clients_plans"."num_of_discounts_left" > :num', num: 0) }
   # =============================END Schema====================================
 
   def self.invalidate_expired_ones

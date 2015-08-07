@@ -26,10 +26,9 @@ class ClientSerializer < ActiveModel::Serializer
              :username,
              :name,
              :image_url,
-             :addresses
-  has_many :categories,
-           # :locations,
-           :discounts,
+             :addresses,
+             :categories
+  has_many :discounts,
            :clients_plans
 
   has_many :customers_discounts, embed: :ids

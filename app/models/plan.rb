@@ -17,7 +17,7 @@
 
 class Plan < ActiveRecord::Base
   # =============================relationships=================================
-  has_many :clients_plans
+  has_many :clients_plans, inverse_of: :plan
   has_many :clients, through: :clients_plans
   # =============================END relationships=============================
   # =============================Schema========================================

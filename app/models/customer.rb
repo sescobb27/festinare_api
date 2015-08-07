@@ -21,7 +21,7 @@
 class Customer < ActiveRecord::Base
   include User
   # =============================relationships=================================
-  has_many :mobiles
+  has_many :mobiles, inverse_of: :customer
   has_many :customers_discounts
   has_many :discounts, through: :customers_discounts
   # =============================END relationships=============================

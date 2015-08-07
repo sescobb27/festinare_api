@@ -3,6 +3,4 @@ class LikesSerializer < ActiveModel::Serializer
              :name,
              :image_url,
              :addresses
-  has_many :categories
-           # :locations
 end

@@ -16,7 +16,7 @@ Rails.application.routes.draw do
           get 'me'
         end
         member do
-          post '/like/:client_id/discount/:discount_id',
+          post '/like/discount/:discount_id',
                controller: 'discounts',
                action: :like
           put 'mobile'
