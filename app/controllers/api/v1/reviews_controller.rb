@@ -7,11 +7,9 @@ module API
       def create
         secure_params = post_params
         begin
-          current_customer = customers_discounts
+          current_customer = Customer
                              .includes(:customers_discounts)
-                             .where(customers_discounts: {
-                                      discount_id: secure_params[:discount_id]
-                                    })
+                             .where(customers_discounts: { discount_id: secure_params[:discount_id] })
                              .limit(1)
                              .find @current_user_credentials[:id]
         rescue ActiveRecord::RecordNotFound
@@ -23,22 +21,24 @@ module API
           return render nothing: true, status: :forbidden
         end
 
-        customer_discount = current_customer.customers_discounts.first
+        review = current_customer.customers_discounts.first
         # customers only can review a discount once
-        unless customer_discount.rate.blank? || customer_discount.rate == 0
+        unless review.rate.blank? || review.rate == 0
           return render nothing: true, status: :method_not_allowed
         end
 
-        review = CustomersDiscount.new secure_params.merge customer_id: current_customer.id
+        review.rate = secure_params[:rate]
+        review.feedback = secure_params[:feedback]
+        review.save
 
-        return render json: review, status: :created if review.save
+        return render json: review, status: :created, serializer: ReviewSerializer if review.save
         render json: { errors: review.errors }, status: :bad_request
       end
 
       # GET /api/v1/reviews/:id
       def show
-        review = Review.find params[:id]
-        render json: review, status: :ok
+        review = CustomersDiscount.find params[:id]
+        render json: review, status: :ok, serializer: ReviewSerializer
       rescue ActiveRecord::RecordNotFound
         return render nothing: true, status: :bad_request
       end

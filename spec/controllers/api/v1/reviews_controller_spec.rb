@@ -21,60 +21,68 @@ module API
         mock_token
       end
 
+      let :client do
+        FactoryGirl.create :client_with_discounts
+      end
       describe 'POST #create' do
-        let :client do
-          FactoryGirl.create :client_with_discounts
-        end
-
-        it 'should not be able to review a client' do
+        it 'should not be able to review a discount' do
           customer = FactoryGirl.create :customer_with_subscriptions
           jwt_validate_token customer
           post :create,
-               review: { client_id: client.id, rate: rand(1..5), feedback: 'feedback' },
+               review: { discount_id: client.discounts.first, rate: rand(1..5), feedback: 'feedback' },
                customer_id: customer.id,
                format: :json
           expect(response.status).to eql 403
         end
 
-        it 'should review a client' do
+        it 'should review a discount' do
           rates = (1..3).map { rand(1..5) }
           3.times do |step|
             customer = FactoryGirl.create :customer_with_subscriptions
             jwt_validate_token customer
-            customer.add_to_set client_ids: client.id
+            discount = client.discounts.sample
+            customer.discounts << discount
+            customer.save!
             post :create,
-                 review: { client_id: client.id, rate: rates[step], feedback: "feedback#{step}" },
+                 review: {
+                   discount_id: discount.id,
+                   rate: rates[step],
+                   feedback: "feedback#{step}"
+                 },
                  customer_id: customer.id,
                  format: :json
             expect(response.status).to eql 201
             response_body = json_response
-            expect(response_body[:review][:id]).not_to be_empty
+            expect(response_body[:review]).not_to be_blank
           end
-          client_with_reviews = Client.joins(discounts: :customers_discounts).find client.id
-          expect(client_with_reviews.discounts.customers_discounts.length).to eql(3)
+          client_reviews = Client.joins(discounts: :customers_discounts).find client.id
+          expect(client_reviews.customers_discounts.length).to eql(3)
 
-          client_rates = client_with_reviews.discounts.customers_discounts.map(&:rate)
+          client_rates = client_reviews.customers_discounts.map(&:rate)
           expect(client_rates.sum.fdiv 3).to eql rates.sum.fdiv(3)
-          expect(client_with_reviews.discounts.customers_discounts.map(&:feedback)).to include 'feedback0'
+          expect(client_reviews.customers_discounts.map(&:feedback)).to include 'feedback0'
         end
 
-        it 'should not be able to review a client twice' do
+        it 'should not be able to review a discount twice' do
           customer = FactoryGirl.create :customer_with_subscriptions
           rate = rand(1..5)
           jwt_validate_token customer
-          customer.add_to_set client_ids: client.id
+          discount = client.discounts.sample
+          customer.discounts << discount
+          customer.save!
           # first review
           post :create,
-               review: { client_id: client.id, rate: rate, feedback: 'feedback' },
+               review: { discount_id: discount.id, rate: rate, feedback: 'feedback' },
                customer_id: customer.id,
                format: :json
           expect(response.status).to eql 201
           customer = Customer.includes(:customers_discounts).find customer.id
-          expect(customer.customers_discounts.map(&:client_id)).to include client.id
+          expect(customer.customers_discounts.map(&:discount_id)).to include discount.id
+          expect(customer.discounts.map(&:client_id)).to include client.id
 
           # second review
           post :create,
-               review: { client_id: client.id, rate: rate, feedback: 'feedback' },
+               review: { discount_id: discount.id, rate: rate, feedback: 'feedback' },
                customer_id: customer.id,
                format: :json
           expect(response.status).to eql 405
@@ -82,15 +90,19 @@ module API
       end
 
       describe 'GET #show' do
-        let(:review) { FactoryGirl.attributes_for :review }
-        let(:client) { FactoryGirl.create :client }
         let(:customer) { FactoryGirl.create :customer }
 
         it 'Authorized customer/client should get a review by id' do
           jwt_validate_token customer
-          customer.add_to_set client_ids: client.id
+          discount = client.discounts.sample
+          customer.discounts << discount
+          customer.save!
           post :create,
-               review: { client_id: client.id }.merge(review),
+               review: {
+                 discount_id: discount.id,
+                 rate: SecureRandom.random_number(5),
+                 feedback: 'feedback'
+               },
                customer_id: customer.id,
                format: :json
           expect(response.status).to eql 201
@@ -101,7 +113,7 @@ module API
           expect(response.status).to eql 200
           response_body = json_response
           expect(response_body[:review][:customer_id]).to eql customer.id
-          expect(response_body[:review][:client_id]).to eql client.id
+          expect(response_body[:review][:discount_id]).to eql discount.id
         end
 
         it 'should respond with status bad_request if review does not exist' do
