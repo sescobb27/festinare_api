@@ -15,10 +15,15 @@ require 'rails_helper'
 require 'rake'
 
 RSpec.describe ClientsPlan, type: :model do
-  describe 'invalidate:plans Task -> Invalidate Expired Plans' do
-    it { should belong_to :client }
-    it { should belong_to :plan }
+  it { should belong_to :client }
+  it { should belong_to :plan }
 
+  it { should have_db_column(:num_of_discounts_left).of_type(:integer) }
+  it { should have_db_column(:status).of_type(:boolean) }
+  it { should have_db_column(:expired_date).of_type(:datetime) }
+  it { should have_db_column(:created_at).of_type(:datetime) }
+
+  describe 'invalidate:plans Task -> Invalidate Expired Plans' do
     let!(:expired_clients) do
       FactoryGirl.create_list :client_with_expired_plan, 10
     end

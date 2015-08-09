@@ -23,13 +23,30 @@
 require 'rails_helper'
 
 RSpec.describe Client, type: :model do
-  describe 'Create Client' do
-    it { should have_many :clients_plans }
-    it { should have_many :plans }
-    it { should have_many :discounts }
-    it { should have_many :customers_discounts }
-    it { should validate_presence_of :name }
+  it { should have_many :clients_plans }
+  it { should have_many :plans }
+  it { should have_many :discounts }
+  it { should have_many :customers_discounts }
 
+  it { should validate_presence_of :name }
+
+  it { should have_db_column(:name).of_type(:string) }
+  it { should have_db_column(:categories).of_type(:string) }
+  it { should have_db_column(:tokens).of_type(:string) }
+  it { should have_db_column(:username).of_type(:string) }
+  it { should have_db_column(:image_url).of_type(:string) }
+  it { should have_db_column(:addresses).of_type(:string) }
+  it { should have_db_column(:created_at).of_type(:datetime) }
+  it { should have_db_column(:updated_at).of_type(:datetime) }
+  it { should have_db_column(:email).of_type(:string) }
+  it { should have_db_column(:encrypted_password).of_type(:string) }
+  it { should have_db_column(:reset_password_token).of_type(:string) }
+  it { should have_db_column(:reset_password_sent_at).of_type(:datetime) }
+  it { should have_db_column(:confirmation_token).of_type(:string) }
+  it { should have_db_column(:confirmed_at).of_type(:datetime) }
+  it { should have_db_column(:confirmation_sent_at).of_type(:datetime) }
+
+  describe 'Create Client' do
     let(:client) { FactoryGirl.create(:client) }
     let(:c_plan) { FactoryGirl.create(:client_with_plan) }
     let(:c_discount) { FactoryGirl.create(:client_with_discounts) }

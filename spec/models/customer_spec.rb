@@ -32,7 +32,22 @@ RSpec.describe Customer, type: :model do
   it { should have_many :mobiles }
   it { should have_many :customers_discounts }
   it { should have_many :discounts }
+
   it { should validate_presence_of :fullname }
+
+  it { should have_db_column(:fullname).of_type(:string) }
+  it { should have_db_column(:categories).of_type(:string) }
+  it { should have_db_column(:tokens).of_type(:string) }
+  it { should have_db_column(:username).of_type(:string) }
+  it { should have_db_column(:created_at).of_type(:datetime) }
+  it { should have_db_column(:updated_at).of_type(:datetime) }
+  it { should have_db_column(:email).of_type(:string) }
+  it { should have_db_column(:encrypted_password).of_type(:string) }
+  it { should have_db_column(:reset_password_token).of_type(:string) }
+  it { should have_db_column(:reset_password_sent_at).of_type(:datetime) }
+  it { should have_db_column(:confirmation_token).of_type(:string) }
+  it { should have_db_column(:confirmed_at).of_type(:datetime) }
+  it { should have_db_column(:confirmation_sent_at).of_type(:datetime) }
 
   before do
     @gcm = instance_double(GCM)

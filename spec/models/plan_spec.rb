@@ -20,6 +20,7 @@ require 'rails_helper'
 RSpec.describe Plan, type: :model do
   it { should have_many :clients_plans }
   it { should have_many :clients }
+
   it { should validate_presence_of :name }
   it { should validate_presence_of :description }
   it { should validate_presence_of :price }
@@ -30,6 +31,17 @@ RSpec.describe Plan, type: :model do
   it { should validate_numericality_of(:price).only_integer }
   it { should validate_numericality_of(:num_of_discounts).only_integer }
   it { should validate_numericality_of(:expired_rate).only_integer }
+
+  it { should have_db_column(:name).of_type(:string) }
+  it { should have_db_column(:description).of_type(:text) }
+  it { should have_db_column(:price).of_type(:integer) }
+  it { should have_db_column(:num_of_discounts).of_type(:integer) }
+  it { should have_db_column(:currency).of_type(:string) }
+  it { should have_db_column(:expired_rate).of_type(:integer) }
+  it { should have_db_column(:expired_time).of_type(:string) }
+  it { should have_db_column(:deleted_at).of_type(:datetime) }
+  it { should have_db_column(:created_at).of_type(:datetime) }
+  it { should have_db_column(:updated_at).of_type(:datetime) }
 
   pending "add some examples to (or delete) #{__FILE__}"
 end

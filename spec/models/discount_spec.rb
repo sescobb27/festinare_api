@@ -22,10 +22,21 @@ RSpec.describe Discount, type: :model do
   it { should belong_to :client }
   it { should have_many :customers_discounts }
   it { should have_many :customers }
+
   it { should validate_presence_of :discount_rate }
   it { should validate_presence_of :title }
   it { should validate_presence_of :duration }
   it { should validate_inclusion_of(:duration).in_array Discount::DURATIONS }
+
+  it { should have_db_column(:discount_rate).of_type(:integer) }
+  it { should have_db_column(:title).of_type(:string) }
+  it { should have_db_column(:secret_key).of_type(:string) }
+  it { should have_db_column(:status).of_type(:boolean) }
+  it { should have_db_column(:duration).of_type(:integer) }
+  it { should have_db_column(:duration_term).of_type(:string) }
+  it { should have_db_column(:hashtags).of_type(:string) }
+  it { should have_db_column(:created_at).of_type(:datetime) }
+  it { should have_db_column(:updated_at).of_type(:datetime) }
 
   describe 'invalidate:discounts Task -> Invalidate Expired Discounts' do
     it 'should invalidate all discounts' do
