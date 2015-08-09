@@ -71,4 +71,37 @@ RSpec.describe Client, type: :model do
       ).categories.count).to be > 0
     end
   end
+
+  describe '#plan?' do
+    pending 'no plan'
+    pending 'expired plan'
+    pending 'valid plan'
+  end
+
+  describe '#decrement_num_of_discounts_left!' do
+    pending 'no plan'
+    pending 'no discounts left'
+    pending 'num of discounts decresed'
+  end
+
+  describe '#unexpired_discounts(Time.zone.now)' do
+    pending 'no discounts'
+    pending 'expired discounts'
+    pending 'no expired discounts'
+  end
+
+  describe '#update_password(credentials)' do
+    pending 'valid password'
+    pending 'invalid password'
+    pending 'password != password_confirmation'
+    pending 'password updated'
+  end
+
+  describe '::available_discounts(categories, opts)' do
+    pending 'no available discounts'
+    pending 'empty categories'
+    pending 'clients does not have available discounts'
+    pending 'clients with expired discounts'
+    pending 'all available discounts'
+  end
 end

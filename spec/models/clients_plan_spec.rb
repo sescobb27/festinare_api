@@ -41,4 +41,8 @@ RSpec.describe ClientsPlan, type: :model do
       end
     end
   end
+
+  describe '::create_from_plan(client, plan)' do
+    pending 'create ClientsPlan from valid Client and Plan'
+  end
 end

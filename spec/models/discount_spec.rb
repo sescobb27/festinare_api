@@ -67,5 +67,17 @@ RSpec.describe Discount, type: :model do
       # expect(categories).to eql User::CATEGORIES
       expect(categories - User::CATEGORIES).to eql []
     end
+
+    pending 'no clients with active discounts'
+  end
+
+  describe '#expired?(Time.zone.now)' do
+    pending 'status false'
+    pending 'expired'
+    pending 'unexpired'
+  end
+
+  describe '#expire_time' do
+    pending 'get expire time'
   end
 end
