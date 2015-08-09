@@ -33,7 +33,10 @@ class Plan < ActiveRecord::Base
             :currency,
             :expired_rate,
             presence: true
-  validates :expired_time, inclusion: { in: EXPIRED_TIMES }
+  validates :expired_time, inclusion: {
+    in: EXPIRED_TIMES,
+    message: "Invalid Expired time, valid ones are (#{EXPIRED_TIMES.join(", ")})"
+  }
   validates :price, numericality: { only_integer: true }
   validates :num_of_discounts, numericality: {
     only_integer: true,

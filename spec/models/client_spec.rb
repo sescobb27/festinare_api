@@ -24,6 +24,12 @@ require 'rails_helper'
 
 RSpec.describe Client, type: :model do
   describe 'Create Client' do
+    it { should have_many :clients_plans }
+    it { should have_many :plans }
+    it { should have_many :discounts }
+    it { should have_many :customers_discounts }
+    it { should validate_presence_of :name }
+
     let(:client) { FactoryGirl.create(:client) }
     let(:c_plan) { FactoryGirl.create(:client_with_plan) }
     let(:c_discount) { FactoryGirl.create(:client_with_discounts) }

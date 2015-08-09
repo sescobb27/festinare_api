@@ -19,6 +19,14 @@ require 'rails_helper'
 require 'rake'
 
 RSpec.describe Discount, type: :model do
+  it { should belong_to :client }
+  it { should have_many :customers_discounts }
+  it { should have_many :customers }
+  it { should validate_presence_of :discount_rate }
+  it { should validate_presence_of :title }
+  it { should validate_presence_of :duration }
+  it { should validate_inclusion_of(:duration).in_array Discount::DURATIONS }
+
   describe 'invalidate:discounts Task -> Invalidate Expired Discounts' do
     it 'should invalidate all discounts' do
       clients = FactoryGirl.create_list :client_with_discounts, 20

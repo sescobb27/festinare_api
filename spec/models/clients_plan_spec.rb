@@ -3,6 +3,9 @@ require 'rake'
 
 RSpec.describe ClientsPlan, type: :model do
   describe 'invalidate:plans Task -> Invalidate Expired Plans' do
+    it { should belong_to :client }
+    it { should belong_to :plan }
+
     let!(:expired_clients) do
       FactoryGirl.create_list :client_with_expired_plan, 10
     end

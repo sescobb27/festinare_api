@@ -29,6 +29,11 @@ RSpec::Matchers.define :array_length_gte do
 end
 
 RSpec.describe Customer, type: :model do
+  it { should have_many :mobiles }
+  it { should have_many :customers_discounts }
+  it { should have_many :discounts }
+  it { should validate_presence_of :fullname }
+
   before do
     @gcm = instance_double(GCM)
     allow(@gcm).to receive(:send_notification).with(
