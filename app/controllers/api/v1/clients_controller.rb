@@ -2,6 +2,7 @@ module API
   module V1
     class ClientsController < API::BaseController
       # Common logic for User Authentication (create, login, me, logout)
+      include UserCategory
       include UserAuth
 
       def index
@@ -65,6 +66,7 @@ module API
           :name,
           :image_url,
           :address,
+          categories: [],
           password: [:password, :current_password, :password_confirmation]
         )
       end

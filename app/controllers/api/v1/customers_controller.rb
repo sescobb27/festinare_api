@@ -2,6 +2,7 @@ module API
   module V1
     class CustomersController < API::BaseController
       # Common logic for User Authentication (create, login, me, logout)
+      include UserCategory
       include UserAuth
 
       def update
@@ -10,19 +11,6 @@ module API
           customer = Customer.find @current_user_credentials[:id]
         rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
-        end
-        if secure_params[:categories]
-          secure_params[:categories].map do |category|
-            # kind of updelete if exist delete, else add
-            should_add = category.delete :status
-            if should_add
-              unless customer.categories.include? category[:name]
-                customer.categories << category[:name]
-              end
-            else
-              customer.categories.delete category[:name]
-            end
-          end
         end
         if secure_params[:fullname] && !secure_params[:fullname].empty?
           customer.fullname secure_params[:fullname]
@@ -75,7 +63,7 @@ module API
       def safe_update_params
         params.require(:customer).permit(
           :fullname,
-          categories: [:name, :status],
+          categories: [],
           password: [:password, :current_password, :password_confirmation]
         )
       end

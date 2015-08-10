@@ -47,57 +47,27 @@ module API
 
         it 'should add given categories to customer' do
           jwt_validate_token customer
-          put(:update, {
+          put(:add_category, {
                 id: customer.id,
-                customer: {
-                  categories: [
-                    { name: 'Bar', description: '', status: true },
-                    { name: 'Restaurant', description: '', status: true }
-                  ]
-                }
+                customer: { categories: ['Bar', 'Restaurant'] }
               }, format: :json)
-          expect(response.status).to eql 200
+          expect(response.status).to eql 201
           u = Customer.find customer.id
           expect(u.categories).to include('Bar')
           expect(u.categories).to include('Restaurant')
         end
 
         it 'should delete given categories from customer' do
-          customer.categories << 'Bar'
-          customer.categories << 'Restaurant'
+          customer.categories = ['Bar', 'Restaurant']
           customer.save
           jwt_validate_token customer
-          put(:update, {
+          delete(:delete_category, {
                 id: customer.id,
-                customer: {
-                  categories: [
-                    { name: 'Bar', description: '', status: false },
-                    { name: 'Restaurant', description: '', status: false }
-                  ]
-                }
+                customer: { categories: ['Bar', 'Restaurant'] }
               }, format: :json)
           expect(response.status).to eql 200
           u = Customer.find customer.id
           expect(u.categories).not_to include('Bar')
-          expect(u.categories).not_to include('Restaurant')
-        end
-
-        it 'should delete/add given categories from/to customer' do
-          customer.categories << 'Restaurant'
-          customer.save
-          jwt_validate_token customer
-          put(:update, {
-                id: customer.id,
-                customer: {
-                  categories: [
-                    { name: 'Bar', description: '', status: true },
-                    { name: 'Restaurant', description: '', status: false }
-                  ]
-                }
-              }, format: :json)
-          expect(response.status).to eql 200
-          u = Customer.find customer.id
-          expect(u.categories).to include('Bar')
           expect(u.categories).not_to include('Restaurant')
         end
       end

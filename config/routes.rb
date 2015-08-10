@@ -16,11 +16,11 @@ Rails.application.routes.draw do
           get 'me'
         end
         member do
-          post '/like/discount/:discount_id',
-               controller: 'discounts',
-               action: :like
+          post '/like/discount/:discount_id', controller: 'discounts', action: :like
           put 'mobile'
           get 'likes'
+          put '/categories', action: :add_category
+          delete '/categories', action: :delete_category
         end
         resources :reviews, except: [:index, :new, :edit, :show]
       end
@@ -29,6 +29,10 @@ Rails.application.routes.draw do
           post 'login'
           post 'logout'
           get 'me'
+        end
+        member do
+          put '/categories', action: :add_category
+          delete '/categories', action: :delete_category
         end
         get 'discounts', controller: 'discounts', action: :discounts
         post 'discounts', controller: 'discounts', action: :create
