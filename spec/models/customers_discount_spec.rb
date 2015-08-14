@@ -21,6 +21,4 @@ RSpec.describe CustomersDiscount, type: :model do
   it { should have_db_column(:updated_at).of_type(:datetime) }
   it { should have_db_column(:rate).of_type(:integer) }
   it { should have_db_column(:feedback).of_type(:string) }
-
-  pending "add some examples to (or delete) #{__FILE__}"
 end

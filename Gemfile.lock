@@ -111,6 +111,9 @@ GEM
       mini_portile (~> 0.6.0)
     orm_adapter (0.5.0)
     paint (1.0.0)
+    parallel (1.6.1)
+    parallel_tests (1.6.1)
+      parallel
     pg (0.18.2)
     pg_array_parser (0.0.9)
     postgres_ext (2.4.1)
@@ -224,6 +227,7 @@ DEPENDENCIES
   jwt-rb
   lograge (~> 0.3.3)
   logstash-event (~> 1.2.0)
+  parallel_tests
   pg (~> 0.18.2)
   postgres_ext (~> 2.4.1)
   puma (~> 2.11.0)

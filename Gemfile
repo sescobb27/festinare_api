@@ -36,6 +36,7 @@ group :development, :test do
   gem 'awesome_print'
   gem 'simplecov', require: false
   gem 'database_cleaner', '~> 1.4.1'
+  gem 'parallel_tests'
 end
 
 gem 'active_model_serializers', '~> 0.9.0'
