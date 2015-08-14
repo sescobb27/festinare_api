@@ -50,15 +50,15 @@ class Discount < ActiveRecord::Base
   # =============================END Schema Validations========================
 
   def expired?(time)
-    if self[:status] # if is active
-      time > self.expire_time
+    if status # if is active
+      time > expire_time
     else
       true
     end
   end
 
   def expire_time
-    self[:created_at] + (self[:duration] * 60).seconds
+    created_at + (duration * 60).seconds
   end
 
   def self.invalidate_expired_ones

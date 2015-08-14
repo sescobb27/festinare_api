@@ -39,35 +39,35 @@ class Client < ActiveRecord::Base
 
   def plan?
     now = Time.zone.now
-    !self.clients_plans.with_discounts.empty? &&
-      self.clients_plans.with_discounts.one? do |plan|
+    !clients_plans.with_discounts.empty? &&
+      clients_plans.with_discounts.one? do |plan|
         now < plan.expired_date
       end
   end
 
   def decrement_num_of_discounts_left!
-    fail ClientsPlan::PlanDiscountsExhausted unless self.plan?
+    fail ClientsPlan::PlanDiscountsExhausted unless plan?
 
-    current_plan = self.clients_plans.with_discounts.last
+    current_plan = clients_plans.with_discounts.last
     current_plan.num_of_discounts_left -= 1
     current_plan.save
     self
   end
 
   def unexpired_discounts(time)
-    self.discounts.select { |discount| !discount.expired? time }
+    discounts.select { |discount| !discount.expired? time }
   end
 
   def update_password(credentials)
-    unless self.valid_password? credentials[:current_password]
-      self.errors.add :password, 'Invalid'
+    unless valid_password? credentials[:current_password]
+      errors.add :password, 'Invalid'
       return false
     end
 
     self.password = credentials[:password]
     self.password_confirmation = credentials[:password_confirmation]
 
-    self.save
+    save
   end
 
   def self.available_discounts(categories = [], opts = {})
