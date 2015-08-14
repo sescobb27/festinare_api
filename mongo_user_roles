@@ -1,7 +1,0 @@
-mongo admin --eval "db.createUser({ user: 'mongo_root', pwd: '$MONGODB_ROOT_PASSWORD', roles:['root'] });"
-
-mongo admin --eval "db.createUser({ user: 'mongo_admin', pwd: '$MONGODB_ADMIN_PASSWORD', roles: ['dbAdminAnyDatabase', 'clusterAdmin'] });"
-
-mongo festinare_api --eval "db.createUser({ user: 'admin', pwd: '$MONGODB_DB_ADMIN_PASSWORD', roles:[{roles: ['dbAdminAnyDatabase', 'clusterAdmin'], db:'festinare_api' }] });"
-
-mongo festinare_api --eval "db.createUser({ user: '$MONGODB_DB_USERNAME', pwd: '$MONGODB_DB_PASSWORD', roles:[{ role:'readWrite', db:'festinare_api' }] });"
