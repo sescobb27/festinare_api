@@ -41,6 +41,11 @@ class Customer < ActiveRecord::Base
       dry_run: (Rails.env.development? || Rails.env.test?)
     }
     categories = Discount.discount_categories
+    # ==========================================================================
+    # SELECT "customers".*
+    # FROM "customers"
+    # WHERE (categories <@ ARRAY[NULL]::varchar[...])
+    # ==========================================================================
     Customer.where('categories <@ ARRAY[?]::varchar[]', categories)
       .joins(:mobiles)
       .where(mobiles: { enabled: true }).find_in_batches do |customers|

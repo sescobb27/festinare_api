@@ -63,6 +63,13 @@ class Discount < ActiveRecord::Base
 
   def self.invalidate_expired_ones
     now = Time.zone.now
+    # ==========================================================================
+    # SELECT "clients"."*", "discounts"."*"
+    # FROM "clients"
+    # LEFT OUTER JOIN "discounts"
+    # ON "discounts"."client_id" = "clients"."id"
+    # WHERE "discounts"."status" = 't'
+    # ==========================================================================
     Client.with_active_discounts.find_each do |client|
       client.discounts.map do |discount|
         next unless discount.expired? now
@@ -77,6 +84,14 @@ EOF
   end
 
   def self.discount_categories
+    # ==========================================================================
+    # SELECT DISTINCT "clients"."*", "discounts"."*"
+    # FROM "clients"
+    # LEFT OUTER JOIN "discounts"
+    # ON "discounts"."client_id" = "clients"."id"
+    # WHERE "discounts"."status" = 't'
+    # AND ("discounts"."created_at" < (now() + ("discounts"."duration" * 60 || 'seconds')::interval))
+    # ==========================================================================
     Client
       .select(:categories)
       .distinct

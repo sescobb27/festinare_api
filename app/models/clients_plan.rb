@@ -23,6 +23,13 @@ class ClientsPlan < ActiveRecord::Base
 
   def self.invalidate_expired_ones
     now = Time.zone.now
+    # ==========================================================================
+    # SELECT "clients".*
+    # FROM "clients"
+    # INNER JOIN "clients_plans"
+    # ON "clients_plans"."client_id" = "clients"."id"
+    # WHERE "clients_plans"."status" = 't'
+    # ==========================================================================
     Client.joins(:clients_plans).where(clients_plans: { status: true }).find_each do |client|
       client.clients_plans.map do |plan|
         next if now < plan.expired_date

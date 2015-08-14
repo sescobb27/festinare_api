@@ -38,7 +38,7 @@ module API
 
       def likes
         begin
-          # Produced QUERY
+          # ==========================================================================
           # SELECT  "customers".*
           # FROM "customers"
           # INNER JOIN "customers_discounts" ON "customers_discounts"."customer_id" = "customers"."id"
@@ -46,6 +46,7 @@ module API
           # AND "discounts"."status" = 't'
           # INNER JOIN "clients" ON "clients"."id" = "discounts"."client_id"
           # WHERE "customers"."id" = $1 LIMIT 1  [["id", 1]]
+          # ==========================================================================
           current_customer = Customer.joins(discounts: :client).find @current_user_credentials[:id]
         rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
