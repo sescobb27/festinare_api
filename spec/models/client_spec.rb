@@ -46,11 +46,12 @@ RSpec.describe Client, type: :model do
   it { should have_db_column(:confirmed_at).of_type(:datetime) }
   it { should have_db_column(:confirmation_sent_at).of_type(:datetime) }
 
-  describe 'Create Client' do
-    let(:client) { FactoryGirl.create(:client) }
-    let(:c_plan) { FactoryGirl.create(:client_with_plan) }
-    let(:c_discount) { FactoryGirl.create(:client_with_discounts) }
+  let(:client) { FactoryGirl.create(:client) }
+  let(:c_plan) { FactoryGirl.create(:client_with_plan) }
+  let(:c_discount) { FactoryGirl.create(:client_with_discounts) }
+  let(:c_expired) { FactoryGirl.create(:client_with_expired_plan) }
 
+  describe 'Create Client' do
     it 'should create a raw client' do
       expect(client.categories.length).to be > 0
       expect(client.save).to be true
@@ -73,35 +74,117 @@ RSpec.describe Client, type: :model do
   end
 
   describe '#plan?' do
-    pending 'no plan'
-    pending 'expired plan'
-    pending 'valid plan'
+    it 'should not have plan' do
+      expect(client.plan?).to be_falsey
+    end
+
+    it 'should not have plan if expired plan' do
+      expect(c_expired.plan?).to be_falsey
+    end
+
+    it 'should have a valid plan' do
+      expect(c_plan.plan?).to be_truthy
+    end
   end
 
   describe '#decrement_num_of_discounts_left!' do
-    pending 'no plan'
-    pending 'no discounts left'
-    pending 'num of discounts decresed'
+    it 'should fail if no active plan' do
+      expect { client.decrement_num_of_discounts_left! }.to raise_error ClientsPlan::PlanDiscountsExhausted
+    end
+
+    it 'should fail if no discounts left' do
+      client_plan = c_plan.clients_plans.last
+      client_plan.num_of_discounts_left = 0
+      client_plan.save
+      expect { c_plan.decrement_num_of_discounts_left! }.to raise_error ClientsPlan::PlanDiscountsExhausted
+    end
+
+    it 'should decresed num of discounts' do
+      plan = c_plan.plans.last
+      expect(c_plan.decrement_num_of_discounts_left!
+                   .clients_plans
+                   .last
+                   .num_of_discounts_left
+            ).to eql plan.num_of_discounts - 1
+    end
   end
 
   describe '#unexpired_discounts(Time.zone.now)' do
-    pending 'no discounts'
-    pending 'expired discounts'
-    pending 'no expired discounts'
+    it 'should not have discounts' do
+      expect(client.unexpired_discounts(Time.zone.now)).to eql []
+    end
+
+    it 'should have expired discounts' do
+      expired_discounts = c_discount.discounts.sample(2)
+      expired_discounts.map do |discount|
+        discount.created_at = (discount.created_at - (discount.duration * 60).seconds - 1.second)
+      end
+      unexpired = c_discount.unexpired_discounts(Time.zone.now)
+      expect(unexpired).not_to include expired_discounts[0]
+      expect(unexpired).not_to include expired_discounts[1]
+    end
+
+    it 'should return all discounts' do
+      unexpired = c_discount.unexpired_discounts(Time.zone.now)
+      expect(unexpired.length).to eql 5
+      expect(unexpired).to match_array c_discount.discounts
+    end
   end
 
   describe '#update_password(credentials)' do
-    pending 'valid password'
-    pending 'invalid password'
-    pending 'password != password_confirmation'
-    pending 'password updated'
+    it 'invalid password' do
+      updated = client.update_password current_password: 'wrongpassword'
+      expect(updated).to be_falsey
+      expect(client.errors.full_messages).to include 'Password Invalid'
+    end
+
+    it 'password != password_confirmation' do
+      updated = client.update_password current_password: client.password,
+                                       password: 'mynewpassword',
+                                       password_confirmation: 'mynewpassword_notmatch'
+      expect(updated).to be_falsey
+      expect(client.errors.full_messages).to include 'Password confirmation doesn\'t match Password'
+    end
+
+    it 'password updated' do
+      updated = client.update_password current_password: client.password,
+                                       password: 'mynewpassword',
+                                       password_confirmation: 'mynewpassword'
+      expect(updated).to be_truthy
+      expect(client.valid_password? 'mynewpassword').to be_truthy
+    end
   end
 
   describe '::available_discounts(categories, opts)' do
-    pending 'no available discounts'
-    pending 'empty categories'
-    pending 'clients does not have available discounts'
-    pending 'clients with expired discounts'
-    pending 'all available discounts'
+    before(:example, create_list: :clients) do
+      @l_clients_with_discounts = FactoryGirl.create_list :client_with_discounts, 20
+    end
+
+    it 'should not have available discounts' do
+      expect(Client.available_discounts(User::CATEGORIES)).to eql []
+    end
+
+    it 'should return all discounts if no categories specifyed', create_list: :clients do
+      available_discounts = Client.available_discounts
+      expect(available_discounts.length).to eql 20
+      expect(available_discounts).to match_array @l_clients_with_discounts
+    end
+
+    it 'should not have available discounts if all of them are expired', create_list: :clients do
+      @l_clients_with_discounts.each do |client|
+        client.discounts.map do |discount|
+          discount.update created_at: (discount.created_at - (discount.duration * 60).seconds - 1.second)
+        end
+      end
+      expect(Client.available_discounts.length).to eql 0
+    end
+
+    it 'all available discounts', create_list: :clients do
+      User::CATEGORIES.each do |category|
+        available_discounts = Client.available_discounts([category])
+        expect(available_discounts).not_to be_empty
+        expect(available_discounts.map(&:categories).flatten.uniq).to include category
+      end
+    end
   end
 end

@@ -48,9 +48,10 @@ class Client < ActiveRecord::Base
   def decrement_num_of_discounts_left!
     fail ClientsPlan::PlanDiscountsExhausted unless self.plan?
 
-    current_plan = self.clients_plans.with_discounts.first
+    current_plan = self.clients_plans.with_discounts.last
     current_plan.num_of_discounts_left -= 1
     current_plan.save
+    self
   end
 
   def unexpired_discounts(time)
@@ -69,7 +70,7 @@ class Client < ActiveRecord::Base
     self.save
   end
 
-  def self.available_discounts(categories, opts)
+  def self.available_discounts(categories = [], opts = {})
     query = Client.with_active_discounts
     query.where(':categories = ANY (categories)', categories: categories) unless categories.empty?
     now = Time.zone.now
