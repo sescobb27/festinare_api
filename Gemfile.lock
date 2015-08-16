@@ -217,14 +217,14 @@ DEPENDENCIES
   bullet
   byebug (~> 4.0.0)
   database_cleaner (~> 1.4.1)
-  devise
+  devise (~> 3.5.1)
   dotenv-rails
   factory_girl_rails (~> 4.5.0)
   fancy_irb (~> 1.0.0)
   ffaker (~> 2.0.0)
-  gcm
+  gcm (~> 0.1.0)
   hirb
-  jwt-rb
+  jwt-rb (~> 0.0.2)
   lograge (~> 0.3.3)
   logstash-event (~> 1.2.0)
   parallel_tests

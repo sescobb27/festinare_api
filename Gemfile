@@ -42,12 +42,12 @@ end
 gem 'active_model_serializers', '~> 0.9.0'
 # gem 'websocket-rails'
 gem 'puma', '~> 2.11.0'
-gem 'jwt-rb'
-gem 'devise'
+gem 'jwt-rb', '~> 0.0.2'
+gem 'devise', '~> 3.5.1'
 # Abort requests that are taking too long
 gem 'rack-timeout', '~> 0.2.0'
 gem 'whenever', require: false
-gem 'gcm'
+gem 'gcm', '~> 0.1.0'
 gem 'lograge', '~> 0.3.3'
 gem 'logstash-event', '~> 1.2.0'
 gem 'rack-cors', '~> 0.4.0', require: 'rack/cors'
