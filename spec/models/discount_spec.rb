@@ -60,10 +60,10 @@ RSpec.describe Discount, type: :model do
     end
   end
 
-  describe '::discount_categories' do
+  describe '::categories' do
     it 'should return all categories' do
       FactoryGirl.create_list :client_with_discounts, 10
-      categories = Discount.discount_categories
+      categories = Discount.categories
       # expect(categories).to eql User::CATEGORIES
       expect(categories - User::CATEGORIES).to eql []
     end

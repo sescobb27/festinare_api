@@ -11,6 +11,7 @@
 #  created_at            :datetime         not null
 #
 
+# @author Simon Escobar
 class ClientsPlan < ActiveRecord::Base
   # =============================relationships=================================
   belongs_to :client, inverse_of: :clients_plans
@@ -21,7 +22,8 @@ class ClientsPlan < ActiveRecord::Base
   scope :with_discounts, -> { active_plans.where('"clients_plans"."num_of_discounts_left" > :num', num: 0) }
   # =============================END Schema====================================
 
-  def self.invalidate_expired_ones
+  # Invalidate Expired Client's Plans
+  def self.invalidate!
     now = Time.zone.now
     # ==========================================================================
     # SELECT "clients".*
@@ -43,6 +45,10 @@ EOF
     end
   end
 
+  # Returns a newly created Client's Plan
+  # @param client [Client] an already created Client object
+  # @param plan [Plan] an already created Plan object
+  # @return [ClientsPlan]
   def self.create_from_plan(client, plan)
     # the purchased plan is going to expire depending on the plan specifications
     # so for example:

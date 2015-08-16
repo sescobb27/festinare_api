@@ -15,6 +15,7 @@
 #  updated_at       :datetime         not null
 #
 
+# @author Simon Escobar
 class Plan < ActiveRecord::Base
   # =============================relationships=================================
   has_many :clients_plans, inverse_of: :plan

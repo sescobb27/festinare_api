@@ -11,6 +11,7 @@
 #  updated_at  :datetime         not null
 #
 
+# @author Simon Escobar
 class Mobile < ActiveRecord::Base
   # =============================relationships=================================
   belongs_to :customer, inverse_of: :mobiles

@@ -18,6 +18,7 @@
 #  confirmation_sent_at   :datetime
 #
 
+# @author Simon Escobar
 class Customer < ActiveRecord::Base
   include User
   # =============================relationships=================================
@@ -40,7 +41,7 @@ class Customer < ActiveRecord::Base
       # Test server.
       dry_run: (Rails.env.development? || Rails.env.test?)
     }
-    categories = Discount.discount_categories
+    categories = Discount.categories
     # ==========================================================================
     # SELECT "customers".*
     # FROM "customers"

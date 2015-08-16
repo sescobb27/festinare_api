@@ -11,6 +11,7 @@
 #  feedback    :string(140)
 #
 
+# @author Simon Escobar
 class CustomersDiscount < ActiveRecord::Base
   belongs_to :customer
   belongs_to :discount

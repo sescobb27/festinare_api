@@ -14,6 +14,8 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
+
+# @author Simon Escobar
 class Discount < ActiveRecord::Base
   include Qr
   # =============================relationships=================================
@@ -49,6 +51,10 @@ class Discount < ActiveRecord::Base
   }
   # =============================END Schema Validations========================
 
+  # Returns if a discount is expired
+  # @param time [Time]
+  # @return [Boolean] true if discount status == true and given time is greater
+  #   than discount's expire time
   def expired?(time)
     if status # if is active
       time > expire_time
@@ -61,7 +67,8 @@ class Discount < ActiveRecord::Base
     created_at + (duration * 60).seconds
   end
 
-  def self.invalidate_expired_ones
+  # Invalidate Expired Discounts
+  def self.invalidate!
     now = Time.zone.now
     # ==========================================================================
     # SELECT "clients"."*", "discounts"."*"
@@ -83,7 +90,7 @@ EOF
     end
   end
 
-  def self.discount_categories
+  def self.categories
     # ==========================================================================
     # SELECT DISTINCT "clients"."*", "discounts"."*"
     # FROM "clients"
@@ -92,15 +99,16 @@ EOF
     # WHERE "discounts"."status" = 't'
     # AND ("discounts"."created_at" < (now() + ("discounts"."duration" * 60 || 'seconds')::interval))
     # ==========================================================================
-    Client
-      .select(:categories)
+    Client.select(:categories)
       .distinct
       .with_active_discounts
       .merge(Discount.not_expired)
       .map(&:categories).flatten.uniq
   end
 
-  # @opts = { omit: [] limit: Fixnum offset: Fixnum }
+  # Returns all available discounts given a set of categories and filters
+  # @param opts [Hash] valid options are = { omit: [Fixnum] limit: Fixnum offset: Fixnum }
+  # @return [Array<Discount>]
   def self.available(categories = [], opts = {})
     query = Discount.joins(:client).where(discounts: { status: true })
     query.where(':categories = ANY ("client"."categories")', categories: categories) unless categories.empty?

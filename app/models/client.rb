@@ -20,6 +20,7 @@
 #  confirmation_sent_at   :datetime
 #
 
+# @author Simon Escobar
 class Client < ActiveRecord::Base
   include User
   # =============================relationships=================================
@@ -37,6 +38,9 @@ class Client < ActiveRecord::Base
   validates :name, presence: true
   # =============================END Schema Validations========================
 
+  # Returns if client has an active plan
+  # @return [Boolean] true if the plan isn't expired at the current time
+  #   and has 1 or more discounts available, false otherwhise
   def plan?
     now = Time.zone.now
     !clients_plans.with_discounts.empty? &&
@@ -54,10 +58,16 @@ class Client < ActiveRecord::Base
     self
   end
 
+  # Returns all client discounts which have not been expired
+  # @param time [Time]
+  # @return [Array]
   def unexpired_discounts(time)
     discounts.select { |discount| !discount.expired? time }
   end
 
+  # Returns all client discounts which have not been expired
+  # @param credentials [Hash]
+  # @return [Boolean]
   def update_password(credentials)
     unless valid_password? credentials[:current_password]
       errors.add :password, 'Invalid'
