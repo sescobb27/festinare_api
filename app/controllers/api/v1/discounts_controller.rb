@@ -10,25 +10,15 @@ module API
         limit = params[:limit] || 20
         offset = params[:offset] || 0
         customer = Customer.includes(:discounts).find @current_user_credentials[:id]
-
-        clients = Client.available_discounts customer.categories,
-                                             limit: limit, offset: offset
+        liked_discounts = customer.discounts.pluck(:id)
 
         # customers can only get discounts who they haven't liked yet
-        unless customer.discounts.empty?
-          liked_discounts = customer.discounts.map do |discount|
-            discount.id
-          end
-          clients.each do |client|
-            likeable_discounts = client.discounts.map do |discount|
-              discount unless liked_discounts.include? discount.id
-            end.compact
+        discounts = Discount.available customer.categories,
+                                       limit: limit,
+                                       offset: offset,
+                                       omit: liked_discounts
 
-            client.discounts = likeable_discounts
-          end
-        end
-
-        render json: clients, each_serializer: ClientsDiscountSerializer
+        render json: discounts
       end
 
       # POST /v1/clients/:client_id/discounts

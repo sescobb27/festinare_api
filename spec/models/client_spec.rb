@@ -154,37 +154,4 @@ RSpec.describe Client, type: :model do
       expect(client.valid_password? 'mynewpassword').to be_truthy
     end
   end
-
-  describe '::available_discounts(categories, opts)' do
-    before(:example, create_list: :clients) do
-      @l_clients_with_discounts = FactoryGirl.create_list :client_with_discounts, 20
-    end
-
-    it 'should not have available discounts' do
-      expect(Client.available_discounts(User::CATEGORIES)).to eql []
-    end
-
-    it 'should return all discounts if no categories specifyed', create_list: :clients do
-      available_discounts = Client.available_discounts
-      expect(available_discounts.length).to eql 20
-      expect(available_discounts).to match_array @l_clients_with_discounts
-    end
-
-    it 'should not have available discounts if all of them are expired', create_list: :clients do
-      @l_clients_with_discounts.each do |client|
-        client.discounts.map do |discount|
-          discount.update created_at: (discount.created_at - (discount.duration * 60).seconds - 1.second)
-        end
-      end
-      expect(Client.available_discounts.length).to eql 0
-    end
-
-    it 'all available discounts', create_list: :clients do
-      User::CATEGORIES.each do |category|
-        available_discounts = Client.available_discounts([category])
-        expect(available_discounts).not_to be_empty
-        expect(available_discounts.map(&:categories).flatten.uniq).to include category
-      end
-    end
-  end
 end

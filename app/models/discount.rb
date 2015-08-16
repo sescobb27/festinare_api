@@ -99,4 +99,16 @@ EOF
       .merge(Discount.not_expired)
       .map(&:categories).flatten.uniq
   end
+
+  # @opts = { omit: [] limit: Fixnum offset: Fixnum }
+  def self.available(categories = [], opts = {})
+    query = Discount.joins(:client).where(discounts: { status: true })
+    query.where(':categories = ANY ("client"."categories")', categories: categories) unless categories.empty?
+    query.where.not(discounts: { id: opts[:omit] }) if opts[:omit]
+    now = Time.zone.now
+
+    query.limit(opts[:limit]).offset(opts[:offset]).to_a.select do |discount|
+      !discount.expired? now
+    end
+  end
 end

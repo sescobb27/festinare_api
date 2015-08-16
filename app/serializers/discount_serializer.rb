@@ -23,5 +23,7 @@ class DiscountSerializer < ActiveModel::Serializer
              :created_at,
              :duration,
              :duration_term,
-             :hashtags
+             :hashtags,
+             :client_id
+  has_many :customers_discounts, embed: :ids
 end

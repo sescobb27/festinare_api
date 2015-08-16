@@ -71,6 +71,51 @@ RSpec.describe Discount, type: :model do
     pending 'no clients with active discounts'
   end
 
+  describe '::available(categories, opts)' do
+    before(:example, create_list: :clients) do
+      @l_clients_with_discounts = FactoryGirl.create_list :client_with_discounts, 20
+    end
+
+    it 'should not have available discounts' do
+      expect(Discount.available(User::CATEGORIES)).to eql []
+    end
+
+    it 'should return all discounts if no categories specifyed', create_list: :clients do
+      available_discounts = Discount.available
+      expect(available_discounts.length).to eql 100
+      expect(available_discounts).to match_array @l_clients_with_discounts.map(&:discounts).flatten
+    end
+
+    it 'should not have available discounts if all of them are expired', create_list: :clients do
+      @l_clients_with_discounts.each do |client|
+        client.discounts.map do |discount|
+          discount.update created_at: (discount.created_at - (discount.duration * 60).seconds - 1.second)
+        end
+      end
+      expect(Discount.available.length).to eql 0
+    end
+
+    it 'all available discounts', create_list: :clients do
+      User::CATEGORIES.each do |category|
+        available_discounts = Discount.available([category])
+        expect(available_discounts).not_to be_empty
+        expect(available_discounts.map(&:client).flatten.uniq).to match_array @l_clients_with_discounts
+      end
+    end
+
+    it 'all available discounts with limit', create_list: :clients do
+      User::CATEGORIES.each do |category|
+        available_discounts = Discount.available([category], limit: 10)
+        expect(available_discounts).not_to be_empty
+        expect(available_discounts.length).to eql 10
+        # available_discounts would match the first 2 clients given that we request
+        # 10 discounts and all test :client_with_discounts generate 5 discounts, so
+        # you do the math
+        expect(available_discounts.map(&:client).flatten.uniq).to match_array @l_clients_with_discounts.take 2
+      end
+    end
+  end
+
   describe '#expired?(Time.zone.now)' do
     pending 'status false'
     pending 'expired'

@@ -137,7 +137,7 @@ module API
 
       describe 'GET #index' do
         before do
-          FactoryGirl.create_list :client_with_discounts, 50
+          @client_with_discounts = FactoryGirl.create_list :client_with_discounts, 50
         end
 
         it 'customer should get all available discounts base on subscriptions' do
@@ -146,13 +146,20 @@ module API
           expect(response.status).to eql 200
           response_body = json_response
           expect(response_body[:discounts].length).to eql 20
-          response_body[:discounts].each do |client|
-            expect(client[:discounts].length).to be > 0
-            client[:discounts].each do |discount|
-              expect(discount.keys).not_to include :secret_key
-            end
-            expect(client[:addresses].length).to be > 0
-            expect(client[:categories] & customer.categories).not_to be_empty
+          response_body[:discounts].each do |discount|
+            expect(discount.keys).not_to include :secret_key
+            # get all clients
+            # then &:discounts => [ ArrayProxy, ArrayProxy, ...]
+            # then &:to_a => [[discounts], [discounts], ...]
+            # then flatten => [discounts, discounts, ...]
+            # and finally [id, id, ...]
+            expect(
+              @client_with_discounts
+              .map(&:discounts)
+              .map(&:to_a)
+              .flatten
+              .map(&:id)
+            ).to include discount[:id]
           end
         end
 
@@ -162,13 +169,20 @@ module API
           expect(response.status).to eql 200
           response_body = json_response
           expect(response_body[:discounts].length).to eql 20
-          response_body[:discounts].each do |client|
-            expect(client[:discounts].length).to be > 0
-            client[:discounts].each do |discount|
-              expect(discount.keys).not_to include :secret_key
-            end
-            expect(client[:addresses].length).to be > 0
-            expect(client[:categories] & raw_customer.categories).to be_empty
+          response_body[:discounts].each do |discount|
+            expect(discount.keys).not_to include :secret_key
+            # get all clients
+            # then &:discounts => [ ArrayProxy, ArrayProxy, ...]
+            # then &:to_a => [[discounts], [discounts], ...]
+            # then flatten => [discounts, discounts, ...]
+            # and finally [id, id, ...]
+            expect(
+              @client_with_discounts
+              .map(&:discounts)
+              .map(&:to_a)
+              .flatten
+              .map(&:id)
+            ).to include discount[:id]
           end
         end
 
@@ -207,8 +221,7 @@ module API
           get :index, {}, format: :json
           response_body = json_response
           expect(response_body[:discounts].length).to eql 20
-          client = response_body[:discounts].sample
-          discount = client[:discounts].sample
+          discount = response_body[:discounts].sample
 
           # like one discount
           post :like,
@@ -217,9 +230,7 @@ module API
                discount_id: discount[:id]
           expect(response.status).to eql 200
           u = Customer.includes(:discounts).find(customer.id)
-          discount_ids = u.discounts.map do |u_discount|
-            u_discount.id
-          end
+          discount_ids = u.discounts.map(&:id)
           expect(discount_ids).to include discount[:id]
 
           # fetch the same discounts and the liked discount should not
@@ -228,12 +239,7 @@ module API
           response_body = json_response
           expect(response_body[:discounts].length).to eql 20
 
-          response_body[:discounts].each do |c|
-            c_discount_ids = c[:discounts].map do |c_discount|
-              c_discount[:id]
-            end
-            expect(c_discount_ids).not_to include discount[:id]
-          end
+          expect(response_body[:discounts]).not_to include discount
         end
 
         it 'should not like a expired discount' do
@@ -242,8 +248,7 @@ module API
           get :index, {}, format: :json
           response_body = json_response
           expect(response_body[:discounts].length).to eql 20
-          client = response_body[:discounts].sample
-          sample_discount = client[:discounts].sample
+          sample_discount = response_body[:discounts].sample
 
           discount = Discount.find sample_discount[:id]
           # invalidate a discount by time

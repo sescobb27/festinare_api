@@ -69,16 +69,4 @@ class Client < ActiveRecord::Base
 
     save
   end
-
-  def self.available_discounts(categories = [], opts = {})
-    query = Client.with_active_discounts
-    query.where(':categories = ANY (categories)', categories: categories) unless categories.empty?
-    now = Time.zone.now
-
-    query.limit(opts[:limit]).offset(opts[:offset]).map do |client|
-      break if client.discounts.empty?
-      client.discounts = client.unexpired_discounts(now)
-      client unless client.discounts.empty?
-    end.compact
-  end
 end
