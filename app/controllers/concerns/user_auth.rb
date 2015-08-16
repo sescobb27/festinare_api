@@ -6,6 +6,7 @@ module UserAuth
     prepend_before_action :authenticate!, except: [:login, :create]
   end
 
+  # POST /api/v1/{resource}/login
   def login
     safe_params = safe_auth_params
 
@@ -24,6 +25,7 @@ module UserAuth
     end
   end
 
+  # POST /api/v1/{resource}/logout
   def logout
     token = auth_token
     begin
@@ -36,6 +38,7 @@ module UserAuth
     render nothing: true, status: :ok
   end
 
+  # GET /api/v1/{resource}/me
   def me
     # Customer.where('id = :id AND :token = ANY (tokens)',
     #   id: @current_user_credentials[:id],
@@ -49,6 +52,7 @@ module UserAuth
     return render nothing: true, status: :unauthorized
   end
 
+  # POST /api/v1/{resource}
   def create
     user = resource_model.new(safe_auth_params)
     token = authenticate_user user

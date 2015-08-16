@@ -6,6 +6,7 @@ module UserCategory
     prepend_before_action :authenticate!
   end
 
+  # PUT /api/v1/{resource}/:id/categories
   def add_category
     secure_params = safe_update_params
     begin
@@ -20,6 +21,7 @@ module UserCategory
     render nothing: true, status: :created
   end
 
+  # DELETE /api/v1/{resource}/:id/categories
   def delete_category
     secure_params = safe_update_params
     begin

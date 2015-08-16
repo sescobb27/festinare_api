@@ -5,7 +5,7 @@ module API
 
       before_action :authenticate!
 
-      # GET /v1/discounts?limit=X&offset=X
+      # GET /api/v1/discounts?limit=X&offset=X
       def index
         limit = params[:limit] || 20
         offset = params[:offset] || 0
@@ -21,7 +21,7 @@ module API
         render json: discounts
       end
 
-      # POST /v1/clients/:client_id/discounts
+      # POST /api/v1/clients/:client_id/discounts
       def create
         discount_attr = safe_discount
 
@@ -45,7 +45,7 @@ module API
         end
       end
 
-      # GET /v1/clients/:client_id/discounts
+      # GET /api/v1/clients/:client_id/discounts
       def discounts
         client = Client.joins(:discounts).find(@current_user_credentials[:id])
         render json: client.discounts.unscoped, status: :ok
@@ -53,7 +53,7 @@ module API
         render nothing: true, status: :unauthorized
       end
 
-      # POST /v1/customers/:id/like/discount/:discount_id
+      # POST /api/v1/customers/:id/like/discount/:discount_id
       def like
         begin
           current_customer = Customer.find(@current_user_credentials[:id])

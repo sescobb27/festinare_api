@@ -5,10 +5,13 @@ module API
       include UserCategory
       include UserAuth
 
+      # GET /api/v1/clients
       def index
-        render nothing: true
+        render nothing: true, status: :not_implemented
       end
 
+      # PATCH /api/v1/clients/:id
+      # PUT /api/v1/clients/:id
       def update
         safe_params = safe_update_params
 
@@ -51,8 +54,9 @@ module API
         end
       end
 
+      # DELETE /api/v1/clients/:id
       def destroy
-        render nothing: true
+        render nothing: true, status: :not_implemented
       end
 
       def safe_auth_params

@@ -1,8 +1,6 @@
 require 'api_constraint'
 
 Rails.application.routes.draw do
-  devise_for :clients
-  devise_for :customers
   root 'application#index'
   namespace :api,
             defaults: { format: :json } do

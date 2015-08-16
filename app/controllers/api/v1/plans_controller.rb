@@ -3,12 +3,12 @@ module API
     class PlansController < API::BaseController
       before_action :authenticate!, only: :purchase_plan
 
-      # GET /v1/plans
+      # GET /api/v1/plans
       def index
         render json: Plan.all, status: :ok
       end
 
-      # POST /v1/plans/:plan_id/purchase
+      # POST /api/v1/plans/:plan_id/purchase
       def purchase_plan
         begin
           current_client = Client.includes(:clients_plans).find @current_user_credentials[:id]

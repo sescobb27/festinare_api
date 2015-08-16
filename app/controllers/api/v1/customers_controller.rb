@@ -5,6 +5,8 @@ module API
       include UserCategory
       include UserAuth
 
+      # PATCH /api/v1/customers/:id
+      # PUT /api/v1/customers/:id
       def update
         secure_params = safe_update_params
         begin
@@ -19,6 +21,7 @@ module API
         render nothing: true, status: :ok
       end
 
+      # PUT /api/v1/customers/:id/mobile
       def mobile
         secure_params = safe_mobile_params
         begin
@@ -36,6 +39,7 @@ module API
         end
       end
 
+      # GET /api/v1/customers/:id/likes
       def likes
         begin
           # ==========================================================================
@@ -55,6 +59,16 @@ module API
         clients = []
         clients = current_customer.discounts.map(&:client) unless current_customer.customers_discounts.empty?
         render json: clients, status: :ok, each_serializer: LikesSerializer, root: 'clients'
+      end
+
+      # GET /api/v1/customers/:id
+      def show
+        render nothing: true, status: :not_implemented
+      end
+
+      # DELETE /api/v1/customers/:id
+      def destroy
+        render nothing: true, status: :not_implemented
       end
 
       def safe_auth_params

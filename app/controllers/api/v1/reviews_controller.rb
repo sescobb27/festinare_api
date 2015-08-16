@@ -44,11 +44,14 @@ module API
       end
 
       # PATCH /api/v1/customers/:customer_id/reviews/:id
+      # PUT /api/v1/customers/:customer_id/reviews/:id
       def update
+        render nothing: true, status: :not_implemented
       end
 
       # DELETE /api/v1/customers/:customer_id/reviews/:id
       def destroy
+        render nothing: true, status: :not_implemented
       end
 
       private
