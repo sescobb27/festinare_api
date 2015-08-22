@@ -11,16 +11,12 @@
 #  created_at            :datetime         not null
 #
 
-class ClientPlanSerializer < ActiveModel::Serializer
+class ClientsPlanSerializer < ActiveModel::Serializer
   attributes :id,
-             :name,
-             :description,
+             :client_id,
              :status,
-             :price,
-             :num_of_discounts,
-             :currency,
-             :expired_rate,
-             :expired_time,
              :expired_date,
-             :num_of_discounts_left
+             :num_of_discounts_left,
+             :created_at
+  has_one :plan
 end

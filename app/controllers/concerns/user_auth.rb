@@ -19,7 +19,7 @@ module UserAuth
     if !user.nil? && user.valid_password?(safe_params[:password])
       token = authenticate_user user
       user.tokens << token
-      render json: { token: token }, status: :ok
+      render json: { token: token }, status: :ok if user.save
     else
       render nothing: true, status: :bad_request
     end

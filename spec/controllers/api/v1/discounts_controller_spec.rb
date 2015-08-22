@@ -34,6 +34,10 @@ module API
         FactoryGirl.create :client_with_discounts
       end
 
+      let(:raw_client) do
+        FactoryGirl.create :client
+      end
+
       let(:customer) do
         FactoryGirl.create :customer_with_subscriptions
       end
@@ -272,6 +276,14 @@ module API
           expect(response.status).to eql 200
           response_body = json_response
           expect(response_body[:discounts].length).to be == 5
+        end
+
+        it 'should return empty if client doesn\'t have discounts' do
+          jwt_validate_token raw_client
+          get :discounts, client_id: raw_client.id
+          expect(response.status).to eql 200
+          response_body = json_response
+          expect(response_body[:discounts].length).to be == 0
         end
       end
     end

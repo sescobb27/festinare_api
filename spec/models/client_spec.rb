@@ -85,6 +85,11 @@ RSpec.describe Client, type: :model do
     it 'should have a valid plan' do
       expect(c_plan.plan?).to be_truthy
     end
+
+    it 'should have at least one valid plan' do
+      ClientsPlan.create_from_plan c_plan, Plan.all.sample
+      expect(c_plan.plan?).to be_truthy
+    end
   end
 
   describe '#decrement_num_of_discounts_left!' do

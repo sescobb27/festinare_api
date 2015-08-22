@@ -47,8 +47,8 @@ module API
 
       # GET /api/v1/clients/:client_id/discounts
       def discounts
-        client = Client.joins(:discounts).find(@current_user_credentials[:id])
-        render json: client.discounts.unscoped, status: :ok
+        client = Client.includes(discounts: [:customers_discounts]).find(@current_user_credentials[:id])
+        render json: client.discounts, status: :ok
       rescue ActiveRecord::RecordNotFound
         render nothing: true, status: :unauthorized
       end

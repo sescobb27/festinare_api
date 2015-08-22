@@ -44,7 +44,7 @@ class Client < ActiveRecord::Base
   def plan?
     now = Time.zone.now
     !clients_plans.with_discounts.empty? &&
-      clients_plans.with_discounts.one? do |plan|
+      clients_plans.with_discounts.any? do |plan|
         now < plan.expired_date
       end
   end
