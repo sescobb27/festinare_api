@@ -5,9 +5,20 @@ module API
       include UserCategory
       include UserAuth
 
+      skip_before_action :authenticate!, only: [:index]
+
       # GET /api/v1/clients
       def index
-        render nothing: true, status: :not_implemented
+        limit = params[:limit] || 20
+        offset = params[:offset] || 0
+        clients = Client.select(
+          :id,
+          :name,
+          :categories,
+          :image_url,
+          :addresses
+        ).limit(limit).offset(offset)
+        render json: clients, status: :ok, each_serializer: SecureClientSerializer, root: :clients
       end
 
       # PATCH /api/v1/clients/:id

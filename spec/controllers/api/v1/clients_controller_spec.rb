@@ -81,6 +81,32 @@ module API
           # pending "TODO #{__FILE__}"
         end
       end
+
+      describe 'GET #index' do
+        let!(:clients) { FactoryGirl.create_list :client, 20 }
+        it 'should get 20 clients' do
+          get :index, format: :json
+          expect(response.status).to eql 200
+          response_body = json_response
+          expect(response_body[:clients].length).to eql 20
+          response_body[:clients].each do |client|
+            expect(client[:password]).to be_blank
+            expect(client[:email]).to be_blank
+            expect(client[:tokens]).to be_blank
+            expect(client[:username]).to be_blank
+            expect(client[:encrypted_password]).to be_blank
+          end
+          names = response_body[:clients].map { |client| client[:name] }
+          created_names = clients.map(&:name)
+          expect(names).to eql created_names
+        end
+        it 'should get 5 clients' do
+          get :index, limit: 5, format: :json
+          expect(response.status).to eql 200
+          response_body = json_response
+          expect(response_body[:clients].length).to eql 5
+        end
+      end
     end
   end
 end
