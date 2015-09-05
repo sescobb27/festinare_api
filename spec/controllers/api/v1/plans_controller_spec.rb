@@ -20,7 +20,7 @@ module API
         mock_token
       end
 
-      describe 'POST #purchase_planr' do
+      describe 'POST #purchase_plan' do
         let(:plan) { Plan.all.to_a.sample }
 
         let(:client) do
