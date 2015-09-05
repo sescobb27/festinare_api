@@ -60,7 +60,7 @@ module API
         it 'should be able to create a discount' do
           jwt_validate_token client_with_plan
           post :create, client_id: client_with_plan.id, discount: discount.to_hash
-          expect(response.status).to eql 200
+          expect(response.status).to eql 201
 
           client_discount = Client.joins(:discounts).find(client_with_plan.id).discounts.first
 
@@ -95,7 +95,7 @@ module API
           ClientsPlan.create_from_plan client, plans[1]
 
           post :create, client_id: client.id, discount: discount.to_hash
-          expect(response.status).to eql 200
+          expect(response.status).to eql 201
 
           first_valid_plan = Client
                              .joins(:clients_plans)

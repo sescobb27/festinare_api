@@ -37,7 +37,7 @@ module API
         discount = Discount.new discount_attr
         if discount.valid?
           current_client.discounts << discount
-          render json: discount, status: :ok
+          render json: discount, status: :created
         else
           render json: {
             errors: discount.errors.full_messages
