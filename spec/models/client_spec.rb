@@ -136,25 +136,25 @@ RSpec.describe Client, type: :model do
     end
   end
 
-  describe '#update_password(credentials)' do
+  describe '#update_with_password(credentials)' do
     it 'invalid password' do
-      updated = client.update_password current_password: 'wrongpassword'
+      updated = client.update_with_password current_password: 'wrongpassword'
       expect(updated).to be_falsey
-      expect(client.errors.full_messages).to include 'Password Invalid'
+      expect(client.errors.full_messages).to include 'Current password is invalid'
     end
 
     it 'password != password_confirmation' do
-      updated = client.update_password current_password: client.password,
-                                       password: 'mynewpassword',
-                                       password_confirmation: 'mynewpassword_notmatch'
+      updated = client.update_with_password current_password: client.password,
+                                            password: 'mynewpassword',
+                                            password_confirmation: 'mynewpassword_notmatch'
       expect(updated).to be_falsey
       expect(client.errors.full_messages).to include 'Password confirmation doesn\'t match Password'
     end
 
     it 'password updated' do
-      updated = client.update_password current_password: client.password,
-                                       password: 'mynewpassword',
-                                       password_confirmation: 'mynewpassword'
+      updated = client.update_with_password current_password: client.password,
+                                            password: 'mynewpassword',
+                                            password_confirmation: 'mynewpassword'
       expect(updated).to be_truthy
       expect(client.valid_password? 'mynewpassword').to be_truthy
     end

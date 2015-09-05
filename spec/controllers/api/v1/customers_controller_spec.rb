@@ -70,6 +70,55 @@ module API
           expect(u.categories).not_to include('Bar')
           expect(u.categories).not_to include('Restaurant')
         end
+
+        it 'should be able to update password' do
+          jwt_validate_token customer
+          put :update, customer: {
+            password: {
+              current_password: customer.password,
+              password: 'passwordpassword',
+              password_confirmation: 'passwordpassword'
+            }
+          }, id: customer.id, format: :json
+          expect(response.status).to eql 200
+          customer.reload
+          expect(customer.valid_password? 'passwordpassword').to be true
+          expect(customer.valid_password? 'qwertyqwerty').to be false
+        end
+
+        it 'should not be able to update password (password != password_confirmation)' do
+          jwt_validate_token customer
+          put :update, customer: {
+            password: {
+              current_password: customer.password,
+              password: 'anotherpassword',
+              password_confirmation: 'passwordpassword'
+            }
+          }, id: customer.id, format: :json
+          expect(response.status).to eql 403
+          response_body = json_response
+          expect(response_body[:errors]).to include 'Password confirmation doesn\'t match Password'
+          customer.reload
+          expect(customer.valid_password? 'anotherpassword').to be false
+          expect(customer.valid_password? 'qwertyqwerty').to be true
+        end
+
+        it 'should not be able to update password (invalid current_password)' do
+          jwt_validate_token customer
+          put :update, customer: {
+            password: {
+              current_password: 'invalid_current_password',
+              password: 'passwordpassword',
+              password_confirmation: 'passwordpassword'
+            }
+          }, id: customer.id, format: :json
+          expect(response.status).to eql 403
+          response_body = json_response
+          expect(response_body[:errors]).to include 'Current password is invalid'
+          customer.reload
+          expect(customer.valid_password? 'passwordpassword').to be false
+          expect(customer.valid_password? 'qwertyqwerty').to be true
+        end
       end
 
       describe 'GET #likes' do

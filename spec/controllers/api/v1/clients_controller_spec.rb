@@ -69,6 +69,8 @@ module API
             }
           }, id: client.id, format: :json
           expect(response.status).to eql 403
+          response_body = json_response
+          expect(response_body[:errors]).to include 'Current password is invalid'
           client.reload
           expect(client.valid_password? 'passwordpassword').to be false
           expect(client.valid_password? 'qwertyqwerty').to be true

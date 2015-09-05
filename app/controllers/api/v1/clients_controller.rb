@@ -29,8 +29,10 @@ module API
           end
 
           if include_all
-            if client.update_password safe_params[:password]
+            if client.update_with_password safe_params[:password]
               safe_params.delete :password
+              safe_params.delete :current_password
+              safe_params.delete :password_confirmation
             else
               return render json: {
                 errors: client.errors.full_messages

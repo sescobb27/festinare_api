@@ -14,9 +14,31 @@ module API
         rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
+
         if secure_params[:fullname] && !secure_params[:fullname].empty?
           customer.fullname secure_params[:fullname]
         end
+
+        if secure_params[:password]
+          keys = %w(password current_password password_confirmation)
+
+          include_all = keys.all? do |key|
+            secure_params[:password].key? key
+          end
+
+          if include_all
+            if customer.update_with_password secure_params[:password]
+              secure_params.delete :password
+              secure_params.delete :current_password
+              secure_params.delete :password_confirmation
+            else
+              return render json: {
+                errors: customer.errors.full_messages
+              }, status: :forbidden
+            end
+          end
+        end
+
         customer.save
         render nothing: true, status: :ok
       end

@@ -64,19 +64,4 @@ class Client < ActiveRecord::Base
   def unexpired_discounts(time)
     discounts.select { |discount| !discount.expired? time }
   end
-
-  # Returns all client discounts which have not been expired
-  # @param credentials [Hash]
-  # @return [Boolean]
-  def update_password(credentials)
-    unless valid_password? credentials[:current_password]
-      errors.add :password, 'Invalid'
-      return false
-    end
-
-    self.password = credentials[:password]
-    self.password_confirmation = credentials[:password_confirmation]
-
-    save
-  end
 end
