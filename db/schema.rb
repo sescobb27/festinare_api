@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150724015503) do
+ActiveRecord::Schema.define(version: 20150905063232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,6 +106,18 @@ ActiveRecord::Schema.define(version: 20150724015503) do
   add_index "discounts", ["client_id"], name: "index_discounts_on_client_id", using: :btree
   add_index "discounts", ["hashtags"], name: "index_discounts_on_hashtags", using: :gin
 
+  create_table "locations", force: :cascade do |t|
+    t.float    "latitude"
+    t.float    "longitude"
+    t.string   "address"
+    t.integer  "customer_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "locations", ["customer_id"], name: "index_locations_on_customer_id", using: :btree
+  add_index "locations", ["latitude", "longitude"], name: "index_locations_on_latitude_and_longitude", using: :btree
+
   create_table "mobiles", force: :cascade do |t|
     t.integer  "customer_id"
     t.string   "token",                      null: false
@@ -136,9 +148,13 @@ ActiveRecord::Schema.define(version: 20150724015503) do
   add_index "plans", ["name"], name: "index_plans_on_name", unique: true, using: :btree
 
   add_foreign_key "clients_plans", "clients"
+  add_foreign_key "clients_plans", "clients"
+  add_foreign_key "clients_plans", "clients"
+  add_foreign_key "clients_plans", "clients"
   add_foreign_key "clients_plans", "plans"
   add_foreign_key "customers_discounts", "customers"
   add_foreign_key "customers_discounts", "discounts"
   add_foreign_key "discounts", "clients"
+  add_foreign_key "locations", "customers"
   add_foreign_key "mobiles", "customers"
 end

@@ -11,6 +11,12 @@
 #  updated_at  :datetime         not null
 #
 
-class LocationSerializer < ActiveModel::Serializer
-  attributes :id, :latitude, :longitude, :address
+require 'ffaker'
+
+FactoryGirl.define do
+  factory :location do
+    latitude 1.5
+    longitude 1.5
+    address { FFaker::Address.street_address }
+  end
 end

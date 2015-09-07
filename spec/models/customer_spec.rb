@@ -32,6 +32,7 @@ RSpec.describe Customer, type: :model do
   it { should have_many :mobiles }
   it { should have_many :customers_discounts }
   it { should have_many :discounts }
+  it { should have_many :locations }
 
   it { should validate_presence_of :fullname }
 

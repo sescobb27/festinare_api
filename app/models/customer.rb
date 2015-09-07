@@ -25,6 +25,7 @@ class Customer < ActiveRecord::Base
   has_many :mobiles, inverse_of: :customer
   has_many :customers_discounts
   has_many :discounts, through: :customers_discounts
+  has_many :locations, inverse_of: :customer
   # =============================END relationships=============================
 
   # =============================Schema========================================

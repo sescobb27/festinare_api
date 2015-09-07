@@ -19,6 +19,7 @@ Rails.application.routes.draw do
           get 'likes'
           put '/categories', action: :add_category
           delete '/categories', action: :delete_category
+          resources :locations, only: [:create, :destroy, :index]
         end
         resources :reviews, except: [:index, :new, :edit, :show]
       end
