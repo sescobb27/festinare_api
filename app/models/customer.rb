@@ -34,6 +34,9 @@ class Customer < ActiveRecord::Base
   # =============================Schema Validations============================
   validates :fullname, presence: true
   # =============================END Schema Validations========================
+  scope :near_location, lambda { |location, limit = 20|
+    near([location.latitude, location.longitude], limit)
+  }
 
   def self.send_notifications
     gcm = Gcm::Notification.instance
