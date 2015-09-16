@@ -36,15 +36,16 @@ sudo cp festinare.conf /etc/nginx/sites-available/festinare.com.co && sudo servi
 ```
 
 ## TODO
-/clients
-/clients/id/password update
 /clients/id/address update/delete
 
-/users/id/locations create
-/users/id/password update
 /users/id/mobile add/delete
 
-/discounts/client_id create
+E2E testing
+
+## WIP
+save created token on login tests
+clients with more than one active plan tests
+
 
 ## API Endpoint
 
