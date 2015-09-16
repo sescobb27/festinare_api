@@ -1,0 +1,25 @@
+Benchmark.measure { Customer.where('id = :id AND :token = ANY (tokens)', id: 1, token: 'token').limit(1).first }
+Benchmark.measure { Customer.where('id = :id AND :token = ANY (tokens)', id: 1, token: 'token').first }
+Benchmark.measure { Customer.where(':token = ANY (tokens)', token: 'token').find 1 }
+Benchmark.measure { Customer.find(1).tokens.detect { |t| t == 'token' } }
+
+2.2.2-p95 :012 > Benchmark.measure { Customer.where('id = :id AND :token = ANY (tokens)', id: 1, token: 'token').limit(1).first }
+  Customer Load (2.0ms)  SELECT  "customers".* FROM "customers" WHERE (id = 1 AND 'token' = ANY (tokens))  ORDER BY "customers"."id" ASC LIMIT 1
+ => #<Benchmark::Tms:0x007f877caaef28 @label="", @real=0.007037888000922976, @cstime=0.0, @cutime=0.0, @stime=0.0, @utime=0.0, @total=0.0>
+2.2.2-p95 :013 > Benchmark.measure { Customer.where(':token = ANY (tokens)', token: 'token').find 1 }
+  Customer Load (0.5ms)  SELECT  "customers".* FROM "customers" WHERE ('token' = ANY (tokens)) AND "customers"."id" = $1 LIMIT 1  [["id", 1]]
+ => #<Benchmark::Tms:0x007f877c241548 @label="", @real=0.0027130979997309623, @cstime=0.0, @cutime=0.0, @stime=0.0, @utime=0.010000000000000009, @total=0.010000000000000009>
+2.2.2-p95 :014 > Benchmark.measure { Customer.find(1).tokens.detect { |t| t == 'token' } }
+  Customer Load (0.3ms)  SELECT  "customers".* FROM "customers" WHERE "customers"."id" = $1 LIMIT 1  [["id", 1]]
+ => #<Benchmark::Tms:0x007f877d0ee3e8 @label="", @real=0.0013233010013209423, @cstime=0.0, @cutime=0.0, @stime=0.0, @utime=0.0, @total=0.0>
+2.2.2-p95 :015 > Benchmark.measure { Customer.where('id = :id AND :token = ANY (tokens)', id: 1, token: 'token').first }
+  Customer Load (0.8ms)  SELECT  "customers".* FROM "customers" WHERE (id = 1 AND 'token' = ANY (tokens))  ORDER BY "customers"."id" ASC LIMIT 1
+ => #<Benchmark::Tms:0x000000053db030 @label="", @real=0.0022630620005656965, @cstime=0.0, @cutime=0.0, @stime=0.0, @utime=0.0, @total=0.0>
+2.2.2-p95 :016 >
+
+
+c = Customer.new username: 'sescob27',
+  fullname: 'Simon Escobar',
+  email: 'sesc@csac.com',
+  password: 'qwertyuiop',
+  tokens: ['token']
