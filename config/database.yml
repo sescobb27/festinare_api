@@ -4,6 +4,9 @@ default: &default
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: 100
+  # host: db
+  timeout: 5000
+  # username: postgres
 
 development:
   <<: *default
@@ -66,5 +69,4 @@ test:
 production:
   <<: *default
   database: festinare_api_production
-  username: festinare_api
   password: <%= ENV['FESTINARE_API_DATABASE_PASSWORD'] %>
