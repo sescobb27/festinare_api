@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150905063232) do
+ActiveRecord::Schema.define(version: 20151102025219) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,10 +79,11 @@ ActiveRecord::Schema.define(version: 20150905063232) do
   create_table "customers_discounts", force: :cascade do |t|
     t.integer  "customer_id"
     t.integer  "discount_id"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
     t.integer  "rate"
     t.string   "feedback",    limit: 140
+    t.boolean  "redeemed",                default: false
   end
 
   add_index "customers_discounts", ["customer_id", "discount_id"], name: "index_customers_discounts_on_customer_id_and_discount_id", unique: true, using: :btree
@@ -147,9 +148,6 @@ ActiveRecord::Schema.define(version: 20150905063232) do
   add_index "plans", ["deleted_at"], name: "index_plans_on_deleted_at", using: :btree
   add_index "plans", ["name"], name: "index_plans_on_name", unique: true, using: :btree
 
-  add_foreign_key "clients_plans", "clients"
-  add_foreign_key "clients_plans", "clients"
-  add_foreign_key "clients_plans", "clients"
   add_foreign_key "clients_plans", "clients"
   add_foreign_key "clients_plans", "plans"
   add_foreign_key "customers_discounts", "customers"

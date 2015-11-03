@@ -9,6 +9,7 @@
 #  updated_at  :datetime         not null
 #  rate        :integer
 #  feedback    :string(140)
+#  redeemed    :boolean
 #
 
 # @author Simon Escobar

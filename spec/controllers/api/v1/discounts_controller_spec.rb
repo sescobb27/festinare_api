@@ -160,8 +160,7 @@ module API
             expect(
               @client_with_discounts
               .map(&:discounts)
-              .map(&:to_a)
-              .flatten
+              .flat_map(&:to_a)
               .map(&:id)
             ).to include discount[:id]
           end
@@ -183,8 +182,7 @@ module API
             expect(
               @client_with_discounts
               .map(&:discounts)
-              .map(&:to_a)
-              .flatten
+              .flat_map(&:to_a)
               .map(&:id)
             ).to include discount[:id]
           end
@@ -285,6 +283,79 @@ module API
           response_body = json_response
           expect(response_body[:discounts].length).to be == 0
         end
+      end
+
+      describe 'POST #redeem' do
+        let!(:client) { FactoryGirl.create :client_with_discounts }
+        let!(:customer) { FactoryGirl.create :customer_with_subscriptions }
+
+        it 'should redeem discount' do
+          jwt_validate_token client
+          discount = client.discounts.sample
+          customer.discounts.push discount
+          customer.save
+          post :redeem,
+               id: discount.id,
+               client_id: client.id,
+               secret_key: discount.secret_key,
+               customer_id: customer.id,
+               format: :json
+          expect(response.status).to eql 200
+          customers_discount = discount.customers_discounts.first
+          expect(customers_discount.redeemed).to be_truthy
+        end
+
+        it 'should not redeem if secret_key not match' do
+          jwt_validate_token client
+          discount = client.discounts.sample
+          customer.discounts.push discount
+          customer.save
+          post :redeem,
+               id: discount.id,
+               client_id: client.id,
+               secret_key: 'AnotherSecretKey',
+               customer_id: customer.id,
+               format: :json
+          expect(response.status).to eql 403
+          response_body = json_response
+          expect(response_body[:errors].first).to eql 'Secret Key Not Match'
+        end
+
+        it 'should not redeem if already redeemed' do
+          jwt_validate_token client
+          discount = client.discounts.sample
+          customer.discounts.push discount
+          customers_discount = customer.customers_discounts.first
+          customers_discount.redeemed = true
+          customers_discount.save
+          post :redeem,
+               id: discount.id,
+               client_id: client.id,
+               secret_key: discount.secret_key,
+               customer_id: customer.id,
+               format: :json
+          expect(response.status).to eql 403
+          response_body = json_response
+          expect(response_body[:errors].first).to eql 'Already Redeemed Discount'
+        end
+
+        # it 'should fail if discount does not belong to client' do
+        #   jwt_validate_token client
+        #   discount = client.discounts.sample
+        #   discount.redeemed = true
+        #   discount.save
+        #   customer.discounts.push discount
+        #   customer.save
+        #   post :redeem,
+        #        id: discount.id,
+        #        client_id: client.id,
+        #        secret_key: discount.secret_key,
+        #        customer_id: customer.id,
+        #        format: :json
+        #   expect(response.status).to eql 403
+        #   response_body = json_response
+        #   expect(response_body[:errors].first).to eql 'Already Redeemed Discount'
+        # end
       end
     end
   end

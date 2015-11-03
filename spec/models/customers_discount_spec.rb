@@ -9,6 +9,7 @@
 #  updated_at  :datetime         not null
 #  rate        :integer
 #  feedback    :string(140)
+#  redeemed    :boolean
 #
 
 require 'rails_helper'
@@ -21,4 +22,5 @@ RSpec.describe CustomersDiscount, type: :model do
   it { should have_db_column(:updated_at).of_type(:datetime) }
   it { should have_db_column(:rate).of_type(:integer) }
   it { should have_db_column(:feedback).of_type(:string) }
+  it { should have_db_column(:redeemed).of_type(:boolean) }
 end

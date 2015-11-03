@@ -83,7 +83,7 @@ RSpec.describe Discount, type: :model do
     it 'should return all discounts if no categories specifyed', create_list: :clients do
       available_discounts = Discount.available
       expect(available_discounts.length).to eql 100
-      expect(available_discounts).to match_array @l_clients_with_discounts.map(&:discounts).flatten
+      expect(available_discounts).to match_array @l_clients_with_discounts.flat_map(&:discounts)
     end
 
     it 'should not have available discounts if all of them are expired', create_list: :clients do
@@ -99,7 +99,7 @@ RSpec.describe Discount, type: :model do
       User::CATEGORIES.each do |category|
         available_discounts = Discount.available([category])
         expect(available_discounts).not_to be_empty
-        expect(available_discounts.map(&:client).flatten.uniq).to match_array @l_clients_with_discounts
+        expect(available_discounts.flat_map(&:client).uniq).to match_array @l_clients_with_discounts
       end
     end
 
@@ -111,8 +111,34 @@ RSpec.describe Discount, type: :model do
         # available_discounts would match the first 2 clients given that we request
         # 10 discounts and all test :client_with_discounts generate 5 discounts, so
         # you do the math
-        expect(available_discounts.map(&:client).flatten.uniq).to match_array @l_clients_with_discounts.take 2
+        expect(available_discounts.flat_map(&:client).uniq).to match_array @l_clients_with_discounts.take 2
       end
+    end
+  end
+
+  describe '::redeem' do
+    let(:discount) { FactoryGirl.create :discount, secret_key: 'MySecretKey' }
+    let(:customer) { FactoryGirl.create :customer }
+
+    before do
+      discount.customers.push customer
+      discount.save
+    end
+
+    it 'should redeem discount' do
+      expect(Discount.redeem discount, 'MySecretKey').to be_truthy
+      expect(discount.customers_discounts.first.redeemed?).to be_truthy
+    end
+
+    it 'should fail with SecretKeyNotMatchError' do
+      expect { Discount.redeem discount, 'NotMatch' }.to raise_error(Discount::SecretKeyNotMatchError)
+      expect(discount.customers_discounts.first.redeemed?).to be_falsy
+    end
+
+    it 'should fail with AlreadyRedeemedError' do
+      Discount.redeem discount, 'MySecretKey'
+      expect { Discount.redeem discount, 'MySecretKey' }.to raise_error(Discount::AlreadyRedeemedError)
+      expect(discount.customers_discounts.first.redeemed?).to be_truthy
     end
   end
 

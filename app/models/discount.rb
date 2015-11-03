@@ -90,6 +90,19 @@ EOF
     end
   end
 
+  def same_secret_key?(key)
+    # TODO: CRYPTO STUFF
+    secret_key == key
+  end
+
+  def self.redeem(discount, secret_key)
+    fail SecretKeyNotMatchError unless discount.same_secret_key? secret_key
+    customers_discount = discount.customers_discounts.first
+    fail AlreadyRedeemedError if customers_discount.redeemed
+    customers_discount.redeemed = true
+    customers_discount.save
+  end
+
   def self.categories
     # ==========================================================================
     # SELECT DISTINCT "clients"."*", "discounts"."*"
@@ -103,7 +116,7 @@ EOF
       .distinct
       .with_active_discounts
       .merge(Discount.not_expired)
-      .map(&:categories).flatten.uniq
+      .flat_map(&:categories).uniq
   end
 
   # Returns all available discounts given a set of categories and filters
@@ -119,4 +132,7 @@ EOF
       !discount.expired? now
     end
   end
+
+  class SecretKeyNotMatchError < StandardError; end
+  class AlreadyRedeemedError < StandardError; end
 end

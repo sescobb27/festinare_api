@@ -33,8 +33,9 @@ Rails.application.routes.draw do
           put '/categories', action: :add_category
           delete '/categories', action: :delete_category
         end
-        get 'discounts', controller: 'discounts', action: :discounts
-        post 'discounts', controller: 'discounts', action: :create
+        get '/discounts', controller: 'discounts', action: :discounts
+        post '/discounts', controller: 'discounts', action: :create
+        post '/discounts/:id', controller: 'discounts', action: :redeem
       end
       resources :reviews, only: :show
       resources :discounts, only: [:index]

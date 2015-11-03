@@ -56,7 +56,7 @@ module API
       # POST /api/v1/customers/:id/like/discount/:discount_id
       def like
         begin
-          current_customer = Customer.find(@current_user_credentials[:id])
+          current_customer = Customer.includes(:discounts).find(@current_user_credentials[:id])
         rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
@@ -73,6 +73,51 @@ module API
                     type: :png,
                     disposition: 'attachment',
                     status: :ok
+        end
+      end
+
+      # POST /api/v1/clients/:client_id/discounts/:id
+      def redeem
+        begin
+          # SELECT  DISTINCT "clients"."id"
+          # FROM "clients"
+          # LEFT OUTER JOIN "discounts"
+          # ON "discounts"."client_id" = "clients"."id"
+          # LEFT OUTER JOIN "customers_discounts"
+          # ON "customers_discounts"."discount_id" = "discounts"."id"
+          # LEFT OUTER JOIN "customers"
+          # ON "customers"."id" = "customers_discounts"."customer_id"
+          # WHERE "discounts"."id" = $1
+          # AND "customers"."id" = 1
+          # AND "clients"."id" = $2
+          # LIMIT 1  [["id", 3], ["id", 1]]
+          current_client = Client.includes(discounts: :customers)
+                           .where(
+                             discounts: { id: params[:id] },
+                             customers: { id: params[:customer_id] }
+                           )
+                           .find(@current_user_credentials[:id])
+        rescue ActiveRecord::RecordNotFound
+          return render nothing: true, status: :unauthorized
+        end
+
+        discount = current_client.discounts.first
+        if current_client.discounts.empty? || discount.id != params[:id].to_i
+          return render json: { errors: ['Discount not found'] }, status: :not_found
+        end
+
+        begin
+          if Discount.redeem discount, params[:discount][:secret_key]
+            render json: discount, status: :ok
+          else
+            render json: { errors: discount.errors.full_messages }, status: :bad_request
+          end
+        rescue ActiveRecord::RecordNotFound
+          return render json: { errors: ['Discount not found'] }, status: :not_found
+        rescue Discount::SecretKeyNotMatchError
+          return render json: { errors: ['Secret Key Not Match'] }, status: :forbidden
+        rescue Discount::AlreadyRedeemedError
+          return render json: { errors: ['Already Redeemed Discount'] }, status: :forbidden
         end
       end
 
