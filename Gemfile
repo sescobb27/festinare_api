@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.0'
+gem 'rails', '4.2.3'
 
 ruby '2.2.2'
 
@@ -26,7 +26,7 @@ group :development, :test do
   gem 'web-console', '~> 2.0'
 
   gem 'spring', '~> 1.3.0'
-  gem 'bullet'
+  gem 'bullet', '~> 4.14.10'
   gem 'rspec-rails', '~> 3.2.0'
   gem 'factory_girl_rails', '~> 4.5.0'
   gem 'ffaker', '~> 2.0.0'
