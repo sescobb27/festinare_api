@@ -76,16 +76,9 @@ RSpec.describe Customer, type: :model do
       FactoryGirl.create_list :client_with_discounts, 20
 
       threads = []
-      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
-      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
-      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
-      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
-      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
-      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
-      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
-      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
-      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
-      threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      10.times do
+        threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
+      end
       threads.each(&:join)
       expect(Customer.count).to be >= 1000
       expect(@gcm).to receive(:send_notification).at_least(:once).with(

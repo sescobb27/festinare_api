@@ -29,7 +29,6 @@ module API
 
         review.rate = secure_params[:rate]
         review.feedback = secure_params[:feedback]
-        review.save
 
         return render json: review, status: :created, serializer: ReviewSerializer if review.save
         render json: { errors: review.errors }, status: :bad_request
