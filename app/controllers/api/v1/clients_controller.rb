@@ -50,14 +50,9 @@ module API
           return render nothing: true, status: :unauthorized
         end
 
-        if safe_params[:address]
-          client.addresses << safe_params[:address]
-          safe_params.delete :address
-        end
-
         # it doesn't update arrays, that's why previous logic
         if client.update safe_params
-          render nothing: true, status: :ok
+          render json: client, status: :ok
         else
           render json: {
             errors: client.errors.full_messages
@@ -80,7 +75,7 @@ module API
         params.require(:client).permit(
           :name,
           :image_url,
-          :address,
+          addresses: [],
           categories: [],
           password: [:password, :current_password, :password_confirmation]
         )

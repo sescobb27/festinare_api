@@ -83,8 +83,42 @@ module API
         end
 
         it 'should be able to update attributes' do
-          # jwt_validate_token client
-          # pending "TODO #{__FILE__}"
+          jwt_validate_token client
+          image_url = FFaker::Internet.http_url
+          put :update, client: {
+            name: 'Client\'s New Name',
+            image_url: image_url,
+            categories: User::CATEGORIES
+          }, id: client.id, format: :json
+          expect(response.status).to eql 200
+          response_body = json_response
+          expect(response_body[:client][:categories]).to eql User::CATEGORIES
+          expect(response_body[:client][:name]).to eql 'Client\'s New Name'
+          expect(response_body[:client][:image_url]).to eql image_url
+        end
+
+        it 'should be able to add addresses' do
+          jwt_validate_token client
+          new_address = FFaker::Address.street_address
+          put :update, client: {
+            addresses: client.addresses + [new_address]
+          }, id: client.id, format: :json
+          expect(response.status).to eql 200
+          response_body = json_response
+          expect(response_body[:client][:addresses].length).to eql 6
+          expect(response_body[:client][:addresses]).to eql client.addresses + [new_address]
+        end
+
+        it 'should be able to delete address from addresses' do
+          jwt_validate_token client
+          addresses = client.addresses.sample(2)
+          put :update, client: {
+            addresses: addresses
+          }, id: client.id, format: :json
+          expect(response.status).to eql 200
+          response_body = json_response
+          expect(response_body[:client][:addresses].length).to eql 2
+          expect(response_body[:client][:addresses]).to eql addresses
         end
       end
 
