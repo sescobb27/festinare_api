@@ -22,24 +22,6 @@ module API
 
       it_behaves_like 'User', :customer
 
-      describe 'POST #create' do
-        before(:each) do
-          @customer = FactoryGirl.attributes_for :customer
-        end
-
-        it 'should have mobile' do
-          Customer.new(@customer).save
-          customer = Customer.find_by username: @customer[:username]
-          expect(customer.id.to_s).not_to eql ''
-          mobile = FactoryGirl.attributes_for :mobile
-          jwt_validate_token customer
-          post :mobile, id: customer.id, customer: { mobile: mobile }, format: :json
-          expect(response.status).to eql 200
-          expect(mobile[:token]).not_to be_empty
-          expect(mobile[:token]).to eql Customer.joins(:mobiles).find(customer.id).mobiles.first.token
-        end
-      end
-
       describe 'PUT #update' do
         let(:customer) do
           FactoryGirl.create :customer
@@ -143,6 +125,25 @@ module API
           expect(response_body[:clients].length).to eql 1
           expect(response_body[:clients].first[:email]).to eql nil
           expect(response_body[:clients].first[:name]).to eql client.name
+        end
+      end
+
+      describe 'POST #mobile' do
+        let(:mobile) { FactoryGirl.attributes_for :mobile }
+
+        let(:customer) do
+          FactoryGirl.create :customer
+        end
+
+        it 'should add mobile' do
+          jwt_validate_token customer
+          post :mobile, id: customer.id, customer: { mobile: mobile }, format: :json
+          expect(response.status).to eql 200
+          expect(mobile[:token]).to eql Customer.joins(:mobiles).find(customer.id).mobiles.first.token
+          response_body = json_response
+          first_mobile = response_body[:customer][:mobiles].first
+          expect(first_mobile[:token]).to eql mobile[:token]
+          expect(first_mobile[:platform]).to eql mobile[:platform]
         end
       end
     end

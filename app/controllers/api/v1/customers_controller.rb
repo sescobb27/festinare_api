@@ -46,7 +46,7 @@ module API
         end
       end
 
-      # PUT /api/v1/customers/:id/mobile
+      # POST /api/v1/customers/:id/mobile
       def mobile
         secure_params = safe_mobile_params
         begin
@@ -56,7 +56,7 @@ module API
         end
         customer.mobiles << Mobile.new(secure_params[:mobile])
         if customer.save
-          render nothing: true, status: :ok
+          render json: customer, status: :ok
         else
           render json: {
             errors: customer.errors.full_messages

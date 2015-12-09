@@ -15,7 +15,7 @@ Rails.application.routes.draw do
         end
         member do
           post '/like/discount/:discount_id', controller: 'discounts', action: :like
-          put 'mobile'
+          post 'mobile'
           put 'password_update'
           get 'likes'
           put '/categories', action: :add_category
