@@ -1,47 +1,67 @@
-class Customer < User
+# == Schema Information
+#
+# Table name: customers
+#
+#  id                     :integer          not null, primary key
+#  fullname               :string(100)      not null
+#  categories             :string           default([]), is an Array
+#  tokens                 :string           default([]), is an Array
+#  username               :string(100)
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  email                  :string(100)      not null
+#  encrypted_password     :string           not null
+#  reset_password_token   :string
+#  reset_password_sent_at :datetime
+#  confirmation_token     :string
+#  confirmed_at           :datetime
+#  confirmation_sent_at   :datetime
+#
+
+# @author Simon Escobar
+class Customer < ActiveRecord::Base
+  include User
   # =============================relationships=================================
-  embeds_one :mobile
-  has_many :reviews
+  has_many :mobiles, inverse_of: :customer
+  has_many :customers_discounts
+  has_many :discounts, through: :customers_discounts
+  has_many :locations, inverse_of: :customer
   # =============================END relationships=============================
 
   # =============================Schema========================================
-  # each time a customer likes a discount, the discount's client id is added here
-  field :client_ids, type: Array, default: []
-  field :fullname
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
   validates :fullname, presence: true
   # =============================END Schema Validations========================
+  scope :near_location, lambda { |location, limit = 20|
+    near([location.latitude, location.longitude], limit)
+  }
 
   def self.send_notifications
     gcm = Gcm::Notification.instance
-    # For sending between 1 or more devices (up to 1000). When you send a message to
-    # multiple registration IDs, that is called a multicast message.
-    registration_ids = []
     options = {
       collapse_key: 'new_discounts',
       # Test server.
       dry_run: (Rails.env.development? || Rails.env.test?)
     }
-    customers_num = Customer.exists(mobile: true).count
-    batch_size = 1000
-    iterations = customers_num.fdiv(batch_size).ceil
-
-    categories = Discount.discount_categories
-    response = nil
-
-    iterations.times do |x|
-      customers = Customer.only(:_id, :categories, :mobile)
-                  .in('categories.name' => categories)
-                  .limit(batch_size)
-                  .offset(batch_size * x)
-      notify_customers = customers.select(&:mobile)
-      next if notify_customers.empty?
-      registration_ids.concat notify_customers.map(&:mobile).map(&:token)
-      response = gcm.send_notification(registration_ids, options)
-      registration_ids.clear
-      Rails.logger.info <<-EOF
+    categories = Discount.categories
+    # ==========================================================================
+    # SELECT "customers".*
+    # FROM "customers"
+    # WHERE (categories <@ ARRAY[NULL]::varchar[...])
+    # ==========================================================================
+    Customer.where('categories <@ ARRAY[?]::varchar[]', categories)
+      .joins(:mobiles)
+      .where(mobiles: { enabled: true }).find_in_batches do |customers|
+          next if customers.empty?
+          # For sending between 1 or more devices (up to 1000). When you send a message to
+          # multiple registration IDs (tokens), that is called a multicast message.
+          tokens = customers.map(&:mobiles).map do |mobiles|
+            mobiles.map(&:token)
+          end
+          response = gcm.send_notification(tokens, options)
+          Rails.logger.info <<-EOF
 { "action": "send_notification", "categories": "#{categories}", "gcm_response": "#{response}" }
 EOF
     end

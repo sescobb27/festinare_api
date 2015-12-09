@@ -30,13 +30,13 @@ module API
         it 'should have mobile' do
           Customer.new(@customer).save
           customer = Customer.find_by username: @customer[:username]
-          expect(customer._id.to_s).not_to eql ''
+          expect(customer.id.to_s).not_to eql ''
           mobile = FactoryGirl.attributes_for :mobile
           jwt_validate_token customer
-          post :mobile, id: customer._id, customer: { mobile: mobile }, format: :json
+          post :mobile, id: customer.id, customer: { mobile: mobile }, format: :json
           expect(response.status).to eql 200
           expect(mobile[:token]).not_to be_empty
-          expect(mobile[:token]).to eql Customer.find(customer._id).mobile.token
+          expect(mobile[:token]).to eql Customer.joins(:mobiles).find(customer.id).mobiles.first.token
         end
       end
 
@@ -47,63 +47,83 @@ module API
 
         it 'should add given categories to customer' do
           jwt_validate_token customer
-          put(:update, {
-                id: customer._id,
-                customer: {
-                  categories: [
-                    { name: 'Bar', description: '', status: true },
-                    { name: 'Restaurant', description: '', status: true }
-                  ]
-                }
+          put(:add_category, {
+                id: customer.id,
+                customer: { categories: ['Bar', 'Restaurant'] }
               }, format: :json)
-          expect(response.status).to eql 200
-          u = Customer.find customer._id
-          customer_categories = u.categories.map(&:name)
-          expect(customer_categories).to include('Bar')
-          expect(customer_categories).to include('Restaurant')
+          expect(response.status).to eql 201
+          u = Customer.find customer.id
+          expect(u.categories).to include('Bar')
+          expect(u.categories).to include('Restaurant')
         end
 
         it 'should delete given categories from customer' do
-          customer.categories.push(
-            Category.new(name: 'Bar'),
-            Category.new(name: 'Restaurant')
-          )
+          customer.categories = ['Bar', 'Restaurant']
+          customer.save
           jwt_validate_token customer
-          put(:update, {
-                id: customer._id,
-                customer: {
-                  categories: [
-                    { name: 'Bar', description: '', status: false },
-                    { name: 'Restaurant', description: '', status: false }
-                  ]
-                }
+          delete(:delete_category, {
+                id: customer.id,
+                customer: { categories: ['Bar', 'Restaurant'] }
               }, format: :json)
           expect(response.status).to eql 200
-          u = Customer.find customer._id
-          customer_categories = u.categories.map(&:name)
-          expect(customer_categories).not_to include('Bar')
-          expect(customer_categories).not_to include('Restaurant')
+          u = Customer.find customer.id
+          expect(u.categories).not_to include('Bar')
+          expect(u.categories).not_to include('Restaurant')
+        end
+      end
+
+      describe 'PUT #password_update' do
+        let(:customer) do
+          FactoryGirl.create :customer
         end
 
-        it 'should delete/add given categories from/to customer' do
-          customer.categories.push(
-            Category.new(name: 'Restaurant')
-          )
+        it 'should be able to update password' do
           jwt_validate_token customer
-          put(:update, {
-                id: customer._id,
-                customer: {
-                  categories: [
-                    { name: 'Bar', description: '', status: true },
-                    { name: 'Restaurant', description: '', status: false }
-                  ]
-                }
-              }, format: :json)
+          put :password_update, customer: {
+            password: {
+              current_password: customer.password,
+              password: 'passwordpassword',
+              password_confirmation: 'passwordpassword'
+            }
+          }, id: customer.id, format: :json
           expect(response.status).to eql 200
-          u = Customer.find customer._id
-          customer_categories = u.categories.map(&:name)
-          expect(customer_categories).to include('Bar')
-          expect(customer_categories).not_to include('Restaurant')
+          customer.reload
+          expect(customer.valid_password? 'passwordpassword').to be true
+          expect(customer.valid_password? 'qwertyqwerty').to be false
+        end
+
+        it 'should not be able to update password (password != password_confirmation)' do
+          jwt_validate_token customer
+          put :password_update, customer: {
+            password: {
+              current_password: customer.password,
+              password: 'anotherpassword',
+              password_confirmation: 'passwordpassword'
+            }
+          }, id: customer.id, format: :json
+          expect(response.status).to eql 403
+          response_body = json_response
+          expect(response_body[:errors]).to include 'Password confirmation doesn\'t match Password'
+          customer.reload
+          expect(customer.valid_password? 'anotherpassword').to be false
+          expect(customer.valid_password? 'qwertyqwerty').to be true
+        end
+
+        it 'should not be able to update password (invalid current_password)' do
+          jwt_validate_token customer
+          put :password_update, customer: {
+            password: {
+              current_password: 'invalid_current_password',
+              password: 'passwordpassword',
+              password_confirmation: 'passwordpassword'
+            }
+          }, id: customer.id, format: :json
+          expect(response.status).to eql 403
+          response_body = json_response
+          expect(response_body[:errors]).to include 'Current password is invalid'
+          customer.reload
+          expect(customer.valid_password? 'passwordpassword').to be false
+          expect(customer.valid_password? 'qwertyqwerty').to be true
         end
       end
 
@@ -115,9 +135,9 @@ module API
         it 'customers should get all liked clients' do
           customer = FactoryGirl.create :customer_with_subscriptions
           jwt_validate_token customer
-          customer.add_to_set client_ids: client._id.to_s
+          customer.discounts << client.discounts.sample
 
-          get :likes, id: customer._id.to_s, format: :json
+          get :likes, id: customer.id, format: :json
           expect(response.status).to eql 200
           response_body = json_response
           expect(response_body[:clients].length).to eql 1

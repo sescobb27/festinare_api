@@ -6,6 +6,7 @@ require 'spec_helper'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'factory_girl'
+require 'database_cleaner'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -28,12 +29,27 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include AuthHelper, type: :controller
   config.include SupportHelper, type: :controller
-  Mongoid::Sessions.default.collections.select do |c|
-    c.name !~ /system/
-  end.each(&:drop)
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    # Set this to false if
+    # (1) you create and drop tables in your tests
+    # (2) you change Postgres schemas
+    DatabaseCleaner.clean_with :truncation, cache_tables: true, except: %w(plans)
+  end
+
+  # scope => example: :each
+  config.around(:example) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
+
   FactoryGirl.reload
+
   Rails.application.load_seed
   Festinare::Application.load_tasks
+
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.

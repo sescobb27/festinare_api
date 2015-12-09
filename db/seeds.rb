@@ -87,14 +87,7 @@ end
 if Rails.env.development?
   clients = [
     {
-      categories: [
-        Category.new(name: 'Bar'),
-        Category.new(name: 'Disco')
-      ],
-      locations:  (1..5).map do
-        Location.new latitude: FFaker::Geolocation.lat,
-                     longitude: FFaker::Geolocation.lng
-      end,
+      categories: ['Bar', 'Disco'],
       username:   'sescobb27',
       email:      'yepeto@gmail.com',
       password:   'qwerty123!',
@@ -103,10 +96,6 @@ if Rails.env.development?
       addresses:  []
     },
     {
-      locations:  (1..5).map do
-        Location.new latitude: FFaker::Geolocation.lat,
-                     longitude: FFaker::Geolocation.lng
-      end,
       username:   'test4echo',
       email:      'sescobb27@notemail.com',
       password:   'qwerty123!',
@@ -115,15 +104,7 @@ if Rails.env.development?
       addresses:  []
     },
     {
-      categories: [
-        Category.new(name: 'Bar'),
-        Category.new(name: 'Restaurant')
-      ],
-      locations:  (1..5).map do
-        Location.new latitude: FFaker::Geolocation.lat,
-                     longitude: FFaker::Geolocation.lng
-      end,
-      client_plans: [Plan.all.sample.to_client_plan],
+      categories: ['Bar', 'Restaurant'],
       username:   'sescob',
       email:      'test4echo@notemail.com',
       password:   'qwerty123!',
@@ -134,13 +115,11 @@ if Rails.env.development?
   ]
   puts 'Creating fixed clients'
   Client.create! clients if Client.count == 0
+  ClientsPlan.create_from_plan(Client.last, Plan.all.sample)
   puts 'End creating fixed clients'
 
   puts 'Creating 100 random clients with discounts'
-  client_with_discounts = (1..100).map do
-    FactoryGirl.attributes_for :client_with_discounts
-  end
-  Client.create client_with_discounts
+  FactoryGirl.create_list :client_with_discounts, 100
   puts 'Finished creating 100 random clients with discounts'
   # user = FactoryGirl.create :user
   # token = API::BaseController.new.authenticate_user user

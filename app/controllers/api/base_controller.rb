@@ -22,7 +22,7 @@ module API
     def authenticate_user(user)
       # expiration time is set to a year
       JWT::AuthToken.make_token({
-                                  _id: user.id.to_s,
+                                  id: user.id.to_s,
                                   username: user.username,
                                   email: user.email
                                 }, 31_104_000)
@@ -34,7 +34,6 @@ module API
       return render nothing: true, status: :unauthorized if token.blank?
       credentials = JWT::AuthToken.validate_token(token)
       if credentials && valid_params?(credentials)
-        credentials[:_id] = credentials[:_id].to_s
         @current_user_credentials = credentials.clone
       else
         return render nothing: true, status: :unauthorized
@@ -50,9 +49,9 @@ module API
       def valid_params?(credentials)
         # some routes not need authentication id
         return true if (request.path_parameters.keys & %i(id customer_id client_id)).empty?
-        request.path_parameters[:id] == credentials[:_id].to_s ||
-          request.path_parameters[:customer_id] == credentials[:_id].to_s ||
-          request.path_parameters[:client_id] == credentials[:_id].to_s
+        request.path_parameters[:id] == credentials[:id] ||
+          request.path_parameters[:customer_id] == credentials[:id] ||
+          request.path_parameters[:client_id] == credentials[:id]
       end
   end
 end

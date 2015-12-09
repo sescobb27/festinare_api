@@ -1,15 +1,22 @@
-class Mobile
-  include Mongoid::Document
-  include Mongoid::Timestamps::Updated
+# == Schema Information
+#
+# Table name: mobiles
+#
+#  id          :integer          not null, primary key
+#  customer_id :integer
+#  token       :string           not null
+#  enabled     :boolean          default(TRUE)
+#  platform    :string           not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+
+# @author Simon Escobar
+class Mobile < ActiveRecord::Base
   # =============================relationships=================================
-  embedded_in :user
+  belongs_to :customer, inverse_of: :mobiles
   # =============================END relationships=============================
   # =============================Schema========================================
-  field :token
-  field :enabled, type: Boolean, default:  true
-  field :platform
-  index({ token: 1 }, unique: true, name: 'token_index')
-  index({ platform: 1 }, unique: false, name: 'platform_index')
   # =============================END Schema====================================
   # =============================Schema Validations============================
   validates :token, :platform, presence: true

@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.0'
+gem 'rails', '4.2.3'
 
 ruby '2.2.2'
 
@@ -26,32 +26,33 @@ group :development, :test do
   gem 'web-console', '~> 2.0'
 
   gem 'spring', '~> 1.3.0'
-  gem 'bullet'
-  gem 'mongoid-rspec', '~> 2.1.0'
+  gem 'bullet', '~> 4.14.10'
   gem 'rspec-rails', '~> 3.2.0'
   gem 'factory_girl_rails', '~> 4.5.0'
   gem 'ffaker', '~> 2.0.0'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '~> 2.8.0'
   gem 'hirb'
   gem 'fancy_irb', '~> 1.0.0'
   gem 'awesome_print'
   gem 'simplecov', require: false
+  gem 'database_cleaner', '~> 1.4.1'
+  gem 'parallel_tests'
 end
 
 gem 'active_model_serializers', '~> 0.9.0'
 # gem 'websocket-rails'
 gem 'puma', '~> 2.11.0'
-gem 'jwt-rb'
-gem 'mongoid', '~> 4.0.2'
-gem 'mongoid_paranoia', '~> 0.1.2'
-gem 'moped', '~> 2.0.6'
-gem 'devise'
-gem 'bson_ext'
+gem 'jwt-rb', '~> 0.0.2'
+gem 'devise', '~> 3.5.1'
 # Abort requests that are taking too long
 gem 'rack-timeout', '~> 0.2.0'
 gem 'whenever', require: false
-gem 'gcm'
+gem 'gcm', '~> 0.1.0'
 gem 'lograge', '~> 0.3.3'
 gem 'logstash-event', '~> 1.2.0'
-gem 'rack-cors', '~> 0.4.0', :require => 'rack/cors'
+gem 'rack-cors', '~> 0.4.0', require: 'rack/cors'
 gem 'rqrcode', '~> 0.6.0'
+gem 'pg', '~> 0.18.2'
+gem 'postgres_ext', '~> 2.4.1'
+gem 'annotate', '~> 2.6.10'
+gem 'geocoder', '~> 1.2.9'

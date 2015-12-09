@@ -1,6 +1,5 @@
 #!/bin/bash
 
-rake db:mongoid:create_indexes
 rake db:seed
 
 whenever -w

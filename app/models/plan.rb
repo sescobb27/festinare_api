@@ -1,20 +1,29 @@
-class Plan
-  include Mongoid::Document
-  include Mongoid::Paranoia
-  # =============================Schema========================================
-  field :name
-  field :description
-  field :status, type: Boolean, default: true
-  field :price, type: Integer
-  field :num_of_discounts, type: Integer
-  field :currency
-  field :expired_rate, type: Integer # (1 .. 31) days or (1 .. 12) months
-  field :expired_time # ( days or months )
+# == Schema Information
+#
+# Table name: plans
+#
+#  id               :integer          not null, primary key
+#  name             :string(40)       not null
+#  description      :text
+#  price            :integer          not null
+#  num_of_discounts :integer          not null
+#  currency         :string           not null
+#  expired_rate     :integer          not null
+#  expired_time     :string           not null
+#  deleted_at       :datetime
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#
 
-  index({ name: 1 }, unique: true, name: 'plan_name_index')
-  index({ status: 1 }, unique: false, name: 'plan_status_index')
+# @author Simon Escobar
+class Plan < ActiveRecord::Base
+  # =============================relationships=================================
+  has_many :clients_plans, inverse_of: :plan
+  has_many :clients, through: :clients_plans
+  # =============================END relationships=============================
+  # =============================Schema========================================
   EXPIRED_TIMES = %w(day days month months).freeze
-  scope :active_plans, -> { where(status: true).asc(:price) }
+  scope :active_plans, -> { where(deleted_at: nil).asc(:price) }
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
@@ -25,7 +34,10 @@ class Plan
             :currency,
             :expired_rate,
             presence: true
-  validates :expired_time, inclusion: { in: EXPIRED_TIMES }
+  validates :expired_time, inclusion: {
+    in: EXPIRED_TIMES,
+    message: "Invalid Expired time, valid ones are (#{EXPIRED_TIMES.join(", ")})"
+  }
   validates :price, numericality: { only_integer: true }
   validates :num_of_discounts, numericality: {
     only_integer: true,
@@ -37,32 +49,4 @@ class Plan
     less_than_or_equal_to: 31
   }
   # =============================END Schema Validations========================
-
-  def to_client_plan
-    plan = ClientPlan.new self.clone.attributes
-    plan._type = 'ClientPlan'
-    # the purchased plan is going to expire depending on the plan specifications
-    # so for example:
-    # DateTime.now => Thu, 12 Mar 2015 21:17:33 -0500
-    # plan => {
-    #             :currency => "COP",
-    #           :deleted_at => nil,
-    #          :description => "15% de ahorro",
-    #         :expired_rate => 1,
-    #         :expired_time => "month",
-    #                 :name => "Hurry Up!",
-    #     :num_of_discounts => 15,
-    #                :price => 127500,
-    #               :status => true
-    # }
-    # the purchased_plan.expired_date = Thu, 12 Apr 2015 21:17:33 -0500
-    # 1 month after today
-    plan.expired_date = Time.zone.now +
-      plan.expired_rate.send(plan.expired_time)
-    plan.num_of_discounts_left = self[:num_of_discounts]
-    plan
-  end
-
-  class PlanNotFound < StandardError; end
-  class PlanDiscountsExhausted < StandardError; end
 end

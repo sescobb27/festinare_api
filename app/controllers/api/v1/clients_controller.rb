@@ -2,41 +2,56 @@ module API
   module V1
     class ClientsController < API::BaseController
       # Common logic for User Authentication (create, login, me, logout)
+      include UserCategory
       include UserAuth
 
+      skip_before_action :authenticate!, only: [:index]
+
+      # GET /api/v1/clients
       def index
-        render nothing: true
+        limit = params[:limit] || 20
+        offset = params[:offset] || 0
+        clients = Client.select(
+          :id,
+          :name,
+          :categories,
+          :image_url,
+          :addresses
+        ).limit(limit).offset(offset)
+        render json: clients, status: :ok, each_serializer: SecureClientSerializer, root: :clients
       end
 
+      def password_update
+        safe_params = safe_update_params
+
+        begin
+          client = Client.find @current_user_credentials[:id]
+        rescue ActiveRecord::RecordNotFound
+          return render nothing: true, status: :unauthorized
+        end
+
+        if client.update_with_password safe_params[:password]
+          render nothing: true, status: :ok
+        else
+          return render json: {
+            errors: client.errors.full_messages
+          }, status: :forbidden
+        end
+      end
+
+      # PATCH /api/v1/clients/:id
+      # PUT /api/v1/clients/:id
       def update
         safe_params = safe_update_params
 
         begin
-          client = Client.find @current_user_credentials[:_id]
-        rescue Mongoid::Errors::DocumentNotFound
+          client = Client.find @current_user_credentials[:id]
+        rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
         end
 
-        if safe_params[:password]
-          keys = %w(password current_password password_confirmation)
-
-          include_all = keys.all? do |key|
-            safe_params[:password].key? key
-          end
-
-          if include_all
-            if client.update_password safe_params[:password]
-              safe_params.delete :password
-            else
-              return render json: {
-                errors: client.errors.full_messages
-              }, status: :forbidden
-            end
-          end
-        end
-
         if safe_params[:address]
-          client.add_to_set addresses: safe_params[:address]
+          client.addresses << safe_params[:address]
           safe_params.delete :address
         end
 
@@ -50,8 +65,9 @@ module API
         end
       end
 
+      # DELETE /api/v1/clients/:id
       def destroy
-        render nothing: true
+        render nothing: true, status: :not_implemented
       end
 
       def safe_auth_params
@@ -65,6 +81,7 @@ module API
           :name,
           :image_url,
           :address,
+          categories: [],
           password: [:password, :current_password, :password_confirmation]
         )
       end

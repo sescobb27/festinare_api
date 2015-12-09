@@ -20,7 +20,7 @@ module API
         mock_token
       end
 
-      describe 'POST #purchase_planr' do
+      describe 'POST #purchase_plan' do
         let(:plan) { Plan.all.to_a.sample }
 
         let(:client) do
@@ -30,10 +30,10 @@ module API
         it 'should have a plan' do
           jwt_validate_token client
           post :purchase_plan,
-               plan_id: plan._id.to_s,
+               plan_id: plan.id,
                format: :json
           expect(response.status).to eql 200
-          client_plans = Client.find(client._id).client_plans
+          client_plans = Client.joins(:clients_plans).find(client.id).clients_plans
           expect(client_plans.length).to eql 1
           expect(client_plans[0].expired_date).to be > Time.zone.now
         end

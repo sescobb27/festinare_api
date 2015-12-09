@@ -1,23 +1,32 @@
-class Discount
-  include Mongoid::Document
-  include Mongoid::Timestamps::Created
-  include Mongoid::Paranoia
+# == Schema Information
+#
+# Table name: discounts
+#
+#  id            :integer          not null, primary key
+#  discount_rate :integer          not null
+#  title         :string(100)      not null
+#  secret_key    :string           not null
+#  status        :boolean          default(TRUE)
+#  duration      :integer          not null
+#  duration_term :string           default("minutes")
+#  hashtags      :string           default([]), is an Array
+#  client_id     :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
+
+# @author Simon Escobar
+class Discount < ActiveRecord::Base
   include Qr
   # =============================relationships=================================
-  embeds_many :categories, as: :categorizable
-  embedded_in :discountable, polymorphic: true
+  belongs_to :client, inverse_of: :discounts
+  has_many :customers_discounts
+  has_many :customers, through: :customers_discounts
+  scope :not_expired, lambda {
+    where("\"discounts\".\"created_at\" < (now() + (\"discounts\".\"duration\" * 60 || 'seconds')::interval)")
+  }
   # =============================END relationships=============================
   # =============================Schema========================================
-  field :discount_rate, type: Integer
-  field :title
-  field :status, type: Boolean, default: true
-  field :duration, type: Integer, default: 60
-  field :duration_term
-  field :hashtags, type: Array, default: []
-
-  index({ status: 1 }, unique: false)
-  index({ hashtags: 1 }, unique: false)
-  default_scope -> { where(status: true) }
 
   DURATION_TERM = 'minutes'.freeze
   DURATIONS = [
@@ -35,66 +44,95 @@ class Discount
   # =============================END Schema====================================
 
   # =============================Schema Validations============================
-  validates :discount_rate, :title, presence: true
+  validates :discount_rate, :title, :duration, presence: true
   validates :duration, inclusion: {
     in: DURATIONS,
     message: "Invalid Discount duration, valid ones are #{DURATIONS.join(", ")}"
   }
   # =============================END Schema Validations========================
 
+  # Returns if a discount is expired
+  # @param time [Time]
+  # @return [Boolean] true if discount status == true and given time is greater
+  #   than discount's expire time
   def expired?(time)
-    if self[:status] # if is active
-      time > self.expire_time
+    if status # if is active
+      time > expire_time
     else
       true
     end
   end
 
   def expire_time
-    self[:created_at] + (self[:duration] * 60).seconds
+    created_at + (duration * 60).seconds
   end
 
-  def self.invalidate_expired_ones
+  # Invalidate Expired Discounts
+  def self.invalidate!
     now = Time.zone.now
-    threads = []
-    Client.has_active_discounts.batch_size(500).each do |client|
-      threads << Thread.new(client) do |t_client|
-        t_client.discounts.map do |discount|
-          next if now < discount.expire_time
-          discount.update_attribute :status, false
-          # rubocop:disable Metrics/LineLength
-          Rails.logger.info <<-EOF
-{ "action": "invalidate_discount", "id": "#{t_client._id}", "name": "#{t_client.name}", "discount": "#{discount.attributes}" }
+    # ==========================================================================
+    # SELECT "clients"."*", "discounts"."*"
+    # FROM "clients"
+    # LEFT OUTER JOIN "discounts"
+    # ON "discounts"."client_id" = "clients"."id"
+    # WHERE "discounts"."status" = 't'
+    # ==========================================================================
+    Client.with_active_discounts.find_each do |client|
+      client.discounts.map do |discount|
+        next unless discount.expired? now
+        discount.update status: false
+        # rubocop:disable Metrics/LineLength
+        Rails.logger.info <<-EOF
+{ "action": "invalidate_discount", "id": "#{client.id}", "name": "#{client.name}", "discount": "#{discount.attributes}" }
 EOF
-          # rubocop:enable Metrics/LineLength
-        end
+        # rubocop:enable Metrics/LineLength
       end
-      threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
     end
-    threads.map!(&:join)
   end
 
-  def self.discount_categories
+  def same_secret_key?(key)
+    # TODO: CRYPTO STUFF
+    secret_key == key
+  end
+
+  def self.redeem(discount, secret_key)
+    fail SecretKeyNotMatchError unless discount.same_secret_key? secret_key
+    customers_discount = discount.customers_discounts.first
+    fail AlreadyRedeemedError if customers_discount.redeemed
+    customers_discount.redeemed = true
+    customers_discount.save
+  end
+
+  def self.categories
+    # ==========================================================================
+    # SELECT DISTINCT "clients"."*", "discounts"."*"
+    # FROM "clients"
+    # LEFT OUTER JOIN "discounts"
+    # ON "discounts"."client_id" = "clients"."id"
+    # WHERE "discounts"."status" = 't'
+    # AND ("discounts"."created_at" < (now() + ("discounts"."duration" * 60 || 'seconds')::interval))
+    # ==========================================================================
+    Client.select(:categories)
+      .distinct
+      .with_active_discounts
+      .merge(Discount.not_expired)
+      .flat_map(&:categories).uniq
+  end
+
+  # Returns all available discounts given a set of categories and filters
+  # @param opts [Hash] valid options are = { omit: [Fixnum] limit: Fixnum offset: Fixnum }
+  # @return [Array<Discount>]
+  def self.available(categories = [], opts = {})
+    query = Discount.joins(:client).where(discounts: { status: true })
+    query.where(':categories = ANY ("client"."categories")', categories: categories) unless categories.empty?
+    query.where.not(discounts: { id: opts[:omit] }) if opts[:omit]
     now = Time.zone.now
-    threads = []
-    Client.has_active_discounts.batch_size(500).each do |client|
-      threads << Thread.new(client) do |t_client|
-        Thread.current[:categories] = []
-        t_client.discounts.map do |discount|
-          if now < discount.expire_time
-            Thread.current[:categories].push discount.categories.map(&:name)
-          end
-        end
-      end
-      threads.map!(&:join) if threads.length >= ENV['POOL_SIZE'].to_i
-    end
 
-    categories = []
-    threads.map do |thread|
-      thread.join
-      categories.concat thread[:categories]
+    query.limit(opts[:limit]).offset(opts[:offset]).to_a.select do |discount|
+      !discount.expired? now
     end
-
-    categories.flatten
   end
+
+  class SecretKeyNotMatchError < StandardError; end
+  class AlreadyRedeemedError < StandardError; end
 end

@@ -1,13 +1,5 @@
-class ReviewSerializer < MongoDocumentSerializer
-  attributes :rate, :feedback
+class ReviewSerializer < ActiveModel::Serializer
+  attributes :id, :feedback, :rate, :created_at, :updated_at
 
-  has_one :customer_id, :client_id
-
-  def customer_id
-    object.customer_id.to_s
-  end
-
-  def client_id
-    object.client_id.to_s
-  end
+  has_one :customer, :discount, embed: :ids
 end

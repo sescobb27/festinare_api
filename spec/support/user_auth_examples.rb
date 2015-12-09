@@ -65,7 +65,7 @@ RSpec.shared_context 'User' do |model_type|
       # Client.find_by username: user[:username]
       # Customer.find_by username: user[:username]
       cli = model_type.to_model.find_by username: user[:username]
-      expect(cli.token).to include user[:token][0]
+      expect(cli.tokens).to include user[:tokens][0]
     end
 
     it 'should return status unauthorized if password not match' do
@@ -93,7 +93,7 @@ RSpec.shared_context 'User' do |model_type|
 
   describe 'POST #logout' do
     let(:user) do
-      FactoryGirl.create model_type, token: ['mysecretkey']
+      FactoryGirl.create model_type, tokens: ['mysecretkey']
     end
 
     it 'should be logged out and token should be removed' do
@@ -102,10 +102,10 @@ RSpec.shared_context 'User' do |model_type|
       post :logout, format: :json
 
       expect(response.status).to eql 200
-      # Client.find user._id
-      # Customer.find user._id
-      user_tmp = model_type.to_model.find user._id
-      expect(user_tmp.token).not_to include 'mysecretkey'
+      # Client.find user.id
+      # Customer.find user.id
+      user_tmp = model_type.to_model.find user.id
+      expect(user_tmp.tokens).not_to include 'mysecretkey'
     end
 
     it 'should respond status code unauthorized' do
@@ -121,16 +121,16 @@ RSpec.shared_context 'User' do |model_type|
       get :me, params, format: :json
 
       expect(response.status).to eql 401
-      # Client.find user._id
-      # Customer.find user._id
-      user_tmp = model_type.to_model.find user._id
-      expect(user_tmp.token).not_to include 'mysecretkey'
+      # Client.find user.id
+      # Customer.find user.id
+      user_tmp = model_type.to_model.find user.id
+      expect(user_tmp.tokens).not_to include 'mysecretkey'
     end
   end
 
   describe 'GET #me' do
     let(:user) do
-      FactoryGirl.create model_type, token: ['mysecretkey']
+      FactoryGirl.create model_type, tokens: ['mysecretkey']
     end
 
     it 'should return user\'s attributes' do
@@ -142,14 +142,15 @@ RSpec.shared_context 'User' do |model_type|
 
       expect(response.status).to eql 200
       response_body = json_response
-      expect(response_body[model_type][:_id]).to eql user._id.to_s
+      expect(response_body[model_type][:id]).to eql user.id
       expect(response_body[model_type][:email]).to eql user.email
       expect(response_body[model_type][:password]).to be_nil
       expect(response_body[model_type][:username]).to eql user.username
     end
 
     it 'should respond with status code unauthorized' do
-      user.pull token: 'mysecretkey'
+      user.tokens.delete 'mysecretkey'
+      user.save!
       jwt_validate_token user
       params = {}
       params[model_type] = user
