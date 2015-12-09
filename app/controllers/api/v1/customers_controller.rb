@@ -5,6 +5,24 @@ module API
       include UserCategory
       include UserAuth
 
+      def password_update
+        safe_params = safe_update_params
+
+        begin
+          customer = Customer.find @current_user_credentials[:id]
+        rescue ActiveRecord::RecordNotFound
+          return render nothing: true, status: :unauthorized
+        end
+
+        if customer.update_with_password safe_params[:password]
+          render nothing: true, status: :ok
+        else
+          return render json: {
+            errors: customer.errors.full_messages
+          }, status: :forbidden
+        end
+      end
+
       # PATCH /api/v1/customers/:id
       # PUT /api/v1/customers/:id
       def update
@@ -19,28 +37,13 @@ module API
           customer.fullname secure_params[:fullname]
         end
 
-        if secure_params[:password]
-          keys = %w(password current_password password_confirmation)
-
-          include_all = keys.all? do |key|
-            secure_params[:password].key? key
-          end
-
-          if include_all
-            if customer.update_with_password secure_params[:password]
-              secure_params.delete :password
-              secure_params.delete :current_password
-              secure_params.delete :password_confirmation
-            else
-              return render json: {
-                errors: customer.errors.full_messages
-              }, status: :forbidden
-            end
-          end
+        if customer.save
+          render json: customer, status: :ok
+        else
+          render json: {
+            errors: customer.errors.full_messages
+          }, status: :forbidden
         end
-
-        customer.save
-        render nothing: true, status: :ok
       end
 
       # PUT /api/v1/customers/:id/mobile

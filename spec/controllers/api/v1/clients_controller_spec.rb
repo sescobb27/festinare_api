@@ -22,14 +22,14 @@ module API
 
       it_behaves_like 'User', :client
 
-      describe 'PUT #update' do
+      describe 'PUT #password_update' do
         let(:client) do
           FactoryGirl.create :client
         end
 
         it 'should be able to update password' do
           jwt_validate_token client
-          put :update, client: {
+          put :password_update, client: {
             password: {
               current_password: client.password,
               password: 'passwordpassword',
@@ -44,7 +44,7 @@ module API
 
         it 'should not be able to update password (password != password_confirmation)' do
           jwt_validate_token client
-          put :update, client: {
+          put :password_update, client: {
             password: {
               current_password: client.password,
               password: 'anotherpassword',
@@ -61,7 +61,7 @@ module API
 
         it 'should not be able to update password (invalid current_password)' do
           jwt_validate_token client
-          put :update, client: {
+          put :password_update, client: {
             password: {
               current_password: 'invalid_current_password',
               password: 'passwordpassword',
@@ -74,6 +74,12 @@ module API
           client.reload
           expect(client.valid_password? 'passwordpassword').to be false
           expect(client.valid_password? 'qwertyqwerty').to be true
+        end
+      end
+
+      describe 'PUT #update' do
+        let(:client) do
+          FactoryGirl.create :client
         end
 
         it 'should be able to update attributes' do

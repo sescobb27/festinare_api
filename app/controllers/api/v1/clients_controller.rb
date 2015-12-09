@@ -21,6 +21,24 @@ module API
         render json: clients, status: :ok, each_serializer: SecureClientSerializer, root: :clients
       end
 
+      def password_update
+        safe_params = safe_update_params
+
+        begin
+          client = Client.find @current_user_credentials[:id]
+        rescue ActiveRecord::RecordNotFound
+          return render nothing: true, status: :unauthorized
+        end
+
+        if client.update_with_password safe_params[:password]
+          render nothing: true, status: :ok
+        else
+          return render json: {
+            errors: client.errors.full_messages
+          }, status: :forbidden
+        end
+      end
+
       # PATCH /api/v1/clients/:id
       # PUT /api/v1/clients/:id
       def update
@@ -30,26 +48,6 @@ module API
           client = Client.find @current_user_credentials[:id]
         rescue ActiveRecord::RecordNotFound
           return render nothing: true, status: :unauthorized
-        end
-
-        if safe_params[:password]
-          keys = %w(password current_password password_confirmation)
-
-          include_all = keys.all? do |key|
-            safe_params[:password].key? key
-          end
-
-          if include_all
-            if client.update_with_password safe_params[:password]
-              safe_params.delete :password
-              safe_params.delete :current_password
-              safe_params.delete :password_confirmation
-            else
-              return render json: {
-                errors: client.errors.full_messages
-              }, status: :forbidden
-            end
-          end
         end
 
         if safe_params[:address]

@@ -16,6 +16,7 @@ Rails.application.routes.draw do
         member do
           post '/like/discount/:discount_id', controller: 'discounts', action: :like
           put 'mobile'
+          put 'password_update'
           get 'likes'
           put '/categories', action: :add_category
           delete '/categories', action: :delete_category
@@ -30,6 +31,7 @@ Rails.application.routes.draw do
           get 'me'
         end
         member do
+          put 'password_update'
           put '/categories', action: :add_category
           delete '/categories', action: :delete_category
         end

@@ -70,10 +70,16 @@ module API
           expect(u.categories).not_to include('Bar')
           expect(u.categories).not_to include('Restaurant')
         end
+      end
+
+      describe 'PUT #password_update' do
+        let(:customer) do
+          FactoryGirl.create :customer
+        end
 
         it 'should be able to update password' do
           jwt_validate_token customer
-          put :update, customer: {
+          put :password_update, customer: {
             password: {
               current_password: customer.password,
               password: 'passwordpassword',
@@ -88,7 +94,7 @@ module API
 
         it 'should not be able to update password (password != password_confirmation)' do
           jwt_validate_token customer
-          put :update, customer: {
+          put :password_update, customer: {
             password: {
               current_password: customer.password,
               password: 'anotherpassword',
@@ -105,7 +111,7 @@ module API
 
         it 'should not be able to update password (invalid current_password)' do
           jwt_validate_token customer
-          put :update, customer: {
+          put :password_update, customer: {
             password: {
               current_password: 'invalid_current_password',
               password: 'passwordpassword',
