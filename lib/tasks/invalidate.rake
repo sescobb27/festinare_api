@@ -8,4 +8,13 @@ namespace :invalidate do
   task plans: :environment do
     ClientsPlan.invalidate!
   end
+
+  desc "Search users's tokens and invalidate the expired ones"
+  task users: :tokens do
+    threads = []
+    [Customer, Client].each do |klass|
+      threads << Thread.new(klass.invalidate!)
+    end
+    threads.map(&:join)
+  end
 end

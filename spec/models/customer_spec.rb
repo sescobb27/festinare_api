@@ -87,4 +87,48 @@ RSpec.describe Customer, type: :model do
       Rake::Task['send:notification'].invoke
     end
   end
+
+  describe 'invalidate tokens' do
+    let!(:customers) { FactoryGirl.create_list :customer, 10, tokens: [] }
+
+    it 'should invalidate all tokens' do
+      # create an expired token
+      customers.each do |customer|
+        token = JWT::AuthToken.make_token({ id: customer.id }, Time.now.to_i - 5)
+        customer.tokens << token
+        customer.save
+      end
+      Customer.invalidate!
+      Customer.select(:id, :tokens).find_each do |model|
+        expect(model.tokens).to be_empty
+      end
+    end
+
+    it 'should invalidate some tokens' do
+      customers_with_tokens = FactoryGirl.create_list :customer, 10, tokens: []
+      # create an expired token
+      customers.each do |customer|
+        token = JWT::AuthToken.make_token({ id: customer.id }, Time.now.to_i - 5)
+        customer.tokens << token
+        customer.save
+      end
+
+      customers_with_tokens.each do |customer|
+        token = JWT::AuthToken.make_token({ id: customer.id }, Time.now.to_i + 1_000)
+        customer.tokens << token
+        customer.save
+      end
+
+      Customer.invalidate!
+
+      customers_with_no_token_ids = customers.map(&:id)
+      Customer.select(:id, :tokens).find_each do |model|
+        if customers_with_no_token_ids.include? model.id
+          expect(model.tokens).to be_empty
+        else
+          expect(model.tokens).not_to be_empty
+        end
+      end
+    end
+  end
 end

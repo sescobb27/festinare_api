@@ -20,15 +20,23 @@ module User
            # https://bugs.ruby-lang.org/issues/10871
     validates :username, presence: true
     before_validation :downcase_credentials
+
+    def self.invalidate!
+      self.find_each do |model|
+        model.tokens.delete_if do |token|
+          !JWT::AuthToken.validate_token(token)
+        end
+        model.save
+      end
+    end
   end
   CATEGORIES = ['Bar', 'Disco', 'Restaurant'].freeze
   # validates :category_name, inclusion: { in: CATEGORIES }
 
   def downcase_credentials
-    self[:username] = self[:username] ? self[:username].downcase : nil
-    self[:email] = self[:email] ? self[:email].downcase : nil
+    self[:username] = self[:username] ? self[:username].downcase : ''
+    self[:email] = self[:email] ? self[:email].downcase : ''
   end
-
   # # user.delete_from_array :tokens, 'JWT_TOKEN'
   # # => user.tokens.delete 'JWT_TOKEN'
   # # => user.tokens_will_change!

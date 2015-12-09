@@ -3,7 +3,7 @@ module JWT
   class AuthToken
     class << self
       def make_token(payload, time)
-        JWT.encode(payload, private_key, algorithm: 'RS256', exp: time)
+        JWT.encode(payload.merge(exp: time), private_key, algorithm: 'RS256', exp: time)
       end
 
       def validate_token(token)

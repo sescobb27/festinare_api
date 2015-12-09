@@ -30,3 +30,7 @@ end
 every 1.hour do
   rake 'invalidate:plans'
 end
+
+every 1.hour do
+  rake 'users:tokens'
+end

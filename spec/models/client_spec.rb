@@ -159,4 +159,49 @@ RSpec.describe Client, type: :model do
       expect(client.valid_password? 'mynewpassword').to be_truthy
     end
   end
+
+
+  describe 'invalidate tokens' do
+    let!(:clients) { FactoryGirl.create_list :client, 10, tokens: [] }
+
+    it 'should invalidate all tokens' do
+      # create an expired token
+      clients.each do |client|
+        token = JWT::AuthToken.make_token({ id: client.id }, Time.now.to_i - 5)
+        client.tokens << token
+        client.save
+      end
+      Client.invalidate!
+      Client.select(:id, :tokens).find_each do |model|
+        expect(model.tokens).to be_empty
+      end
+    end
+
+    it 'should invalidate some tokens' do
+      clients_with_tokens = FactoryGirl.create_list :client, 10, tokens: []
+      # create an expired token
+      clients.each do |client|
+        token = JWT::AuthToken.make_token({ id: client.id }, Time.now.to_i - 5)
+        client.tokens << token
+        client.save
+      end
+
+      clients_with_tokens.each do |client|
+        token = JWT::AuthToken.make_token({ id: client.id }, Time.now.to_i + 1_000)
+        client.tokens << token
+        client.save
+      end
+
+      Client.invalidate!
+
+      clients_with_no_token_ids = clients.map(&:id)
+      Client.select(:id, :tokens).find_each do |model|
+        if clients_with_no_token_ids.include? model.id
+          expect(model.tokens).to be_empty
+        else
+          expect(model.tokens).not_to be_empty
+        end
+      end
+    end
+  end
 end
