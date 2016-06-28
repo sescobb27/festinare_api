@@ -108,10 +108,13 @@ RSpec.describe Discount, type: :model do
         available_discounts = Discount.available([category], limit: 10)
         expect(available_discounts).not_to be_empty
         expect(available_discounts.length).to eql 10
+        client_ids = available_discounts.flat_map do |discount|
+          discount.client.id
+        end.uniq
         # available_discounts would match the first 2 clients given that we request
         # 10 discounts and all test :client_with_discounts generate 5 discounts, so
         # you do the math
-        expect(available_discounts.flat_map(&:client).uniq).to match_array @l_clients_with_discounts.take 2
+        expect(@l_clients_with_discounts.map(&:id)).to include(*client_ids)
       end
     end
   end
