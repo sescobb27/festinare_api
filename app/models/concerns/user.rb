@@ -37,6 +37,11 @@ module User
     self[:username] = (self[:username] || '').downcase
     self[:email] = (self[:email] || '').downcase
   end
+
+  def send_devise_notification(notification, *args)
+    devise_mailer.send(notification, self, *args).deliver_later
+  end
+
   # # user.delete_from_array :tokens, 'JWT_TOKEN'
   # # => user.tokens.delete 'JWT_TOKEN'
   # # => user.tokens_will_change!
