@@ -13,3 +13,9 @@ export GMAIL_USERNAME="username"
 export GMAIL_PASSWORD="password"
 export PARALLEL_TEST_PROCESSORS=$(WEB_CONCURRENCY)
 export GOOGLE_API_KEY="KEY_HERE"
+
+## Payment
+# Production
+# export API_KEY_TOKEN="TOKEN"
+# Sandbox - Testing - Development
+export API_KEY_TOKEN="TOKEN"

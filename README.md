@@ -34,12 +34,17 @@ zeus rspec
 # Nginx
 sudo cp festinare.conf /etc/nginx/sites-available/festinare.com.co && sudo service nginx restart && sudo nginx -t
 ```
+# Audit
+`rake bundle:audit`
+
+# Reek - Code smell detector
+```
+reek app/controllers
+reek app/models
+reek app/services
+```
 
 ## TODO
-/clients/id/address update/delete
-
-/users/id/mobile add/delete
-
 E2E testing
 
 ## WIP
