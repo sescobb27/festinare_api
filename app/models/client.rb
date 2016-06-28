@@ -27,7 +27,7 @@ class Client < ActiveRecord::Base
   has_many :clients_plans, inverse_of: :client
   has_many :plans, through: :clients_plans
   has_many :discounts, inverse_of: :client
-  has_many :customers_discounts,  through: :discounts
+  has_many :customers_discounts, through: :discounts
   # =============================END relationships=============================
 
   # =============================Schema========================================
@@ -43,15 +43,19 @@ class Client < ActiveRecord::Base
   #   and has 1 or more discounts available, false otherwhise
   def plan?
     now = Time.zone.now
-    !clients_plans.with_discounts.empty? &&
-      clients_plans.with_discounts.any? do |plan|
-        now < plan.expired_date
-      end
+
+    have_discounts = clients_plans.with_discounts
+    !have_discounts.empty? && have_discounts.any? do |plan|
+      now < plan.expired_date
+    end
   end
 
   def decrement_num_of_discounts_left!
     fail ClientsPlan::PlanDiscountsExhausted unless plan?
+    decrement_num_of_discounts_left
+  end
 
+  def decrement_num_of_discounts_left
     current_plan = clients_plans.with_discounts.last
     current_plan.num_of_discounts_left -= 1
     current_plan.save

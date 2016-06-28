@@ -34,8 +34,8 @@ module User
   # validates :category_name, inclusion: { in: CATEGORIES }
 
   def downcase_credentials
-    self[:username] = self[:username] ? self[:username].downcase : ''
-    self[:email] = self[:email] ? self[:email].downcase : ''
+    self[:username] = (self[:username] || '').downcase
+    self[:email] = (self[:email] || '').downcase
   end
   # # user.delete_from_array :tokens, 'JWT_TOKEN'
   # # => user.tokens.delete 'JWT_TOKEN'

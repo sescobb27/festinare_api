@@ -32,7 +32,9 @@ class ClientsPlan < ActiveRecord::Base
     # ON "clients_plans"."client_id" = "clients"."id"
     # WHERE "clients_plans"."status" = 't'
     # ==========================================================================
-    Client.joins(:clients_plans).where(clients_plans: { status: true }).find_each do |client|
+    Client.joins(:clients_plans)
+      .where(clients_plans: { status: true })
+      .find_each do |client|
       client.clients_plans.map do |plan|
         next if now < plan.expired_date
         plan.update status: false
@@ -66,12 +68,12 @@ EOF
     # }
     # the purchased_plan.expired_date = Thu, 12 Apr 2015 21:17:33 -0500
     # 1 month after today
-    ClientsPlan.new.tap do |clients_plan|
-      clients_plan.plan_id = plan.id
-      clients_plan.client_id = client.id
-      clients_plan.expired_date = Time.zone.now +
-        plan.expired_rate.send(plan.expired_time)
-      clients_plan.num_of_discounts_left = plan.num_of_discounts
+    ClientsPlan.new(
+      plan_id: plan.id,
+      client_id: client.id,
+      expired_date: Time.zone.now + plan.expired_rate.send(plan.expired_time),
+      num_of_discounts_left: plan.num_of_discounts
+    ).tap do |clients_plan|
       yield clients_plan if block_given?
       clients_plan.save
     end

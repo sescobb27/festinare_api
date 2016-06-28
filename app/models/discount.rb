@@ -105,18 +105,19 @@ EOF
 
   def self.categories
     # ==========================================================================
-    # SELECT DISTINCT "clients"."*", "discounts"."*"
+    # SELECT DISTINCT "clients"."categories"
     # FROM "clients"
     # LEFT OUTER JOIN "discounts"
     # ON "discounts"."client_id" = "clients"."id"
-    # WHERE "discounts"."status" = 't'
-    # AND ("discounts"."created_at" < (now() + ("discounts"."duration" * 60 || 'seconds')::interval))
+    # WHERE "discounts"."status" = $1
+    # AND ("discounts"."created_at" < (now() + ("discounts"."duration" * 60 || 'seconds')::interval))  [["status", "t"]]
     # ==========================================================================
     Client.select(:categories)
       .distinct
       .with_active_discounts
       .merge(Discount.not_expired)
-      .flat_map(&:categories).uniq
+      .pluck(:categories)
+      .flatten
   end
 
   # Returns all available discounts given a set of categories and filters
