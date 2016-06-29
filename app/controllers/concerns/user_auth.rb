@@ -58,7 +58,6 @@ module UserAuth
     token = authenticate_user user
     user.tokens << token
     if user.save
-      token = authenticate_user user
       render json: { token: token }, status: :ok
     else
       render json: {
