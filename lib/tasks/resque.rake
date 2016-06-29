@@ -1,2 +1,7 @@
 require 'resque/tasks'
-task 'resque:setup' => :environment
+
+namespace :resque do
+  task setup: :environment do
+    require 'resque'
+  end
+end
