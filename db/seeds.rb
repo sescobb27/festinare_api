@@ -118,9 +118,9 @@ if Rails.env.development?
   ClientsPlan.create_from_plan(Client.last, Plan.all.sample)
   puts 'End creating fixed clients'
 
-  puts 'Creating 100 random clients with discounts'
-  FactoryGirl.create_list :client_with_discounts, 100
-  puts 'Finished creating 100 random clients with discounts'
+  puts 'Creating 10 random clients with discounts'
+  FactoryGirl.create_list :client_with_discounts, 10
+  puts 'Finished creating 10 random clients with discounts'
   # user = FactoryGirl.create :user
   # token = API::BaseController.new.authenticate_user user
   # puts "Finished creating fake user: TOKEN=#{token}"

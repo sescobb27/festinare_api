@@ -19,7 +19,7 @@ class ClientsPlan < ActiveRecord::Base
   # =============================END relationships=============================
   # =============================Schema========================================
   scope :active_plans, -> { where(status: true) }
-  scope :with_discounts, -> { active_plans.where('"clients_plans"."num_of_discounts_left" > :num', num: 0) }
+  scope :with_discounts, -> { active_plans.where('num_of_discounts_left > :num', num: 0) }
   # =============================END Schema====================================
 
   # Invalidate Expired Client's Plans
