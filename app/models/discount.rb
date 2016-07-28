@@ -22,8 +22,9 @@ class Discount < ActiveRecord::Base
   belongs_to :client, inverse_of: :discounts
   has_many :customers_discounts
   has_many :customers, through: :customers_discounts
+  scope :active, -> { where(status: true) }
   scope :not_expired, lambda {
-    where("\"discounts\".\"created_at\" < (now() + (\"discounts\".\"duration\" * 60 || 'seconds')::interval)")
+    active.where("discounts.created_at < (now() + (duration * 60 || 'seconds')::interval)")
   }
   # =============================END relationships=============================
   # =============================Schema========================================
@@ -105,20 +106,20 @@ EOF
 
   def self.categories
     # ==========================================================================
-    # SELECT DISTINCT "clients"."categories"
+    # SELECT DISTINCT UNNEST(categories)
     # FROM "clients"
     # LEFT OUTER JOIN "discounts"
     # ON "discounts"."client_id" = "clients"."id"
     # WHERE "discounts"."status" = $1
     # AND ("discounts"."created_at" < (now() + ("discounts"."duration" * 60 || 'seconds')::interval))  [["status", "t"]]
     # ==========================================================================
-    Client.select(:categories)
+    Client.select('UNNEST(categories)')
       .distinct
       .with_active_discounts
       .merge(Discount.not_expired)
-      .pluck(:categories)
-      .flatten
+      .pluck('UNNEST(categories)')
   end
+
 
   # Returns all available discounts given a set of categories and filters
   # @param opts [Hash] valid options are = { omit: [Fixnum] limit: Fixnum offset: Fixnum }
