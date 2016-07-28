@@ -21,6 +21,7 @@ group :development do
   gem 'web-console', group: :development
   gem 'bundler-audit', '~> 0.5.0'
   gem 'reek', '~> 4.0.3'
+  gem 'rails-erd'
 end
 
 group :development, :test do
