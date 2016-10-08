@@ -1,5 +1,5 @@
 module DiscountService
-  def self.categories
+  def self.available_categories
     # ==========================================================================
     # SELECT DISTINCT UNNEST(categories)
     # FROM "clients"
@@ -16,7 +16,7 @@ module DiscountService
   end
 
   # Invalidate Expired Discounts
-  def self.invalidate!
+  def self.invalidate_expired_discounts!
     now = Time.zone.now
     # ==========================================================================
     # SELECT "clients"."*", "discounts"."*"
@@ -41,7 +41,7 @@ EOF
   # Returns all available discounts given a set of categories and filters
   # @param opts [Hash] valid options are = { omit: [Fixnum] limit: Fixnum offset: Fixnum }
   # @return [Array<Discount>]
-  def self.available(categories = [], opts = {})
+  def self.available_discounts(categories = [], opts = {})
     query = Discount.joins(:client).where(discounts: { status: true })
     query.where(':categories = ANY ("client"."categories")', categories: categories) unless categories.empty?
     query.where.not(discounts: { id: opts[:omit] }) if opts[:omit]

@@ -16,7 +16,7 @@ module API
           return render nothing: true, status: :unauthorized
         end
         plan = Plan.find params[:plan_id]
-        ClientsPlan.create_from_plan current_client, plan
+        current_client.purchase plan
         render nothing: true, status: :ok
       end
     end

@@ -1,12 +1,12 @@
 module NotificationService
-  def self.send_notifications
+  def self.notify_customers
     gcm = Gcm::Notification.instance
     options = {
       collapse_key: 'new_discounts',
       # Test server.
       dry_run: (Rails.env.development? || Rails.env.test?)
     }
-    categories = Discount.categories
+    categories = DiscountService.available_categories
     # ==========================================================================
     # SELECT "customers".*
     # FROM "customers"

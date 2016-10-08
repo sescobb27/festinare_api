@@ -13,10 +13,10 @@ module API
         liked_discounts = customer.discounts.pluck(:id)
 
         # customers can only get discounts who they haven't liked yet
-        discounts = Discount.available customer.categories,
-                                       limit: limit,
-                                       offset: offset,
-                                       omit: liked_discounts
+        discounts = DiscountService.available_discounts customer.categories,
+                                                        limit: limit,
+                                                        offset: offset,
+                                                        omit: liked_discounts
 
         render json: discounts
       end

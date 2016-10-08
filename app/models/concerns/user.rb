@@ -21,7 +21,7 @@ module User
     validates :username, presence: true
     before_validation :downcase_credentials
 
-    def self.invalidate!
+    def self.invalidate_tokens!
       self.find_each do |model|
         model.tokens.delete_if do |token|
           !JWT::AuthToken.validate_token(token)
