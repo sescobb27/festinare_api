@@ -87,7 +87,7 @@ RSpec.describe Client, type: :model do
     end
 
     it 'should have at least one valid plan' do
-      ClientsPlan.create_from_plan c_plan, Plan.all.sample
+      c_plan.purchase Plan.all.sample
       expect(c_plan.plan?).to be_truthy
     end
   end
@@ -160,7 +160,6 @@ RSpec.describe Client, type: :model do
     end
   end
 
-
   describe 'invalidate tokens' do
     let!(:clients) { FactoryGirl.create_list :client, 10, tokens: [] }
 
@@ -171,7 +170,7 @@ RSpec.describe Client, type: :model do
         client.tokens << token
         client.save
       end
-      Client.invalidate!
+      Client.invalidate_tokens!
       Client.select(:id, :tokens).find_each do |model|
         expect(model.tokens).to be_empty
       end
@@ -192,7 +191,7 @@ RSpec.describe Client, type: :model do
         client.save
       end
 
-      Client.invalidate!
+      Client.invalidate_tokens!
 
       clients_with_no_token_ids = clients.map(&:id)
       Client.select(:id, :tokens).find_each do |model|

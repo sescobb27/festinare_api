@@ -89,10 +89,10 @@ module API
         it 'should create discount it has at least one valid plan' do
           jwt_validate_token client
           plans = Plan.all.offset(1).sample(2)
-          ClientsPlan.create_from_plan client, plans[0] do |clients_plan|
+          client.purchase plans[0] do |clients_plan|
             clients_plan.num_of_discounts_left = 0
           end
-          ClientsPlan.create_from_plan client, plans[1]
+          client.purchase plans[1]
 
           post :create, client_id: client.id, discount: discount.to_hash
           expect(response.status).to eql 201
@@ -112,7 +112,7 @@ module API
           it 'Plan Discounts Exhausted' do
             jwt_validate_token client
             plan = Plan.all.offset(1).sample
-            ClientsPlan.create_from_plan client, plan do |clients_plan|
+            client.purchase plan do |clients_plan|
               clients_plan.num_of_discounts_left = 0
             end
             post :create, client_id: client.id, discount: discount.to_hash

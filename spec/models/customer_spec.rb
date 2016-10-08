@@ -50,16 +50,6 @@ RSpec.describe Customer, type: :model do
   it { should have_db_column(:confirmed_at).of_type(:datetime) }
   it { should have_db_column(:confirmation_sent_at).of_type(:datetime) }
 
-  before do
-    @gcm = instance_double(GCM)
-    allow(@gcm).to receive(:send_notification).with(
-      instance_of(Array), instance_of(Hash)
-    ).and_return []
-    allow(Gcm::Notification).to(
-      receive(:instance).and_return(@gcm)
-    )
-  end
-
   describe 'Customer with categories' do
     it 'should have some categories' do
       customer = FactoryGirl.attributes_for :customer_with_subscriptions
@@ -71,24 +61,7 @@ RSpec.describe Customer, type: :model do
     end
   end
 
-  describe 'send:notification Task -> Send Customer Notifications' do
-    skip 'should send notification to customer' do
-      FactoryGirl.create_list :client_with_discounts, 20
-
-      threads = []
-      10.times do
-        threads << Thread.new { FactoryGirl.create_list :customer_with_mobile, 100 }
-      end
-      threads.each(&:join)
-      expect(Customer.count).to be >= 1000
-      expect(@gcm).to receive(:send_notification).at_least(:once).with(
-        array_length_gte(1000), instance_of(Hash)
-      )
-      Rake::Task['send:notification'].invoke
-    end
-  end
-
-  describe 'invalidate tokens' do
+  describe '#invalidate_tokens!' do
     let!(:customers) { FactoryGirl.create_list :customer, 10, tokens: [] }
 
     it 'should invalidate all tokens' do
@@ -98,7 +71,7 @@ RSpec.describe Customer, type: :model do
         customer.tokens << token
         customer.save
       end
-      Customer.invalidate!
+      Customer.invalidate_tokens!
       Customer.select(:id, :tokens).find_each do |model|
         expect(model.tokens).to be_empty
       end
@@ -119,7 +92,7 @@ RSpec.describe Customer, type: :model do
         customer.save
       end
 
-      Customer.invalidate!
+      Customer.invalidate_tokens!
 
       customers_with_no_token_ids = customers.map(&:id)
       Customer.select(:id, :tokens).find_each do |model|

@@ -22,27 +22,4 @@ RSpec.describe ClientsPlan, type: :model do
   it { should have_db_column(:status).of_type(:boolean) }
   it { should have_db_column(:expired_date).of_type(:datetime) }
   it { should have_db_column(:created_at).of_type(:datetime) }
-
-  describe 'invalidate:plans Task -> Invalidate Expired Plans' do
-    let!(:expired_clients) do
-      FactoryGirl.create_list :client_with_expired_plan, 10
-    end
-    let!(:clients) do
-      FactoryGirl.create_list :client_with_plan, 10
-    end
-
-    it 'should invalidate all expired plans' do
-      Rake::Task['invalidate:plans'].invoke
-      clients.each do |client|
-        expect(Client.joins(:clients_plans).find(client.id).clients_plans).not_to be_empty
-      end
-      expired_clients.each do |client|
-        expect(Client.joins(:clients_plans).find(client.id).clients_plans.with_discounts).to be_empty
-      end
-    end
-  end
-
-  describe '::create_from_plan(client, plan)' do
-    pending 'create ClientsPlan from valid Client and Plan'
-  end
 end

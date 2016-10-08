@@ -41,12 +41,12 @@ FactoryGirl.define do
     end
     factory :client_with_plan do
       after(:create) do |client|
-        ClientsPlan.create_from_plan client, Plan.all.sample
+        client.purchase Plan.all.sample
       end
     end
     factory :client_with_expired_plan do
       after(:create) do |client|
-        ClientsPlan.create_from_plan client, Plan.all.sample do |plan|
+        client.purchase Plan.all.sample do |plan|
           plan.expired_date = Time.zone.now - 1.minute
         end
       end
